@@ -1,20 +1,25 @@
-# IA904 - Projeto - Primeira Entrega (E1)
+# IA901 - Projeto - Segunda Entrega (E2)
 
 ## Instruções Gerais
 
-O objetivo desta disciplina é fazer com que os alunos tentem resolver um problema real utilizando técnicas de visão computacional.
+O objetivo do projeto no contexto desta disciplina é fazer com que os alunos tentem resolver um problema real utilizando técnicas de processamento de imagens e reconhecimento de padrões.
 
 Para fazer esta entrega pelo github, siga as seguintes instruções atentamente:
  * Garanta que cada membro da equipe tenha uma conta github (serão monitoradas as contribuições de cada membro).
  * Faça fork deste repositório.
  * No seu fork, dentro da pasta de `projetos`, *crie uma nova pasta* com o *nome do seu projeto*.
  * Faça o commit dos arquivos associados a esta entrega, conforme descrito a seguir.
- * Quando tudo estiver pronto para entrega, crie uma tag de release no repositório identificada como `IA904_E1`.
+ * Quando tudo estiver pronto para entrega, crie uma tag de release no repositório identificada como `IA901_E2`.
  * Até a data de submissão estabelecida, crie um pull request para este repositório.
 
 
 
-Seu repositório deverá obrigatoriamente conter o arquivo README.md, arquivo de documentação Markdown, que deverá conter a descrição do projeto conforme orientações a seguir.
+## Estrutura do repositório
+
+A fim de uniformizar os repositórios de projetos da disciplina, os diretórios de seu repositório deverão ser nomeados e utilizados segundo a estrutura sugerida a seguir.
+
+Note que nem todos os diretórios ou arquivos serão necessários para todos os projetos. Foque em seguir o padrão para os diretórios que forem necessários. Não crie diretórios que não serão utilizados.
+
 
 ~~~
 ├── README.md          <- apresentação do projeto
@@ -34,7 +39,7 @@ Seu repositório deverá obrigatoriamente conter o arquivo README.md, arquivo de
 
 ## `README.md`
 
-Para a entrega E1, o README.md do repositório deve ser formatado [segundo o modelo disponibilizado neste link](https://github.com/Disciplinas-FEEC/IA904-2024S1/blob/main/templates/ia904-E1-template.md).
+Para a entrega E2, o README.md do repositório deve ser formatado [segundo o modelo disponibilizado neste link](https://github.com/Disciplinas-FEEC/IA901-2026S1/blob/main/templates/ia901-E2-template.md).
 
 Caso não tenha experiência com edição em Markdown, vide referência: [Mastering Markdown](https://guides.github.com/features/mastering-markdown/).
 Existem também múltiplas ferramentas para edição de Markdown como, por exemplo, [StackEdit](https://stackedit.io/).
@@ -44,6 +49,8 @@ Existem também múltiplas ferramentas para edição de Markdown como, por exemp
 Dados utilizados no projeto respeitadas as possíveis implicações éticas, se você tiver licença para tal e se o volume for suportado pelo Github. Você pode optar por colocar um subconjunto ilustrativo dos dados.
 
 É importante que sejam colocados os dados originais (se for possível) para garantir a reprodutibilidade do processo. Os originais são colocados na subpasta `raw`. Dados intermediários devem ser colocados na pasta `interim`. Coloque os dados finais que serviram de entrada para as suas análises na subpasta `processed`.
+
+Ainda, você deve criar um "datasheet" para os datasets utilizados e colocá-lo na pasta `data`.
 
 ## `notebooks`
 
