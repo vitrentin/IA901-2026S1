@@ -1,6 +1,6 @@
-# IA904-2024S1
-IA904 - Projeto de Modelos em Computação Visual
+# IA901-2026S1
+IA901 - Análise de Imagens e Reconhecimento de Padrões
 
-Profa. Leticia Rittner e Profa. Paula D. Paro Costa
+Profa. Leticia Rittner
 
-1o. Semestre de 2024
+1o. Semestre de 2026

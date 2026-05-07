@@ -18,7 +18,7 @@ oferecida no primeiro semestre de 2026, na Unicamp, sob supervisão da Profa. Dr
 > Descrição do objetivo principal do projeto, incluindo contexto gerador, motivação, etc. Qual problema você pretende solucionar? Qual a relevância do problema e o impacto da solução do mesmo?
 
 ## Metodologia
-Proposta de metodologia incluindo especificação de quais técnicas pretende-se explorar. Espera-se que nesta entrega você já seja capaz de descrever de maneira mais específica (do que na Entrega 1) quais as técnicas a serem empregadas em cada etapa do projeto.
+> Proposta de metodologia incluindo especificação de quais técnicas pretende-se explorar. Espera-se que nesta entrega você já seja capaz de descrever de maneira mais específica (do que na Entrega 1) quais as técnicas a serem empregadas em cada etapa do projeto.
 
 ## Bases de Dados e Evolução
 > Elencar as bases de dados utilizadas no projeto.
@@ -27,7 +27,7 @@ Base de Dados | Endereço na Web | Resumo descritivo
 ----- | ----- | -----
 Título da Base | http://base1.org/ | Breve resumo (duas ou três linhas) sobre a base.
 
-> Forneça também o link para o "datasheet" criado para os datasets (anexado na pasta `data`, como indicado nas [instruções E2](https://github.com/Disciplinas-FEEC/IA901-2026S1/blob/main/templates/ia901-E2-instrucoes.md)), contendo informações mais detalhadas e sistematizadas sobre as bases de dados.
+> Forneça também o link para o "datasheet" criado para os datasets (anexado na pasta `data`, como indicado nas [instruções E2](https://github.com/Disciplinas-FEEC/IA901-2026S1/blob/main/templates/ia901-E2-instructions.md)), contendo informações mais detalhadas e sistematizadas sobre as bases de dados.
 
 ## Ferramentas
 > Ferramentas e/ou bibliotecas já utilizadas e/ou ainda a serem utilizadas (com base na visão atual do grupo sobre o projeto).
@@ -49,5 +49,5 @@ Título da Base | http://base1.org/ | Breve resumo (duas ou três linhas) sobre 
 ## Uso de IA Generativa
 > Adicione aqui em quais tarefas foi usada alguma ferramenta de IA Generativa. Para cada tarefa indicada detalhe qual a ferramenta e qual o prompt utilizado.
 
-## Referências (ATUALIZAR SE NECESSÁRIO)
+## Referências
 > Seção obrigatória. Inclua aqui referências utilizadas no projeto.
