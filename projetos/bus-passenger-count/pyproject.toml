@@ -1,0 +1,28 @@
+[project]
+name = "bus-passenger-count"
+version = "0.1.0"
+description = "Bus passenger counting with computer vision (IA901 2026S1)."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "ultralytics>=8.3.0",
+    "roboflow>=1.1.50",
+    "wandb>=0.18.0",
+    "nbformat>=5.10.0",
+    "python-dotenv>=1.0.1",
+    "torch>=2.4.0",
+    "torchvision>=0.19.0",
+    "opencv-python>=4.10.0",
+    "pyyaml>=6.0.2",
+    "matplotlib>=3.9.0",
+    "ipykernel>=6.29.0",
+]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu128" }]
+torchvision = [{ index = "pytorch-cu128" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true

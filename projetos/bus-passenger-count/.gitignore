@@ -1,0 +1,29 @@
+# Secrets
+.env
+
+# uv / venv
+.venv/
+__pycache__/
+*.pyc
+
+# Run artefacts
+runs/
+wandb/
+
+# Downloaded model weights (pulled on demand by ultralytics / SAM)
+yolo*.pt
+sam*.pt
+
+# Roboflow / downloaded datasets
+datasets/
+**/images/
+**/labels/
+data/processed/
+*.cache
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db

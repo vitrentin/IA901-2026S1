@@ -1,6 +1,12 @@
 # `Contagem de passageiros em ônibus utilizando visão computacional (análise de imagens e reconhecimento de padrões).`
 # `Counting passengers on buses using computer vision (image analysis and pattern recognition).`
 
+## Setup rápido
+
+As instruções de instalação e execução:
+
+- `src/README.md`
+
 ## Apresentação
 
 O presente projeto foi originado no contexto das atividades da disciplina de pós-graduação *IA901 - Análise de Imagens e Reconhecimento de Padrões*, 
