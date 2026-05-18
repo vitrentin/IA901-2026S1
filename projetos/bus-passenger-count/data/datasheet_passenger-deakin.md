@@ -26,9 +26,9 @@
 - **Are relationships between individual instances made explicit?**  
   No (though originally from video sequences).
 - **Are there recommended data splits? (e.g., train/validation/test)**  
-  Unknown.
+  Yes, there are: Train: 70% Valid: 20% Test: 10%.
 - **Are there any errors, sources of noise, or redundancies?**  
-  Unknown (possible video-frame redundancy before subsampling).
+  Yes, there are (possible video-frame redundancy before subsampling).
 - **Is the dataset self-contained, or does it rely on external resources? If external: are there guarantees they will persist? Are there archival versions? Any restrictions?**  
   Self-contained on Roboflow.
 - **Does the dataset contain data that might be considered confidential?**  
@@ -56,7 +56,7 @@
 - **Who was involved in the data collection process and how were they compensated?**  
   Unknown.
 - **Over what timeframe was the data collected?**  
-  Updated approximately 2 years ago on Roboflow.
+  Updated approximately 2 years ago(2024) on Roboflow.
 - **Were any ethical review processes conducted?**  
   Unknown.
 
@@ -70,7 +70,7 @@
 - **If consent was obtained, can individuals revoke it?**  
   Unknown.
 - **Has a data protection impact analysis been conducted?**  
-  Unknown.
+  The data is Creative Commons(CC BY 4.0)
 - **Any other comments?**  
   N/A.
 
@@ -116,17 +116,17 @@
 
 ## Maintenance
 - **Who will be supporting/hosting/maintaining the dataset?**  
-  Roboflow and the Deakin workspace.
+  Roboflow(the Deakin workspace), also for the Google Drive: Maintenance and updates will be managed by the project authors during the IA901 course period, until the end of July 2026.
 - **How can the owner/curator/manager of the dataset be contacted (e.g., email address)?**  
   Through the Roboflow platform.
 - **Is there an erratum? If so, please provide a link or other access point.**  
-  Unknown.
+  No.
 - **Will the dataset be updated (e.g., to correct labeling errors, add new instances, delete instances)? If so, please describe how often, by whom, and how updates will be communicated to dataset consumers (e.g., mailing list, GitHub).**  
-  Unknown.
+  No.
 - **If the dataset relates to people, are there applicable limits on the retention of the data associated with the instances?**  
   N/A.
 - **Will older versions of the dataset continue to be supported/hosted/maintained? If so, please describe how. If not, please describe how its obsolescence will be communicated to dataset consumers.**  
-  Unknown.
+  Yes, all data will be on Google Drive or Roboflow.
 - **If others want to extend/augment/build on/contribute to the dataset, is there a mechanism for them to do so? If so, please provide a description. Will these contributions be validated/verified? If so, please describe how. If not, why not? Is there a process for communicating/distributing these contributions to dataset consumers? If so, please provide a description.**  
   Yes, via Roboflow fork/clone.
 - **Any other comments?**  

@@ -6,9 +6,9 @@
 - **Who created the dataset and on behalf of which entity?**  
   Created by the `seat-occupancy` workspace on Roboflow Universe.
 - **Who funded the creation of the dataset?**  
-  Unknown.
+  Unknown (likely internal academic project).
 - **Any other comments?**  
-  N/A.
+  Public dataset on Roboflow.
 
 ## Composition
 - **What do the instances represent?**  
@@ -26,11 +26,11 @@
 - **Are relationships between individual instances made explicit?**  
   No.
 - **Are there recommended data splits? (e.g., train/validation/test)**  
-  Unknown.
+  Yes, there are: Train: 70% Valid: 20% Test: 10%.
 - **Are there any errors, sources of noise, or redundancies?**  
-  Unknown.
+  No, there are not.
 - **Is the dataset self-contained, or does it rely on external resources? If external: are there guarantees they will persist? Are there archival versions? Any restrictions?**  
-  Yes.
+  The dataset is self-contained.
 - **Does the dataset contain data that might be considered confidential?**  
   No.
 - **Does the dataset contain data that might be offensive, insulting, threatening, or anxiety-inducing?**  
@@ -56,7 +56,7 @@
 - **Who was involved in the data collection process and how were they compensated?**  
   Unknown.
 - **Over what timeframe was the data collected? Does this match the creation timeframe of the data?**  
-  Unknown.
+  Updated approximately 1 year ago(2025) on Roboflow.
 - **Were any ethical review processes conducted? (e.g., IRB) If so, what were the outcomes?**  
   Unknown.
 
@@ -70,7 +70,7 @@
 - **If consent was obtained, can individuals revoke it?**  
   Unknown.
 - **Has a data protection impact analysis been conducted?**  
-  Unknown.
+  The data is Public Domain(CC0)
 - **Any other comments?**  
   N/A.
 
@@ -116,17 +116,17 @@
 
 ## Maintenance
 - **Who will be supporting/hosting/maintaining the dataset?**  
-  Roboflow and the original `seat-occupancy` workspace.
+  Roboflow and the original `seat-occupancy` workspace, also for the Google Drive: Maintenance and updates will be managed by the project authors during the IA901 course period, until the end of July 2026.
 - **How can the owner/curator/manager of the dataset be contacted (e.g., email address)?**  
   Via Roboflow platform.
 - **Is there an erratum? If so, please provide a link or other access point.**  
-  Unknown.
+  No.
 - **Will the dataset be updated (e.g., to correct labeling errors, add new instances, delete instances)? If so, please describe how often, by whom, and how updates will be communicated to dataset consumers (e.g., mailing list, GitHub).**  
-  Unknown.
+  No.
 - **If the dataset relates to people, are there applicable limits on the retention of the data associated with the instances?**  
   N/A.
 - **Will older versions of the dataset continue to be supported/hosted/maintained? If so, please describe how. If not, please describe how its obsolescence will be communicated to dataset consumers.**  
-  Unknown.
+  Yes, all data will be on Google Drive or Roboflow.
 - **If others want to extend/augment/build on/contribute to the dataset, is there a mechanism for them to do so? If so, please provide a description. Will these contributions be validated/verified? If so, please describe how. If not, why not? Is there a process for communicating/distributing these contributions to dataset consumers? If so, please provide a description.**  
   Yes, via Roboflow.
 - **Any other comments?**  
