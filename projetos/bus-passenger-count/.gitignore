@@ -14,12 +14,9 @@ wandb/
 yolo*.pt
 sam*.pt
 
-# Roboflow / downloaded datasets
-datasets/
-**/images/
-**/labels/
-data/processed/
-*.cache
+# Downloaded dataset payloads; keep only the per-folder readmes.
+data/processed/*/*
+!data/processed/*/readme.md
 
 # Jupyter
 .ipynb_checkpoints/
