@@ -82,11 +82,25 @@ Os experimentos iniciais utilizarão o modelo YOLO base para estabelecer o basel
 * Saturation: Variar a saturação da imagem, escolhemos de +/- 25%, câmeras simples(como a do ESP32-CAM, utilizada no modelo do dataset privado no ônibus da Unicamp, ou câmeras similares) costumam ter um balanço de branco ruim, deixando a imagem mais "azulada" ou "amarelada"(cores frias e quentes), a saturação também pode ajudar na questão de viés em relação a cores que nem o Hue.
 * Crop: Variar corte ou zoom, escolhemos de 0 a 20%, essa técnica aproxima a imagem artificialmente, pode ajudar o modelo aprender a detectar pessoas que estão coladas na câmera, que pode acontecer
 
+Para visualização de alguns dos resultados preliminares disponibilizamos um pasta no Google Drive com simulações do dataset Passenger Detection on a Bus e Inside Bus View e será mostrado algumas imagens abaixo de parte dos resultados.
+
+### Runs Google Drive
+
+```sh
+  https://drive.google.com/drive/folders/1mELdfdfAS4YE39bwXNG4FGVBLFEm-mYM?usp=drive_link
+```
+
 De `Epoch` foram utilizadas 300 para o treinamento. 
 
 No roboflow do repositório Passenger Detection on a Bus estava com uma precisão de 91.1%, com o nosso treinamento feito ficou com uma precisão de 93%.
 
+![Matriz de confusão normalizada Passenger Detection on a Bus](assets/passenger-detection-bus/train/confusion_matrix_normalized.png)
+
 No roboflow do repositório Inside Bus Detection estava com uma precisão de 90.2%, com o nosso treinamento feito ficou com uma precisão de  97%, porém utilizando o modelo do primeiro dataset nesse dataset para validar e verificar a precisão, diminuiu para 31% evidenciando o problema que retratamos de um dataset ficar específico para o conjunto de imagens treinados e quando jogado em outro dataset cair drasticamente a precisão.
+
+![Matriz de confusão normalizada Inside Bus Detection](assets/inside-bus-view/train/confusion_matrix_normalized.png)
+
+![Matriz de confusão normalizada Inside Bus Detection Validação cruzada](assets/inside-bus-view/train/confusion_matrix_normalized.png)
 
 **Problemas identificados até o momento:**
 * Risco elevado de oclusão severa gerando subcontagem (falsos negativos) e sobreposição de detecções (contagem dupla).
