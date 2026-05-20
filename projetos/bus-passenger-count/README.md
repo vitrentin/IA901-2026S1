@@ -16,8 +16,8 @@ oferecida no primeiro semestre de 2026, na Unicamp, sob supervisão da Profa. Dr
 ## Descrição do Projeto
 <!-- > Descrição do objetivo principal do projeto, incluindo contexto gerador, motivação, etc. Qual problema você pretende solucionar? Qual a relevância do problema e o impacto da solução do mesmo? -->
 
-O objetivo do projeto é desenvolver um algoritmo capaz de detectar e contabilizar o número de passageiros presentes em imagens no interior de ônibus. A solução utilizará técnica de transfer learning a partir de modelos de detecção de objetos pré-treinados, como YOLOv8 ou YOLOv11 treinados no dataset COCO para a classe "person". Diversos datasets públicos que contem imagens de pessoas em ônibus possuem precisão elevada, porém quando são colocados em situações diferentes, como validando com uma imagem de outro dataset, essa precisão diminui, chegando até 20% a menos.
-<!-- (colocar referencia do artigo que tinha encontrado).  -->
+O objetivo do projeto é desenvolver um algoritmo capaz de detectar e contabilizar o número de passageiros presentes em imagens no interior de ônibus. A solução utilizará técnica de transfer learning a partir de modelos de detecção de objetos pré-treinados, como YOLOv8 ou YOLOv11 treinados no dataset COCO para a classe "person". Diversos datasets públicos que contem imagens de pessoas em ônibus possuem precisão elevada, porém quando são colocados em situações diferentes, como validando com uma imagem de outro dataset, essa precisão diminui, chegando até porcentagens superiores de 20% a menos, por exemplo.
+
 A relevância deste projeto reside na tentativa de desenvolver um algoritmo de detecção de passageiros que tenha uma boa precisão na detecção em diferentes cenários, a noção da quantidade de passageiros em ônibus pelo tempo contribui na otimização da mobilidade urbana e na análise de impacto da massa de passageiros, sendo importante para o consumo energético de ônibus elétricos, com aplicação direta no ônibus elétrico da Unicamp.
 
 ## Metodologia
@@ -58,10 +58,11 @@ A validação final será realizada no dataset privado da Unicamp, sendo analisa
 * **Plataformas de Anotação/Gestão de Dados:** Roboflow, WandDB.
 
 ## Workflow
-> Use uma ferramenta que permita desenhar o workflow e salvá-lo como uma imagem (Draw.io, por exemplo). Insira a imagem nesta seção.
+<!-- > Use uma ferramenta que permita desenhar o workflow e salvá-lo como uma imagem (Draw.io, por exemplo). Insira a imagem nesta seção.
 > Você pode optar por usar um gerenciador de workflow (Sacred, Pachyderm, etc) e nesse caso use o gerenciador para gerar uma figura para você.
 > Lembre-se que o objetivo de desenhar o workflow é ajudar a quem quiser reproduzir seus experimentos.
-> Mais informações sobre o workflow podem ser encontradas nos materiais de apoio no Classroom (Reprodutibilidade em pesquisa computacional - workflow).
+> Mais informações sobre o workflow podem ser encontradas nos materiais de apoio no Classroom (Reprodutibilidade em pesquisa computacional - workflow). -->
+![Workflow de detecção de passageiros](assets/workflow.png)
 
 ## Experimentos e Resultados preliminares
 <!-- > Descreva de forma sucinta e organizada os experimentos realizados.
@@ -100,11 +101,27 @@ No roboflow do repositório Inside Bus Detection estava com uma precisão de 90.
 4. **Semana 2-3:** Avaliação quantitativa (mAP, Recall, Precision) e qualitativa das detecções no dataset da Unicamp, tanto com a Estratégia 1, quanto da Estratégia 2.
 
 ## Uso de IA Generativa
-> Adicione aqui em quais tarefas foi usada alguma ferramenta de IA Generativa. Para cada tarefa indicada detalhe qual a ferramenta e qual o prompt utilizado.
-<!-- Colocar as tarefas colocadas no gemini ou claude -->
+<!-- > Adicione aqui em quais tarefas foi usada alguma ferramenta de IA Generativa. Para cada tarefa indicada detalhe qual a ferramenta e qual o prompt utilizado. -->
+Durante o desenvolvimento deste projeto e a elaboração desta documentação, ferramentas de IA Generativa foram utilizadas estritamente para auxiliar na estruturação visual, diagramação e formatação do texto do repositório, não interferindo na concepção da metodologia. Abaixo estão os detalhes das tarefas:
+
+* **Tarefa: Geração do código do diagrama de Workflow**
+  * **Ferramenta:** Gemini
+  * **Prompt utilizado:** Fornecimento do texto descritivo das seções de "Metodologia" e "Experimentos" do README, seguido do comando: *"Preciso gerar uma imagem do meu workflow para meu projeto"*. A IA processou o texto e gerou o código em linguagem Mermaid, que foi posteriormente importado para a plataforma Mermaid e ajustado para a exportação da imagem final.
+
+* **Tarefa: Estruturação e formatação das Referências Bibliográficas**
+  * **Ferramenta:** Gemini
+  * **Prompt utilizado:** Fornecimento dos links brutos (URLs) das bases de dados, bibliotecas e documentações, acompanhado do comando: *"Preciso ajustar minhas referencias para meu .md"*. A ferramenta categorizou os links e aplicou a sintaxe correta de hiperlinks nativa do Markdown.
 
 ## Referências
-> Seção obrigatória. Inclua aqui referências utilizadas no projeto.
-<!-- Referências dos datasets, documentação do Yolo, bibliotecas utilizadas, ... -->
-https://pytorch.org/ -> pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu126
-Para instalar a versão estável para seu sistema operacional, package, linguagem,...
+<!-- > Seção obrigatória. Inclua aqui referências utilizadas no projeto. -->
+**Bibliotecas e Frameworks**
+* **[PyTorch](https://pytorch.org/):** Framework principal de Deep Learning utilizado no projeto.
+  > *Nota de instalação (versão estável com suporte a CUDA 12.6):* > `pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu126`
+* **[Ultralytics (YOLO)](https://docs.ultralytics.com/):** Documentação oficial das arquiteturas YOLOv8 e YOLOv11 utilizadas para a detecção de objetos.
+
+**Bases de Dados (Datasets)**
+* **[Roboflow - Passenger Detection on a Bus](https://universe.roboflow.com/bus-project-frdgz/passenger-detection-on-a-bus-qgljh):** Dataset utilizado para o treinamento e detecção de passageiros no interior de ônibus.
+* **[Roboflow - Inside Bus View](https://universe.roboflow.com/seat-occupancy/inside-bus-view):** Dataset focado na visão interna do ônibus (anotações de assentos mapeadas para passageiros).
+* **[Roboflow - Passenger (Deakin)](https://universe.roboflow.com/deakin-07shj/passenger-mmpbi):** Dataset auxiliar de passageiros utilizado para compor as bases de treinamento e validação.
+* **[CrowdHuman Dataset (Página Oficial)](https://www.crowdhuman.org/):** Página oficial do dataset de multidões utilizado para o fine-tuning em estágios, visando maior robustez contra oclusões.
+* **[CrowdHuman Dataset (Hugging Face)](https://huggingface.co/datasets/sshao0516/CrowdHuman):** Repositório do dataset CrowdHuman hospedado no Hugging Face.
