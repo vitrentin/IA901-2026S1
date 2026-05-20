@@ -10,7 +10,7 @@ oferecida no primeiro semestre de 2026, na Unicamp, sob supervisão da Profa. Dr
 > |Nome  | RA | Curso|
 > |--|--|--|
 > | Vinícius de Souza Trentin  | 298990  | Mestrado em Engenharia Elétrica com ênfase em computação|
-> | Cristian Javier Maza Merchan  | 272289  | Doutorado em Engenharia Elétrica
+> | Cristian Javier Maza Merchan  | 272289  | Doutorado em Engenharia Elétrica |
 
 
 ## Descrição do Projeto
@@ -49,7 +49,7 @@ A validação final será realizada no dataset privado da Unicamp, sendo analisa
 | Dataset Privado (Unicamp) | N/A | 2.400 imagens (.jpeg) coletadas no ônibus elétrico da Unicamp para rotulação manual e validação final. |
 
 <!-- > Forneça também o link para o "datasheet" criado para os datasets (anexado na pasta `data`, como indicado nas [instruções E2](https://github.com/Disciplinas-FEEC/IA901-2026S1/blob/main/templates/ia901-E2-instructions.md)), contendo informações mais detalhadas e sistematizadas sobre as bases de dados. -->
-> O "datasheet" contendo a sistematização destas bases encontra-se no diretório `data/`, por questões de limitação do github para imagens, foram adicionadas no Google drive e disponibilizados links de cada pasta separada.
+> O "datasheet" contendo a sistematização destas bases encontra-se no diretório [`data/`](data/), por questões de limitação do github para imagens, foram adicionadas no Google drive e disponibilizados links de cada pasta separada.
 
 ## Ferramentas
 <!-- > Ferramentas e/ou bibliotecas já utilizadas e/ou ainda a serem utilizadas (com base na visão atual do grupo sobre o projeto). -->
@@ -92,13 +92,13 @@ Para visualização de alguns dos resultados preliminares disponibilizamos um pa
 
 De `Epoch` foram utilizadas 300 para o treinamento. 
 
-No roboflow do repositório Passenger Detection on a Bus estava com uma precisão de 91.1%, com o nosso treinamento feito ficou com uma precisão de 93%.
+No roboflow do repositório Passenger Detection on a Bus estava com uma Precision de 91.1%, com o nosso treinamento feito ficou com uma Precision de 93%.
 
 *Matriz de confusão normalizada Passenger Detection on a Bus*
 ![Matriz de confusão normalizada Passenger Detection on a Bus](assets/passenger-detection-bus/train/confusion_matrix_normalized.png)
 
 
-No roboflow do repositório Inside Bus Detection estava com uma precisão de 90.2%, com o nosso treinamento feito ficou com uma precisão de  97%, porém utilizando o modelo do primeiro dataset nesse dataset para validar e verificar a precisão, diminuiu para 31% evidenciando o problema que retratamos de um dataset ficar específico para o conjunto de imagens treinados e quando jogado em outro dataset cair drasticamente a precisão.
+No roboflow do repositório Inside Bus Detection estava com uma Precision de 90.2%, com o nosso treinamento feito ficou com uma Precision de 97%, porém utilizando o modelo do primeiro dataset nesse dataset para validar e verificar a Precision, diminuiu para 31% evidenciando o problema que retratamos de um dataset ficar específico para o conjunto de imagens treinados e quando jogado em outro dataset cair drasticamente a precisão.
 
 *Matriz de confusão normalizada Inside Bus Detection*
 ![Matriz de confusão normalizada Inside Bus Detection](assets/inside-bus-view/train/confusion_matrix_normalized.png)

@@ -70,7 +70,7 @@
 - **If consent was obtained, can individuals revoke it?**  
   Unknown.
 - **Has a data protection impact analysis been conducted?**  
-  The data is Public Domain(CC0)
+  Unknown/not conducted by this project; license: Public Domain (CC0).
 - **Any other comments?**  
   N/A.
 

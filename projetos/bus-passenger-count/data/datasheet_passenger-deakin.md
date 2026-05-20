@@ -70,7 +70,7 @@
 - **If consent was obtained, can individuals revoke it?**  
   Unknown.
 - **Has a data protection impact analysis been conducted?**  
-  The data is Creative Commons(CC BY 4.0)
+  Unknown/not conducted by this project; license: Creative Commons (CC BY 4.0).
 - **Any other comments?**  
   N/A.
 
