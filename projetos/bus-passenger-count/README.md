@@ -10,7 +10,7 @@ oferecida no primeiro semestre de 2026, na Unicamp, sob supervisão da Profa. Dr
 > |Nome  | RA | Curso|
 > |--|--|--|
 > | Vinícius de Souza Trentin  | 298990  | Mestrado em Engenharia Elétrica com ênfase em computação|
-> | Cristian Javier Maza Merchan  | 272289  | Mestrado em Engenharia Elétrica, Doutorado em Engenharia Elétrica.
+> | Cristian Javier Maza Merchan  | 272289  | Doutorado em Engenharia Elétrica
 
 
 ## Descrição do Projeto
@@ -121,6 +121,10 @@ No roboflow do repositório Inside Bus Detection estava com uma precisão de 90.
 ## Uso de IA Generativa
 <!-- > Adicione aqui em quais tarefas foi usada alguma ferramenta de IA Generativa. Para cada tarefa indicada detalhe qual a ferramenta e qual o prompt utilizado. -->
 Durante o desenvolvimento deste projeto e a elaboração desta documentação, ferramentas de IA Generativa foram utilizadas estritamente para auxiliar na estruturação visual, diagramação e formatação do texto do repositório, não interferindo na concepção da metodologia. Abaixo estão os detalhes das tarefas:
+
+* **Tarefa:** Apoio ao desenvolvimento e organização do código do projeto, incluindo estruturação dos módulos em `src/` e adaptação do notebook para funções reutilizáveis.
+  * **Ferramenta:** Cursor
+  * **Forma de uso:** Interação iterativa em linguagem natural durante a implementação, sem um único prompt principal; as sugestões foram revisadas, testadas e ajustadas pelos autores.
 
 * **Tarefa: Geração do código do diagrama de Workflow**
   * **Ferramenta:** Gemini
