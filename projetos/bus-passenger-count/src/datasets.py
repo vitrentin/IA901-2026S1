@@ -1,12 +1,12 @@
-"""Pick datasets by name; fetch the processed payload on demand.
+"""Pick datasets by name; fetch the selected payload on demand.
 
-Datasets live on Google Drive (per-dataset shared folder, YOLO layout) or on
+Datasets live on Google Drive (per-dataset zip, YOLO layout) or on
 Hugging Face (CrowdHuman, redistribution-restricted). This module:
 
 * Resolves friendly names (e.g. ``"InsideBusView"``, ``"CrowdHuman"``) to
   canonical keys via a small registry; matching is case- and separator-
   insensitive (``"InsideBusView" == "inside_bus_view" == "inside-bus-view"``).
-* Downloads missing data into ``data/processed/<name>/`` on first use.
+* Downloads missing data into ``data/<stage>/<name>/`` on first use.
 * Tolerates split directories with mixed capitalization (``Train`` vs ``train``).
 * Converts CrowdHuman's ODGT annotations to YOLO labels (single ``person`` class).
 * Generates a YOLO ``data.yaml`` with absolute paths, supporting either a
@@ -16,6 +16,7 @@ Example:
 
     >>> import datasets
     >>> yaml_path = datasets.prepare("InsideBusView")
+    >>> yaml_path = datasets.prepare("InsideBusView", stage="interim")
     >>> yaml_path = datasets.prepare(["InsideBusView", "CrowdHuman"])
 """
 
@@ -37,26 +38,34 @@ import config
 # ---------------------------------------------------------------------------
 
 # Canonical key -> dataset info. Source is determined by which key is set:
-#   * ``gdrive_folder_url`` — shared Drive folder containing the YOLO layout
-#     (preferred for small datasets; gdown has a ~50-file Drive folder cap).
+#   * ``gdrive_zip_urls`` — stage -> single shared .zip on Drive.
 #   * ``gdrive_zip_url`` — single shared .zip on Drive, extracted on download.
 #   * ``hf_repo`` (+ ``hf_zips`` and ``hf_odgt``) — Hugging Face dataset where
 #     image zips and ODGT annotations are downloaded individually and the
 #     ODGT boxes are converted to YOLO labels (CrowdHuman).
 #
-# ``dir`` is the destination folder under ``data/processed/``.
+# ``dir`` is the destination folder under ``data/<stage>/``.
 REGISTRY: dict[str, dict] = {
     "inside-bus-view": {
-        "dir":               "inside-bus-view",
-        "gdrive_folder_url": "https://drive.google.com/drive/folders/1fvW1eP3QAAht62inlsjjUxRERNOcq2jH",
+        "dir": "inside-bus-view",
+        "gdrive_zip_urls": {
+            "interim": "https://drive.google.com/file/d/1ghCCFEZO4GWSIdhdtpfn81JXqF3pEr6w/view?usp=drive_link",
+            "processed": "https://drive.google.com/file/d/11GyL5Oz_p2A9e9jgCisuFKKkjCW60wTj/view?usp=drive_link",
+        },
     },
     "passenger-deakin": {
-        "dir":               "passenger-deakin",
-        "gdrive_folder_url": "https://drive.google.com/drive/folders/1F-LB5fE6owvsw3vq_zXcblI2M_4g4NyE",
+        "dir": "passenger-deakin",
+        "gdrive_zip_urls": {
+            "interim": "https://drive.google.com/file/d/14yxQ2PpSl6JpL8ZmLSQBP4CC5sf7XFg0/view?usp=drive_link",
+            "processed": "https://drive.google.com/file/d/1dHwNN4qIclubKAuzlMDa6cFBuvumRpgw/view?usp=drive_link",
+        },
     },
     "passenger-detection-bus": {
-        "dir":               "passenger-detection-bus",
-        "gdrive_folder_url": "https://drive.google.com/drive/folders/1QFeVXeULj_IqQLLiR7u5f4AR-gXZpjrP",
+        "dir": "passenger-detection-bus",
+        "gdrive_zip_urls": {
+            "interim": "https://drive.google.com/file/d/18W3eGadv-ginlkdOIQnLWplDXt9Gk2i5/view?usp=drive_link",
+            "processed": "https://drive.google.com/file/d/1QiKCZ6Bfe-m9MypfS-m-hV4vrDSfBm-c/view?usp=drive_link",
+        },
     },
     "crowdhuman": {
         "dir":     "crowdhuman",
@@ -86,6 +95,12 @@ _ALIAS_OVERRIDES: dict[str, str] = {
 CLASS_NAMES: list[str] = ["person"]
 
 _SPLITS = ("train", "valid", "test")
+_DEFAULT_STAGE = "processed"
+_DOWNLOAD_COMPLETE = ".download_complete"
+_STAGE_DIRS = {
+    "interim": config.INTERIM_DIR,
+    "processed": config.PROCESSED_DIR,
+}
 
 
 # ---------------------------------------------------------------------------
@@ -131,18 +146,26 @@ def _find_child(parent: Path, name: str) -> Path | None:
 def _has_yolo_layout(root: Path) -> bool:
     if not root.exists():
         return False
-    return any(_find_child(root, s) for s in _SPLITS)
+    return all(_split_images(root, s) for s in ("train", "valid"))
+
+
+def _download_marker(root: Path) -> Path:
+    return root / _DOWNLOAD_COMPLETE
+
+
+def _is_download_complete(root: Path) -> bool:
+    return _download_marker(root).exists() and _has_yolo_layout(root)
 
 
 def _locate_dataset_root(start: Path) -> Path:
     """Find the first directory at/under ``start`` that has YOLO splits."""
     if _has_yolo_layout(start):
         return start
-    for child in start.iterdir():
+    for child in start.rglob("*"):
         if child.is_dir() and _has_yolo_layout(child):
             return child
     raise RuntimeError(
-        f"Downloaded data under {start} does not contain train/valid/test split folders."
+        f"Downloaded data under {start} does not contain train/valid image folders."
     )
 
 
@@ -173,17 +196,54 @@ def _split_images(root: Path, split: str) -> Path | None:
 # Download backends
 # ---------------------------------------------------------------------------
 
+def _stage_key(stage: str) -> str:
+    key = _norm(stage)
+    if key in _STAGE_DIRS:
+        return key
+    raise KeyError(f"Unknown dataset stage: {stage!r}. Known: {sorted(_STAGE_DIRS)}")
+
+
+def _stage_dir(stage: str) -> Path:
+    return _STAGE_DIRS[_stage_key(stage)]
+
+
+def _source_for_stage(info: dict, stage: str) -> dict:
+    stage = _stage_key(stage)
+    if "gdrive_zip_urls" in info:
+        try:
+            return {"gdrive_zip_url": info["gdrive_zip_urls"][stage]}
+        except KeyError as exc:
+            raise KeyError(
+                f"Dataset does not define a {stage!r} zip. Available: "
+                f"{sorted(info['gdrive_zip_urls'])}"
+            ) from exc
+    if stage != _DEFAULT_STAGE:
+        raise KeyError(
+            f"Dataset source only supports stage {_DEFAULT_STAGE!r}, got {stage!r}."
+        )
+    return info
+
+
 def _download_gdrive(info: dict, target: Path) -> None:
     import gdown
 
     if "gdrive_zip_url" in info:
         zip_path = target / "_dataset.zip"
         print(f"datasets: downloading zip {info['gdrive_zip_url']} -> {zip_path}")
-        gdown.download(url=info["gdrive_zip_url"], output=str(zip_path), quiet=False, fuzzy=True)
+        result = gdown.download(
+            url=info["gdrive_zip_url"],
+            output=str(zip_path),
+            quiet=False,
+            fuzzy=True,
+        )
+        if result is None:
+            raise RuntimeError(f"Failed to download {info['gdrive_zip_url']}")
         print(f"datasets: extracting {zip_path}")
-        with zipfile.ZipFile(zip_path) as zf:
-            zf.extractall(target)
-        zip_path.unlink(missing_ok=True)
+        try:
+            with zipfile.ZipFile(zip_path) as zf:
+                zf.extractall(target)
+        finally:
+            zip_path.unlink(missing_ok=True)
         return
 
     print(f"datasets: downloading folder {info['gdrive_folder_url']} -> {target}")
@@ -192,7 +252,6 @@ def _download_gdrive(info: dict, target: Path) -> None:
         output=str(target),
         quiet=False,
         use_cookies=False,
-        remaining_ok=True,
     )
 
 
@@ -280,20 +339,26 @@ def _download(info: dict, target: Path) -> None:
         raise ValueError(f"Registry entry has no known source URL: {info}")
 
 
-def _dataset_root(name: str, force_download: bool = False) -> Path:
+def _dataset_root(
+    name: str,
+    force_download: bool = False,
+    stage: str = _DEFAULT_STAGE,
+) -> Path:
     """Return a local directory containing YOLO splits for ``name``."""
     info = REGISTRY[_canonical(name)]
-    root = config.PROCESSED_DIR / info["dir"]
+    source = _source_for_stage(info, stage)
+    root = _stage_dir(stage) / info["dir"]
 
-    if not force_download and _has_yolo_layout(root):
+    if not force_download and _is_download_complete(root):
         return root
 
-    _download(info, root)
+    _download(source, root)
 
-    # Drive folder downloads often nest under the original folder name
-    # (e.g. ``Processed/``). Flatten so split dirs sit directly under ``root``.
+    # Drive zips often nest under an extra top-level folder. Flatten so split
+    # dirs sit directly under ``root``.
     actual = _locate_dataset_root(root)
     _flatten_into(root, actual)
+    _download_marker(root).write_text("ok\n", encoding="utf-8")
     return root
 
 
@@ -304,21 +369,26 @@ def _dataset_root(name: str, force_download: bool = False) -> Path:
 def prepare(
     names: str | Iterable[str],
     force_download: bool = False,
+    stage: str = _DEFAULT_STAGE,
 ) -> Path:
     """Ensure datasets are local and return the path to a YOLO ``data.yaml``.
 
     With one name, the yaml is written inside that dataset's folder and uses
     string paths so downstream YOLO tooling treats it like a single source.
     With multiple names, a merged yaml is written under
-    ``data/processed/_combined/<name1>+<name2>+...`` using list paths.
+    ``data/<stage>/_combined/<name1>+<name2>+...`` using list paths.
     """
+    stage = _stage_key(stage)
     if isinstance(names, str):
         names = [names]
     canonical = [_canonical(n) for n in names]
     if not canonical:
         raise ValueError("prepare() requires at least one dataset name.")
 
-    roots = [_dataset_root(n, force_download=force_download) for n in canonical]
+    roots = [
+        _dataset_root(n, force_download=force_download, stage=stage)
+        for n in canonical
+    ]
 
     train_imgs = [p for p in (_split_images(r, "train") for r in roots) if p]
     val_imgs   = [p for p in (_split_images(r, "valid") for r in roots) if p]
@@ -342,7 +412,7 @@ def prepare(
     if single:
         out_dir = roots[0]
     else:
-        out_dir = config.PROCESSED_DIR / "_combined" / "+".join(canonical)
+        out_dir = _stage_dir(stage) / "_combined" / "+".join(canonical)
         out_dir.mkdir(parents=True, exist_ok=True)
 
     out = out_dir / "data.yaml"
