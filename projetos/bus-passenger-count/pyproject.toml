@@ -15,7 +15,7 @@ dependencies = [
     "pyyaml>=6.0.2",
     "matplotlib>=3.9.0",
     "ipykernel>=6.29.0",
-    "gdown>=5.2.0",
+    "gdown>=6,<7",
     "huggingface-hub>=0.24.0",
     "pillow>=10.0.0",
 ]

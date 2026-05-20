@@ -60,15 +60,17 @@ No notebook:
 ## 7) Selecionar datasets
 
 Na célula **Experiment Config**, defina um ou mais datasets. Eles são preparados
-em `data/processed/` e podem vir do Drive ou do Hugging Face, conforme
-`src/datasets.py`.
+em `data/<DATASET_STAGE>/` e podem vir do Drive ou do Hugging Face, conforme
+`src/datasets.py`. Use `DATASET_STAGE = "processed"` para modelagem, ou
+`DATASET_STAGE = "interim"` para baixar os dados intermediários.
 
 ```python
 DATASETS = ["InsideBusView"]
 DATASETS = ["CrowdHuman", "InsideBusView", "PassengerDetectionBus"]
+DATASET_STAGE = "processed"
 ```
 
 Nomes aceitam variações de caixa e separador (`InsideBusView`,
 `inside-bus-view`, `inside_bus_view`). Use `datasets.available()` para listar
 opções e `FORCE_DOWNLOAD = True` para baixar de novo. Com múltiplos datasets,
-o notebook gera um `data.yaml` combinado em `data/processed/_combined/`.
+o notebook gera um `data.yaml` combinado em `data/<DATASET_STAGE>/_combined/`.

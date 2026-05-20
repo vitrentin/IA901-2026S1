@@ -13,6 +13,7 @@ load_dotenv(PROJECT_ROOT / ".env", override=False)
 
 DATA_DIR: Path = PROJECT_ROOT / "data"
 RAW_DIR: Path = DATA_DIR / "raw"
+INTERIM_DIR: Path = DATA_DIR / "interim"
 PROCESSED_DIR: Path = DATA_DIR / "processed"
 RUNS_DIR: Path = PROJECT_ROOT / "runs"
 
