@@ -57,12 +57,30 @@ A validação final será realizada no dataset privado da Unicamp, sendo analisa
 * **Linguagem e Bibliotecas:** Python, OpenCV, Pandas, NumPy, PyTorch, ...
 * **Plataformas de Anotação/Gestão de Dados:** Roboflow, WandDB.
 
-## Workflow
+## Workflow reprodutível
 <!-- > Use uma ferramenta que permita desenhar o workflow e salvá-lo como uma imagem (Draw.io, por exemplo). Insira a imagem nesta seção.
 > Você pode optar por usar um gerenciador de workflow (Sacred, Pachyderm, etc) e nesse caso use o gerenciador para gerar uma figura para você.
 > Lembre-se que o objetivo de desenhar o workflow é ajudar a quem quiser reproduzir seus experimentos.
 > Mais informações sobre o workflow podem ser encontradas nos materiais de apoio no Classroom (Reprodutibilidade em pesquisa computacional - workflow). -->
+
+O pipeline foi separado em notebooks menores para deixar claro qual artefato é
+produzido em cada etapa. O treinamento pode ser duplicado por experimento, mas
+download, pré-processamento e validação permanecem compartilhados e modulares.
+
+| Etapa | Notebook / módulo | Entrada | Saída |
+| --- | --- | --- | --- |
+| Download dos dados | [`notebooks/1_download_datasets.ipynb`](notebooks/1_download_datasets.ipynb), [`src/datasets.py`](src/datasets.py) | Registro de datasets e links do Drive/Hugging Face | `data/interim/<dataset>/` ou `data/processed/<dataset>/` |
+| Pré-processamento | [`notebooks/2_preprocess_datasets.ipynb`](notebooks/2_preprocess_datasets.ipynb), [`src/preprocess.py`](src/preprocess.py) | `data/interim/<dataset>/` | `data/processed/<dataset>/`, `preprocessing_manifest.json` |
+| Treinamento | [`notebooks/3_train.ipynb`](notebooks/3_train.ipynb), [`src/train.py`](src/train.py) | `data/processed/.../data.yaml` | `runs/<experiment>/weights.txt` e pesos YOLO |
+| Validação/teste | [`notebooks/4_validate_test.ipynb`](notebooks/4_validate_test.ipynb), [`src/eval.py`](src/eval.py) | pesos treinados ou baseline `yolo_raw` | métricas em `runs/<experiment>/test_metrics.json` e W&B |
+
 ![Workflow de detecção de passageiros](assets/workflow.png)
+
+O código Mermaid usado para gerar a próxima versão do diagrama está em
+[`docs/workflow.mmd`](docs/workflow.mmd), já com os artefatos de cada etapa.
+
+As instruções de execução dos notebooks ficam em [`src/README.md`](src/README.md).
+Detalhes do registro no Weights & Biases ficam em [`docs/WANDB.md`](docs/WANDB.md).
 
 ## Experimentos e Resultados preliminares
 <!-- > Descreva de forma sucinta e organizada os experimentos realizados.
@@ -92,13 +110,13 @@ Para visualização de alguns dos resultados preliminares disponibilizamos um pa
 
 De `Epoch` foram utilizadas 300 para o treinamento. 
 
-No roboflow do repositório Passenger Detection on a Bus estava com uma Precision de 91.1%, com o nosso treinamento feito ficou com uma Precision de 93%.
+No roboflow do repositório Passenger Detection on a Bus estava com uma precisão de 91.1%, com o nosso treinamento feito ficou com uma precisão de 93%.
 
 *Matriz de confusão normalizada Passenger Detection on a Bus*
 ![Matriz de confusão normalizada Passenger Detection on a Bus](assets/passenger-detection-bus/train/confusion_matrix_normalized.png)
 
 
-No roboflow do repositório Inside Bus Detection estava com uma Precision de 90.2%, com o nosso treinamento feito ficou com uma Precision de 97%, porém utilizando o modelo do primeiro dataset nesse dataset para validar e verificar a Precision, diminuiu para 31% evidenciando o problema que retratamos de um dataset ficar específico para o conjunto de imagens treinados e quando jogado em outro dataset cair drasticamente a precisão.
+No roboflow do repositório Inside Bus Detection estava com uma precisão de 90.2%, com o nosso treinamento feito ficou com uma precisão de  97%, porém utilizando o modelo do primeiro dataset nesse dataset para validar e verificar a precisão, diminuiu para 31% evidenciando o problema que retratamos de um dataset ficar específico para o conjunto de imagens treinados e quando jogado em outro dataset cair drasticamente a precisão.
 
 *Matriz de confusão normalizada Inside Bus Detection*
 ![Matriz de confusão normalizada Inside Bus Detection](assets/inside-bus-view/train/confusion_matrix_normalized.png)

@@ -1,83 +1,68 @@
-"""Evaluation entrypoint for trained or baseline models."""
-
-from __future__ import annotations
+"""Evaluation entrypoint — infraestrutura de wandb e métricas."""
 
 import json
 from pathlib import Path
-from typing import Any
 
-import config
-import wandb_utils
-from models import get_model
+from src import config
+from src import wandb_utils
 
 
-def _resolve_weights(run_dir: Path, override: str | Path | None) -> str | None:
-    if override:
-        return str(override)
-    wfile = run_dir / "weights.txt"
-    if wfile.exists():
-        return wfile.read_text().strip() or None
-    return None
+def find_run(experiment_id):
+    """Retorna (run_dir, weights_path) para o experiment_id dado, ou (None, None)."""
+    if not config.RUNS_DIR.exists():
+        return None, None
+    matches = sorted(
+        [d for d in config.RUNS_DIR.iterdir()
+         if d.is_dir() and d.name.startswith(f"{experiment_id}_")],
+        key=lambda d: d.stat().st_mtime,
+    )
+    if not matches:
+        return None, None
+    run_dir = matches[-1]
+    wfile   = run_dir / "weights.txt"
+    weights = wfile.read_text().strip() if wfile.exists() else None
+    return run_dir, weights
 
 
-def run(
-    run_dir: str | Path,
-    data_yaml: str | Path,
-    model_name: str = config.DEFAULT_MODEL_NAME,
-    n_samples: int = config.LOG_N_TEST_IMAGES,
-    cfg: dict[str, Any] | None = None,
-    weights: str | Path | None = None,
-) -> dict:
-    """Evaluate and return the flat metrics dict logged to wandb."""
-    cfg       = dict(cfg or {})
-    run_dir   = Path(run_dir).resolve()
-    data_yaml = Path(data_yaml).resolve()
+def run(experiment_id, model, data_yaml, n_samples=config.LOG_N_TEST_IMAGES, run_dir=None):
+    """Avalia o modelo no split de teste e retorna o dicionário de métricas."""
+    if run_dir is None:
+        run_dir, _ = find_run(experiment_id)
+    if run_dir is None:
+        run_dir = config.RUNS_DIR / f"eval_{experiment_id}"
+        print(f"eval:     nenhum run de treino encontrado — criando {run_dir.name}")
     run_dir.mkdir(parents=True, exist_ok=True)
 
-    weights_path = _resolve_weights(run_dir, weights)
-    print(f"eval:     weights -> {weights_path or '(model default)'}")
+    wandb_utils.init_run(
+        wandb_config={
+            "experiment_id": experiment_id,
+            "data_yaml":     str(data_yaml),
+        },
+        run_name=f"{run_dir.name}_eval",
+        run_dir=run_dir,
+    )
 
-    if not wandb_utils.is_active():
-        notes = cfg.get("notes")
-        tags = cfg.get("tags") or None
-        cfg_extra = {
-            k: v for k, v in cfg.items()
-            if k not in ("notes", "tags")
-        }
-        wandb_utils.init_run(
-            wandb_config = config.to_wandb_config({
-                "experiment_id": run_dir.name,
-                "model_name":    model_name,
-                "mode":          "eval_only",
-                **cfg_extra,
-            }),
-            run_name = f"{run_dir.name}_eval",
-            run_dir  = run_dir,
-            notes    = notes,
-            tags     = tags,
-        )
+    results = model.val(
+        data     = str(data_yaml),
+        split    = "test",
+        project  = str(run_dir),
+        name     = "eval",
+        exist_ok = True,
+    )
 
-    model_mod = get_model(model_name)
-    try:
-        result = model_mod.predict(cfg, data_yaml, run_dir, weights=weights_path)
-    except NotImplementedError as e:
-        print(f"eval:     {model_name}.predict is not implemented yet ({e}).")
-        wandb_utils.finish_run({})
-        return {}
-
-    metrics    = result.get("metrics", {}) if isinstance(result, dict) else {}
-    yolo_model = result.get("model") if isinstance(result, dict) else None
+    md      = getattr(results, "results_dict", None) or {}
+    metrics = {f"test/{k}": float(v) for k, v in md.items()}
 
     if metrics:
         wandb_utils.log_metrics(metrics)
         (run_dir / "test_metrics.json").write_text(json.dumps(metrics, indent=2))
-        print("eval:     test metrics:")
+        print("eval:     métricas:")
         for k, v in metrics.items():
             print(f"          {k:40s} {v:.4f}")
 
-    if yolo_model is not None and n_samples > 0:
+    if n_samples > 0:
         wandb_utils.log_test_predictions(
-            predictor = yolo_model,
+            predictor = model,
             data_yaml = data_yaml,
             n         = n_samples,
         )

@@ -1,47 +1,53 @@
-# Setup e execução
+# Código e notebooks
 
-## 1) Instalar `uv`
+Este diretório contém os módulos usados pelos notebooks. A ideia é manter os
+notebooks curtos e trocar comportamento nos módulos:
 
-No Windows (PowerShell):
+- `datasets.py`: usa as chaves exatas do registro de datasets, baixa artefatos do Drive/Hugging Face
+  e gera `data.yaml` para YOLO.
+- `preprocess.py`: transforma `data/interim` em `data/processed` e registra um
+  `preprocessing_manifest.json`.
+- `train.py`: cria runs, inicializa Weights & Biases e chama o adaptador do
+  modelo.
+- `eval.py`: avalia modelos treinados ou baselines e registra métricas/imagens.
+- `models/`: adaptadores de modelo (`yolo`, `yolo_raw`).
 
-```powershell
-pip install uv
-```
+## Fluxo dos notebooks
 
-## 2) Criar ambiente e instalar dependências
+| Notebook | Objetivo | Artefato principal |
+| --- | --- | --- |
+| `notebooks/1_download_datasets.ipynb` | Baixar `interim` ou `processed` | `data/<stage>/<dataset>/data.yaml` |
+| `notebooks/2_preprocess_datasets.ipynb` | Reconstruir `processed` a partir de `interim`, se necessário | `data/processed/<dataset>/preprocessing_manifest.json` |
+| `notebooks/3_train.ipynb` | Treinar um experimento | `runs/<experiment>/weights.txt` |
+| `notebooks/4_validate_test.ipynb` | Validar/testar e fazer cross-dataset | `runs/<experiment>/test_metrics.json` |
+
+Para criar um novo experimento, duplique apenas `3_train.ipynb` e altere a
+célula de configuração. Download, preprocessing e validação continuam
+compartilhados.
+
+## Setup
 
 No diretório `projetos/bus-passenger-count`:
 
 ```powershell
+pip install uv
 uv venv
 uv sync
-```
-
-## 3) Configurar ambiente
-
-```powershell
 copy .env.example .env
-```
-
-Use `WANDB_ENTITY` e `WANDB_PROJECT` em `.env` para registrar no workspace do time.
-
-## 4) Login no Weights & Biases (uma vez)
-
-```powershell
 uv run wandb login
 ```
 
-## 5) Usar o notebook com o Python do `.venv`
-
-Opção A: iniciar Jupyter via `uv`:
+Para abrir Jupyter:
 
 ```powershell
 uv run jupyter lab
 ```
 
-Opção B (Cursor/VS Code): abrir `notebooks/bus-passenger-count.ipynb` e selecionar o interpretador:
+Ou abra os notebooks no Cursor/VS Code usando o interpretador:
 
-- Windows: `.venv\Scripts\python.exe`
+```text
+.venv\Scripts\python.exe
+```
 
 Se quiser registrar um kernel nomeado:
 
@@ -49,28 +55,21 @@ Se quiser registrar um kernel nomeado:
 uv run python -m ipykernel install --user --name bus-passenger-count --display-name "Python (bus-passenger-count)"
 ```
 
-## 6) Executar pipeline
+## Seleção de datasets
 
-No notebook:
-
-- Edite a célula **Experiment Config** (ex.: `MODEL_NAME`, `RUN_TRAINING`, `TRAIN_OVERRIDES` com `epochs`/`batch`/`imgsz`).
-- Rode as células de cima para baixo.
-- Para baseline sem treino: `MODEL_NAME = "yolo_raw"` e `RUN_TRAINING = False`.
-
-## 7) Selecionar datasets
-
-Na célula **Experiment Config**, defina um ou mais datasets. Eles são preparados
-em `data/<DATASET_STAGE>/` e podem vir do Drive ou do Hugging Face, conforme
-`src/datasets.py`. Use `DATASET_STAGE = "processed"` para modelagem, ou
-`DATASET_STAGE = "interim"` para baixar os dados intermediários.
+Na célula de configuração dos notebooks, defina:
 
 ```python
-DATASETS = ["InsideBusView"]
-DATASETS = ["CrowdHuman", "InsideBusView", "PassengerDetectionBus"]
+DATASETS = datasets.available()
 DATASET_STAGE = "processed"
 ```
 
-Nomes aceitam variações de caixa e separador (`InsideBusView`,
-`inside-bus-view`, `inside_bus_view`). Use `datasets.available()` para listar
-opções e `FORCE_DOWNLOAD = True` para baixar de novo. Com múltiplos datasets,
-o notebook gera um `data.yaml` combinado em `data/<DATASET_STAGE>/_combined/`.
+Use `DATASET_STAGE = "interim"` quando for reconstruir preprocessing. Os dados
+brutos com rótulos/classes originais ficam documentados em `data/raw/`, mas não
+entram no pipeline executável. Os nomes devem ser exatamente as chaves retornadas
+por `datasets.available()`. Use `FORCE_DOWNLOAD = True` para baixar novamente.
+
+Com múltiplos datasets, `datasets.prepare()` gera um `data.yaml` combinado em
+`data/<stage>/_combined/`.
+
+Mais detalhes de W&B ficam em `../docs/WANDB.md`.
