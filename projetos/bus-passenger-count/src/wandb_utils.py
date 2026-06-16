@@ -96,39 +96,54 @@ def _yolo_to_minmax(x, y, w, h):
     }
 
 
-def _resolve_test_image_dir(data_yaml):
-    data_yaml = Path(data_yaml)
-    with data_yaml.open() as f:
-        spec = yaml.safe_load(f)
+def _resolve_test_image_dir(data_spec):
+    if isinstance(data_spec, dict):
+        spec = data_spec
+        base_dir = Path.cwd()
+    else:
+        data_yaml = Path(data_spec)
+        with data_yaml.open() as f:
+            spec = yaml.safe_load(f)
+        base_dir = data_yaml.parent
 
-    split_dir = spec.get("test") or spec.get("val")
-    if split_dir is None:
-        raise FileNotFoundError(f"{data_yaml} defines neither 'test' nor 'val' split")
+    split_dirs = spec.get("test") or spec.get("val")
+    if split_dirs is None:
+        raise FileNotFoundError("Data spec defines neither 'test' nor 'val' split")
+    if not isinstance(split_dirs, list):
+        split_dirs = [split_dirs]
 
-    p = Path(split_dir)
-    if p.is_absolute() and p.exists():
-        return p
+    def _resolve_one(split_dir):
+        p = Path(split_dir)
+        if p.is_absolute() and p.exists():
+            return p.resolve()
 
-    candidates = []
+        candidates = []
 
-    base = Path(spec.get("path", data_yaml.parent))
-    if not base.is_absolute():
-        base = (data_yaml.parent / base).resolve()
-    candidates.append((base / p).resolve())
+        base = Path(spec.get("path", base_dir))
+        if not base.is_absolute():
+            base = (base_dir / base).resolve()
+        candidates.append((base / p).resolve())
 
-    candidates.append((data_yaml.parent / p).resolve())
+        candidates.append((base_dir / p).resolve())
 
-    normalized_parts = [part for part in p.parts if part not in ("..", ".")]
-    if normalized_parts:
-        candidates.append((data_yaml.parent / Path(*normalized_parts)).resolve())
+        normalized_parts = [part for part in p.parts if part not in ("..", ".")]
+        if normalized_parts:
+            candidates.append((base_dir / Path(*normalized_parts)).resolve())
 
-    for c in candidates:
-        if c.exists():
-            return c
+        for c in candidates:
+            if c.exists():
+                return c
+        return None
+
+    tried = []
+    for split_dir in split_dirs:
+        resolved = _resolve_one(split_dir)
+        tried.append(str(split_dir))
+        if resolved is not None:
+            return resolved
 
     raise FileNotFoundError(
-        f"Could not resolve split directory '{split_dir}' from {data_yaml}. "
-        f"Tried: {[str(c) for c in candidates]}"
+        f"Could not resolve split directories {tried}"
     )
 
 
@@ -141,22 +156,24 @@ def _to_wandb_image_source(result_obj, fallback_path):
     return img
 
 
-def log_test_predictions(predictor, data_yaml, n=10, names=None,
-                         conf=0.25, panel_key="test/predictions", seed=0):
+def log_test_predictions(predictor, data_spec, n=10, names=None,
+                         conf=0.05, panel_key="test/predictions", seed=0):
     """Upload a sample of test images with prediction and GT boxes."""
     if not is_active():
         print("wandb:    no active run — skipping test prediction panel")
         return
 
-    data_yaml = Path(data_yaml)
-    with data_yaml.open() as f:
-        spec = yaml.safe_load(f)
+    if isinstance(data_spec, dict):
+        spec = data_spec
+    else:
+        with Path(data_spec).open() as f:
+            spec = yaml.safe_load(f)
     class_names = names or (
         spec["names"] if isinstance(spec.get("names"), dict)
         else {i: n for i, n in enumerate(spec.get("names", []))}
     )
 
-    img_dir   = _resolve_test_image_dir(data_yaml)
+    img_dir   = _resolve_test_image_dir(data_spec)
     label_dir = img_dir.parent / "labels"
 
     all_imgs = sorted(
@@ -168,8 +185,16 @@ def log_test_predictions(predictor, data_yaml, n=10, names=None,
         return
 
     rng    = random.Random(seed)
-    sample = rng.sample(all_imgs, min(n, len(all_imgs)))
-    print(f"wandb:    uploading {len(sample)} test predictions from {img_dir}")
+    labeled_imgs = [
+        p for p in all_imgs
+        if (label_dir / f"{p.stem}.txt").exists()
+    ]
+    pool = labeled_imgs if labeled_imgs else all_imgs
+    sample = rng.sample(pool, min(n, len(pool)))
+    print(
+        f"wandb:    uploading {len(sample)} test predictions from {img_dir} "
+        f"(labeled images: {len(labeled_imgs)}/{len(all_imgs)})"
+    )
 
     wandb_images = []
     for img_path in sample:

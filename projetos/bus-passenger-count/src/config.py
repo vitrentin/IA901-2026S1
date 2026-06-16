@@ -16,3 +16,5 @@ RUNS_DIR      = PROJECT_ROOT / "runs"
 WANDB_PROJECT     = os.environ.get("WANDB_PROJECT", "bus-passenger-count")
 WANDB_ENTITY      = os.environ.get("WANDB_ENTITY")
 LOG_N_TEST_IMAGES = 10
+
+ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY", "")

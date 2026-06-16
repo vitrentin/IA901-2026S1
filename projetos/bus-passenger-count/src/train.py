@@ -7,6 +7,8 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+import yaml
+
 from src import config
 from src import wandb_utils
 
@@ -57,7 +59,15 @@ def _log_yolo_history(save_dir):
         print(f"train:    {logged} épocas registradas no wandb")
 
 
-def run(experiment_id, model, data_yaml, train_config=None):
+def _resolve_data_arg(data_spec, run_dir):
+    if isinstance(data_spec, dict):
+        data_file = Path(run_dir) / "_data_runtime.yaml"
+        data_file.write_text(yaml.safe_dump(data_spec, sort_keys=False), encoding="utf-8")
+        return str(data_file)
+    return str(data_spec)
+
+
+def run(experiment_id, model, data_spec, train_config=None):
     """Cria run dir, inicia wandb, treina o modelo e retorna o run dir."""
     run_dir, run_name = _make_run_dir(experiment_id)
     print(f"train:    run dir -> {run_dir}")
@@ -65,7 +75,7 @@ def run(experiment_id, model, data_yaml, train_config=None):
     wandb_utils.init_run(
         wandb_config={
             "experiment_id": experiment_id,
-            "data_yaml":     str(data_yaml),
+            "data":          data_spec,
             "train_config":  train_config,
             **_git_info(),
         },
@@ -74,7 +84,7 @@ def run(experiment_id, model, data_yaml, train_config=None):
     )
 
     params = dict(train_config or {})
-    params["data"]     = str(data_yaml)
+    params["data"]     = _resolve_data_arg(data_spec, run_dir)
     params["project"]  = str(run_dir)
     params["name"]     = "train"
     params["exist_ok"] = True
@@ -92,4 +102,5 @@ def run(experiment_id, model, data_yaml, train_config=None):
     _log_yolo_history(save_dir)
     (run_dir / "weights.txt").write_text(str(best) + "\n")
     wandb_utils.log_metrics({"train/duration_sec": dt})
+    wandb_utils.finish_run({"train/duration_sec": dt})
     return run_dir

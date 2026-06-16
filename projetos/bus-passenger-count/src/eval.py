@@ -5,6 +5,7 @@ from pathlib import Path
 
 from src import config
 from src import wandb_utils
+import yaml
 
 
 def find_run(experiment_id):
@@ -24,7 +25,15 @@ def find_run(experiment_id):
     return run_dir, weights
 
 
-def run(experiment_id, model, data_yaml, n_samples=config.LOG_N_TEST_IMAGES, run_dir=None):
+def _resolve_data_arg(data_spec, run_dir):
+    if isinstance(data_spec, dict):
+        data_file = Path(run_dir) / "_data_runtime.yaml"
+        data_file.write_text(yaml.safe_dump(data_spec, sort_keys=False), encoding="utf-8")
+        return str(data_file)
+    return str(data_spec)
+
+
+def run(experiment_id, model, data_spec, n_samples=config.LOG_N_TEST_IMAGES, run_dir=None):
     """Avalia o modelo no split de teste e retorna o dicionário de métricas."""
     if run_dir is None:
         run_dir, _ = find_run(experiment_id)
@@ -36,14 +45,14 @@ def run(experiment_id, model, data_yaml, n_samples=config.LOG_N_TEST_IMAGES, run
     wandb_utils.init_run(
         wandb_config={
             "experiment_id": experiment_id,
-            "data_yaml":     str(data_yaml),
+            "data":          data_spec,
         },
         run_name=f"{run_dir.name}_eval",
         run_dir=run_dir,
     )
 
     results = model.val(
-        data     = str(data_yaml),
+        data     = _resolve_data_arg(data_spec, run_dir),
         split    = "test",
         project  = str(run_dir),
         name     = "eval",
@@ -63,7 +72,7 @@ def run(experiment_id, model, data_yaml, n_samples=config.LOG_N_TEST_IMAGES, run
     if n_samples > 0:
         wandb_utils.log_test_predictions(
             predictor = model,
-            data_yaml = data_yaml,
+            data_spec = data_spec,
             n         = n_samples,
         )
 

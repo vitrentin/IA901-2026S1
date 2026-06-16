@@ -1,9 +1,6 @@
 """Download e preparação dos datasets."""
 
-import json
-import re
 import shutil
-import zipfile
 from pathlib import Path
 
 import yaml
@@ -16,6 +13,35 @@ _DOWNLOAD_COMPLETE = ".download_complete"
 _STAGE_DIRS        = {
     "interim":   config.INTERIM_DIR,
     "processed": config.PROCESSED_DIR,
+}
+_ROBOFLOW_SOURCES = {
+    "inside-bus-view": {
+        "workspace": "cristians-workspace-9z79y",
+        "project": "inside-bus-view-interim-clean-20260615-151915-3vue1",
+        "keep_classes": {"person", "0"},
+        "versions": {
+            "interim": 1,
+            "processed": None,
+        },
+    },
+    "passenger-deakin": {
+        "workspace": "cristians-workspace-9z79y",
+        "project": "passenger-deakin-interim-clean-20260615-151915-pmurz",
+        "keep_classes": {"person", "0"},
+        "versions": {
+            "interim": 1,
+            "processed": None,
+        },
+    },
+    "passenger-detection-bus": {
+        "workspace": "cristians-workspace-9z79y",
+        "project": "passenger-detection-bus-interim-clean-20260615-152755-ilzsy",
+        "keep_classes": {"person", "0"},
+        "versions": {
+            "interim": 1,
+            "processed": None,
+        },
+    },
 }
 
 
@@ -60,13 +86,6 @@ def _is_downloaded(root):
     return (root / _DOWNLOAD_COMPLETE).exists() and _has_yolo_layout(root)
 
 
-def _gdrive_download_url(url):
-    match = re.search(r"/d/([^/]+)", url)
-    if match:
-        return f"https://drive.google.com/uc?id={match.group(1)}"
-    return url
-
-
 def _locate_dataset_root(start):
     if _has_yolo_layout(start):
         return start
@@ -86,122 +105,133 @@ def _flatten_into(root, source):
     source.rmdir()
 
 
+def _parse_label_row(parts):
+    coords = [float(v) for v in parts[1:]]
+    if len(coords) == 4:
+        return coords
+
+    if len(coords) >= 6 and len(coords) % 2 == 0:
+        xs = coords[0::2]
+        ys = coords[1::2]
+        min_x, max_x = min(xs), max(xs)
+        min_y, max_y = min(ys), max(ys)
+        w = max_x - min_x
+        h = max_y - min_y
+        if w <= 0 or h <= 0:
+            return None
+        cx = min_x + (w / 2.0)
+        cy = min_y + (h / 2.0)
+        return [cx, cy, w, h]
+
+    return None
+
+
+def _normalize_to_single_person_class(root, keep_classes):
+    data_yaml = root / "data.yaml"
+    if not data_yaml.exists():
+        return
+
+    spec = yaml.safe_load(data_yaml.read_text(encoding="utf-8")) or {}
+    names = spec.get("names", [])
+    if isinstance(names, dict):
+        id_to_name = {int(k): str(v).lower() for k, v in names.items()}
+    else:
+        id_to_name = {i: str(v).lower() for i, v in enumerate(names)}
+
+    keep_ids = {idx for idx, name in id_to_name.items() if name in keep_classes}
+
+    converted = 0
+    dropped = 0
+    for split in ("train", "valid", "test"):
+        lbl_dir = root / split / "labels"
+        if not lbl_dir.exists():
+            continue
+        for label_path in lbl_dir.glob("*.txt"):
+            rows = []
+            for line in label_path.read_text(encoding="utf-8").splitlines():
+                parts = line.strip().split()
+                if len(parts) < 5:
+                    continue
+                cls_id = int(float(parts[0]))
+                if cls_id not in keep_ids:
+                    dropped += 1
+                    continue
+                xywh = _parse_label_row(parts)
+                if xywh is None:
+                    dropped += 1
+                    continue
+                rows.append("0 " + " ".join(f"{v:.6f}" for v in xywh))
+                converted += 1
+            label_path.write_text("\n".join(rows), encoding="utf-8")
+
+    print(f"datasets:   labels normalizados ({converted} caixas, {dropped} descartadas)")
+
+
 # ---------------------------------------------------------------------------
 # Download API
 # ---------------------------------------------------------------------------
 
-def download_gdrive(name, url, stage=_DEFAULT_STAGE, force=False):
-    """Baixa um dataset do Google Drive e extrai em data/<stage>/<name>/."""
+def download_roboflow(name, stage=_DEFAULT_STAGE, force=False, model_format="yolov8"):
+    """Baixa um dataset do Roboflow para data/<stage>/<name>/."""
     root = _STAGE_DIRS[stage] / name
     if not force and _is_downloaded(root):
         print(f"datasets: {name} já baixado em {root}")
         return root
 
-    import gdown
+    if name not in _ROBOFLOW_SOURCES:
+        raise KeyError(
+            f"Dataset '{name}' não mapeado em _ROBOFLOW_SOURCES."
+        )
+    source = _ROBOFLOW_SOURCES[name]
+    version = source["versions"].get(stage)
+    if not version:
+        raise ValueError(
+            f"Não há versão Roboflow configurada para '{name}' no stage '{stage}'."
+        )
+
+    api_key = (config.ROBOFLOW_API_KEY or "").strip()
+    if not api_key:
+        raise RuntimeError("ROBOFLOW_API_KEY ausente no .env.")
+
+    from roboflow import Roboflow
+
+    if root.exists():
+        shutil.rmtree(root)
     root.mkdir(parents=True, exist_ok=True)
-    zip_path = root / "_dataset.zip"
 
-    print(f"datasets: baixando {name} ...")
-    result = gdown.download(
-        url    = _gdrive_download_url(url),
-        output = str(zip_path),
-        quiet  = False,
-        fuzzy  = True,
+    print(
+        f"datasets: baixando {name} "
+        f"({source['workspace']}/{source['project']}/{version}) ..."
     )
-    if result is None:
-        raise RuntimeError(f"Falha ao baixar {url}")
-
-    print(f"datasets: extraindo {zip_path.name}")
-    with zipfile.ZipFile(zip_path) as zf:
-        zf.extractall(root)
-    zip_path.unlink(missing_ok=True)
+    rf = Roboflow(api_key=api_key)
+    project = rf.workspace(source["workspace"]).project(source["project"])
+    project.version(int(version)).download(
+        model_format,
+        location=str(root),
+        overwrite=True,
+    )
 
     _flatten_into(root, _locate_dataset_root(root))
+    _normalize_to_single_person_class(root, source["keep_classes"])
     (root / _DOWNLOAD_COMPLETE).write_text("ok\n", encoding="utf-8")
     print(f"datasets: {name} pronto em {root}")
     return root
 
 
-def download_crowdhuman(hf_repo, stage=_DEFAULT_STAGE, force=False):
-    """Baixa o CrowdHuman do HuggingFace e converte anotações ODGT → YOLO."""
-    HF_ZIPS = {
-        "train": ("CrowdHuman_train01.zip", "CrowdHuman_train02.zip", "CrowdHuman_train03.zip"),
-        "valid": ("CrowdHuman_val.zip",),
-    }
-    HF_ODGT = {
-        "train": "annotation_train.odgt",
-        "valid": "annotation_val.odgt",
-    }
-
-    root = _STAGE_DIRS[stage] / "crowdhuman"
-    if not force and _is_downloaded(root):
-        print(f"datasets: crowdhuman já baixado em {root}")
-        return root
-
-    from huggingface_hub import hf_hub_download
-    from PIL import Image
-
-    print(f"datasets: baixando CrowdHuman de {hf_repo}")
-
-    for split, zips in HF_ZIPS.items():
-        img_dir = root / split / "images"
-        lbl_dir = root / split / "labels"
-        img_dir.mkdir(parents=True, exist_ok=True)
-        lbl_dir.mkdir(parents=True, exist_ok=True)
-
-        for zname in zips:
-            zpath = hf_hub_download(repo_id=hf_repo, repo_type="dataset", filename=zname)
-            print(f"datasets:   extraindo {zname}")
-            with zipfile.ZipFile(zpath) as zf:
-                for member in zf.infolist():
-                    if member.is_dir():
-                        continue
-                    if not member.filename.lower().endswith((".jpg", ".jpeg", ".png")):
-                        continue
-                    out = img_dir / Path(member.filename).name
-                    if not out.exists():
-                        with zf.open(member) as src, out.open("wb") as dst:
-                            shutil.copyfileobj(src, dst)
-
-        odgt_name = HF_ODGT.get(split)
-        if odgt_name:
-            odgt_path = hf_hub_download(repo_id=hf_repo, repo_type="dataset", filename=odgt_name)
-            print(f"datasets:   convertendo {odgt_name}")
-            _odgt_to_yolo(Path(odgt_path), img_dir, lbl_dir, Image)
-
-    (root / _DOWNLOAD_COMPLETE).write_text("ok\n", encoding="utf-8")
-    print(f"datasets: crowdhuman pronto em {root}")
-    return root
-
-
-def _odgt_to_yolo(odgt, img_dir, lbl_dir, Image):
-    converted = 0
-    for line in odgt.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        rec = json.loads(line)
-        img_path = img_dir / f"{rec['ID']}.jpg"
-        if not img_path.exists():
-            continue
-        with Image.open(img_path) as im:
-            iw, ih = im.size
-        rows = []
-        for box in rec.get("gtboxes", []):
-            if box.get("tag") != "person" or box.get("extra", {}).get("ignore"):
-                continue
-            x, y, w, h = box["fbox"]
-            x0, y0 = max(x, 0), max(y, 0)
-            x1, y1 = min(x + w, iw), min(y + h, ih)
-            if x1 <= x0 or y1 <= y0:
-                continue
-            cx = ((x0 + x1) / 2) / iw
-            cy = ((y0 + y1) / 2) / ih
-            bw = (x1 - x0) / iw
-            bh = (y1 - y0) / ih
-            rows.append(f"0 {cx:.6f} {cy:.6f} {bw:.6f} {bh:.6f}")
-        (lbl_dir / f"{rec['ID']}.txt").write_text("\n".join(rows), encoding="utf-8")
-        converted += 1
-    print(f"datasets:   {converted} labels escritos em {lbl_dir}")
+def download_selected(stage=_DEFAULT_STAGE, names=None, force=False, model_format="yolov8"):
+    """Baixa uma lista de datasets mapeados no Roboflow."""
+    names = list(names or _ROBOFLOW_SOURCES.keys())
+    downloaded = []
+    for name in names:
+        downloaded.append(
+            download_roboflow(
+                name=name,
+                stage=stage,
+                force=force,
+                model_format=model_format,
+            )
+        )
+    return downloaded
 
 
 # ---------------------------------------------------------------------------
@@ -209,7 +239,7 @@ def _odgt_to_yolo(odgt, img_dir, lbl_dir, Image):
 # ---------------------------------------------------------------------------
 
 def prepare(names, stage=_DEFAULT_STAGE):
-    """Gera o data.yaml a partir dos datasets já baixados; retorna o Path do yaml."""
+    """Monta o config de dados para YOLO e retorna um dict."""
     if isinstance(names, str):
         names = [names]
     names = list(names)
@@ -242,12 +272,4 @@ def prepare(names, stage=_DEFAULT_STAGE):
     if test_imgs:
         payload["test"] = str(test_imgs[0]) if single else [str(p) for p in test_imgs]
 
-    if single:
-        out_dir = roots[0]
-    else:
-        out_dir = _STAGE_DIRS[stage] / "_combined" / "+".join(names)
-        out_dir.mkdir(parents=True, exist_ok=True)
-
-    out = out_dir / "data.yaml"
-    out.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
-    return out.resolve()
+    return payload
