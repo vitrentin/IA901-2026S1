@@ -33,7 +33,13 @@ def _resolve_data_arg(data_spec, run_dir):
     return str(data_spec)
 
 
-def run(experiment_id, model, data_spec, n_samples=config.LOG_N_TEST_IMAGES, run_dir=None):
+def run(
+    experiment_id,
+    model,
+    data_spec,
+    n_wandb_samples=config.LOG_N_WANDB_TEST_PREDICTIONS,
+    run_dir=None,
+):
     """Avalia o modelo no split de teste e retorna o dicionário de métricas."""
     if run_dir is None:
         run_dir, _ = find_run(experiment_id)
@@ -69,11 +75,11 @@ def run(experiment_id, model, data_spec, n_samples=config.LOG_N_TEST_IMAGES, run
         for k, v in metrics.items():
             print(f"          {k:40s} {v:.4f}")
 
-    if n_samples > 0:
+    if n_wandb_samples > 0:
         wandb_utils.log_test_predictions(
             predictor = model,
             data_spec = data_spec,
-            n         = n_samples,
+            n         = n_wandb_samples,
         )
 
     wandb_utils.finish_run(metrics)

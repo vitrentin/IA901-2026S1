@@ -13,8 +13,8 @@ INTERIM_DIR   = DATA_DIR / "interim"
 PROCESSED_DIR = DATA_DIR / "processed"
 RUNS_DIR      = PROJECT_ROOT / "runs"
 
-WANDB_PROJECT     = os.environ.get("WANDB_PROJECT", "bus-passenger-count")
-WANDB_ENTITY      = os.environ.get("WANDB_ENTITY")
-LOG_N_TEST_IMAGES = 10
+WANDB_PROJECT                  = os.environ.get("WANDB_PROJECT", "bus-passenger-count")
+WANDB_ENTITY                   = os.environ.get("WANDB_ENTITY")
+LOG_N_WANDB_TEST_PREDICTIONS   = 10
 
 ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY", "")
