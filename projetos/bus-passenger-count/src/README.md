@@ -37,6 +37,11 @@ copy .env.example .env
 uv run wandb login
 ```
 
+Configure `.env`:
+
+- `ROBOFLOW_API_KEY`: obrigatório para baixar datasets do Roboflow.
+- Hugging Face público (ex.: CrowdHuman): não precisa de API key.
+
 Para abrir Jupyter:
 
 ```powershell
