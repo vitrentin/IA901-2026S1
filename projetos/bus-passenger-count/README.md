@@ -72,7 +72,7 @@ download, pré-processamento e validação permanecem compartilhados e modulares
 | Download dos dados | [`notebooks/1_download_datasets.ipynb`](notebooks/1_download_datasets.ipynb), [`src/datasets.py`](src/datasets.py) | Registro de datasets e links do Drive/Hugging Face | `data/interim/<dataset>/` ou `data/processed/<dataset>/` |
 | Pré-processamento | [`notebooks/2_preprocess_datasets.ipynb`](notebooks/2_preprocess_datasets.ipynb), [`src/preprocess.py`](src/preprocess.py) | `data/interim/<dataset>/` | `data/processed/<dataset>/`, `preprocessing_manifest.json` |
 | Treinamento | [`notebooks/3_train.ipynb`](notebooks/3_train.ipynb), [`src/train.py`](src/train.py) | `data/processed/.../data.yaml` | `runs/<experiment>/weights.txt` e pesos YOLO |
-| Validação/teste | [`notebooks/4_validate_test.ipynb`](notebooks/4_validate_test.ipynb), [`src/eval.py`](src/eval.py) | pesos treinados ou baseline `yolo_raw` | métricas em `runs/<experiment>/test_metrics.json` e W&B |
+| Validação/teste | [`notebooks/4_evaluate.ipynb`](notebooks/4_evaluate.ipynb), [`src/eval.py`](src/eval.py) | pesos treinados ou baseline `yolo_raw` | métricas em `runs/<experiment>/test_metrics.json` e W&B |
 
 ![Workflow de detecção de passageiros](assets/workflow.png)
 

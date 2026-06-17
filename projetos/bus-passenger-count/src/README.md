@@ -19,7 +19,7 @@ notebooks curtos e trocar comportamento nos módulos:
 | `notebooks/1_download_datasets.ipynb` | Baixar `interim` ou `processed` | diretórios `data/<stage>/<dataset>/` |
 | `notebooks/2_preprocess_datasets.ipynb` | Reconstruir `processed` a partir de `interim`, se necessário | `data/processed/<dataset>/preprocessing_manifest.json` |
 | `notebooks/3_train.ipynb` | Treinar um experimento | `runs/<experiment>/weights.txt` |
-| `notebooks/4_validate_test.ipynb` | Validar/testar e fazer cross-dataset | `runs/<experiment>/test_metrics.json` |
+| `notebooks/4_evaluate.ipynb` | Validar/testar e fazer cross-dataset | `runs/<experiment>/test_metrics.json` |
 
 Para criar um novo experimento, duplique apenas `3_train.ipynb` e altere a
 célula de configuração. Download, preprocessing e validação continuam
