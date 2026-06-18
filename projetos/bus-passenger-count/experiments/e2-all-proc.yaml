@@ -1,0 +1,27 @@
+# Ablacao B (pre-processamento OFFLINE): E2-all sobre o dataset PROCESSED.
+# "processed" = versao com pre-processamento aplicado no Roboflow no momento do
+# export (ex.: grayscale, auto-contrast, filter null, resize). Compara contra
+# e2-all (interim, sem pre-processamento) -> o pre-processamento ajuda?
+# REQUISITO: baixar a versao 'processed' no notebook 1 antes de rodar
+#   (hoje data/processed ainda nao existe; ver _ROBOFLOW_SOURCES.versions.processed).
+experiment_id: e2-all-proc
+strategy: direct
+weights: yolo11m.pt
+dataset_stage: processed
+train_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+train_config:
+  epochs: 100
+  patience: 20
+  batch: 16
+  imgsz: 640
+  workers: 4
+  amp: true
+  seed: 42
+  deterministic: true

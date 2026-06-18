@@ -1,0 +1,53 @@
+# Ablacao A: E2-all com a politica de augmentation AJUSTADA PARA ONIBUS.
+# Compara contra e2-all (aug padrao) -> a politica do colega bate o default?
+# Mapeamento das notas do colega para parametros nativos do Ultralytics
+# (os percentuais do Roboflow sao aproximados; nao ha correspondencia exata):
+#   Flip horizontal      -> fliplr 0.5
+#   Flip vertical (nao)   -> flipud 0.0   (passageiros nao ficam de cabeca pra baixo)
+#   Mosaic                -> mosaic 1.0 + close_mosaic 10
+#   Brilho/Exposure +-15% -> hsv_v 0.4
+#   Hue +-15%             -> hsv_h 0.03
+#   Saturacao +-25%       -> hsv_s 0.7
+#   Rotation +-10%        -> degrees 10.0
+#   Crop/zoom 0-20%       -> scale 0.2 (+ translate 0.1)
+#   Cutout 3x10%          -> erasing 0.4
+#   Shear (nao usar)      -> shear 0.0
+#   90 graus (nao usar)   -> sem parametro
+#   Noise (nao usar)      -> sem parametro nativo
+# Blur / Motion blur: o Ultralytics aplica via albumentations com prob. baixa
+#   automaticamente; nao sao expostos como floats simples no train().
+experiment_id: e2-all-aug-bus
+strategy: direct
+weights: yolo11m.pt
+dataset_stage: interim
+train_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+train_config:
+  epochs: 100
+  patience: 20
+  batch: 16
+  imgsz: 640
+  workers: 4
+  amp: true
+  seed: 42
+  deterministic: true
+augment:
+  fliplr: 0.5
+  flipud: 0.0
+  mosaic: 1.0
+  close_mosaic: 10
+  hsv_h: 0.03
+  hsv_s: 0.7
+  hsv_v: 0.4
+  degrees: 10.0
+  translate: 0.1
+  scale: 0.2
+  shear: 0.0
+  perspective: 0.0
+  erasing: 0.4

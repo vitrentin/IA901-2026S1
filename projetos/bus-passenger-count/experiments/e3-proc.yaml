@@ -1,0 +1,42 @@
+# Ablacao B sobre o two-stage: E3 com os datasets de onibus PROCESSED no estagio 2.
+# CrowdHuman segue em interim (nao ha versao processed dele). Compara contra
+# e3-crowd-all -> pre-processamento ajuda no robusto?
+# REQUISITO: baixar a versao 'processed' dos datasets de onibus no notebook 1.
+experiment_id: e3-proc
+strategy: two_stage
+weights: yolo11m.pt
+dataset_stage: processed     # vale para o estagio 2 e para a avaliacao
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+stages:
+  - name: stage1_crowd
+    dataset_stage: interim   # CrowdHuman so existe em interim
+    train_datasets:
+      - crowdhuman
+    freeze: 10
+    train_config:
+      epochs: 50
+      patience: 15
+      batch: 16
+      imgsz: 640
+      workers: 4
+      amp: true
+      seed: 42
+      deterministic: true
+  - name: stage2_bus
+    train_datasets:
+      - passenger-detection-bus
+      - inside-bus-view
+      - passenger-deakin
+    freeze: 0
+    train_config:
+      epochs: 100
+      patience: 20
+      batch: 16
+      imgsz: 640
+      workers: 4
+      amp: true
+      seed: 42
+      deterministic: true

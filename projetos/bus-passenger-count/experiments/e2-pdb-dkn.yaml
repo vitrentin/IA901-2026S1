@@ -1,0 +1,21 @@
+# E2 - Fine-tuning em 2 datasets (PDB + DKN). IBV fica como hold-out (LOO).
+experiment_id: e2-pdb-dkn
+strategy: direct
+weights: yolo11m.pt
+dataset_stage: interim
+train_datasets:
+  - passenger-detection-bus
+  - passenger-deakin
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+train_config:
+  epochs: 100
+  patience: 20
+  batch: 16
+  imgsz: 640
+  workers: 4
+  amp: true
+  seed: 42
+  deterministic: true
