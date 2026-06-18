@@ -43,7 +43,7 @@ def _log_yolo_history(save_dir):
     with csv_path.open(newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            step = int(float(row["epoch"])) + 1 if row.get("epoch") else None
+            epoch = int(float(row["epoch"])) + 1 if row.get("epoch") else None
             payload = {}
             for k, v in row.items():
                 key = (k or "").strip()
@@ -54,7 +54,9 @@ def _log_yolo_history(save_dir):
                 except (TypeError, ValueError):
                     continue
             if payload:
-                wandb_utils.log_metrics(payload, step=step)
+                if epoch is not None:
+                    payload["epoch"] = epoch
+                wandb_utils.log_metrics(payload)
                 logged += 1
     if logged:
         print(f"train:    {logged} épocas registradas no wandb")
@@ -134,6 +136,7 @@ def run_experiment(cfg):
     """Roda experimento por `strategy` (`direct`, `two_stage`, `baseline`)."""
     from ultralytics import YOLO
 
+    wandb_utils.disable_ultralytics_autolog()
     experiment_id = cfg["experiment_id"]
     strategy      = cfg.get("strategy", "direct")
     stage         = cfg.get("dataset_stage", "interim")
@@ -163,6 +166,8 @@ def run_experiment(cfg):
                     "strategy":      strategy,
                     "stage":         st_name,
                     "stage_index":   i,
+                    "dataset_stage": st_stage,
+                    "datasets":      st["train_datasets"],
                     "data":          data_spec,
                     "train_config":  params,
                     "augment":       augment,
@@ -184,6 +189,8 @@ def run_experiment(cfg):
         wandb_config={
             "experiment_id": experiment_id,
             "strategy":      strategy,
+            "dataset_stage": stage,
+            "datasets":      cfg["train_datasets"],
             "data":          data_spec,
             "train_config":  cfg.get("train_config"),
             "augment":       cfg.get("augment"),

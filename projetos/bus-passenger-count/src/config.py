@@ -17,4 +17,10 @@ WANDB_PROJECT                  = os.environ.get("WANDB_PROJECT", "bus-passenger-
 WANDB_ENTITY                   = os.environ.get("WANDB_ENTITY")
 LOG_N_WANDB_TEST_PREDICTIONS   = 10
 
+VIZ_CONF         = 0.25
+VIZ_IOU          = 0.70
+VIZ_AGNOSTIC_NMS = True
+
+PERSON_CLASS_ID = 0
+
 ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY", "")

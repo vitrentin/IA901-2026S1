@@ -18,6 +18,14 @@ def _active_run():
     return wandb.run if wandb is not None else None
 
 
+def disable_ultralytics_autolog():
+    """Turn off Ultralytics' built-in W&B callback so we log once, on epochs."""
+    from ultralytics import settings
+    if settings.get("wandb"):
+        settings.update({"wandb": False})
+        print("wandb:    disabled Ultralytics built-in W&B logging")
+
+
 def init_run(wandb_config, run_name, run_dir, notes=None, tags=None):
     """Start a wandb run; returns False if wandb is unavailable."""
     if wandb is None:
@@ -40,6 +48,10 @@ def init_run(wandb_config, run_name, run_dir, notes=None, tags=None):
         tags    = tags,
         reinit  = "finish_previous",
     )
+    # Use epoch as the x-axis for every metric so curves from datasets with
+    # different #steps overlay cleanly.
+    wandb.define_metric("epoch")
+    wandb.define_metric("*", step_metric="epoch")
     print(f"wandb:    run '{run_name}' -> {run.url}")
     return True
 
@@ -62,15 +74,28 @@ def finish_run(summary=None):
     run = _active_run()
     if run is None:
         return
+    # Store headline values once, as run summary (shown in the runs table for
+    # cross-run comparison). No redundant `final/` chart section.
     if summary:
-        final = {f"final/{k}": v for k, v in summary.items()
-                 if isinstance(v, (int, float)) and not isinstance(v, bool)}
-        if final:
-            wandb.log(final)
-            for k, v in final.items():
+        for k, v in summary.items():
+            if isinstance(v, (int, float)) and not isinstance(v, bool):
                 run.summary[k] = v
     wandb.finish()
     print("wandb:    run finished")
+
+
+def log_image(path, key):
+    """Upload a single image (e.g. a PR/F1 curve PNG) to wandb."""
+    if not is_active():
+        return
+    wandb.log({key: wandb.Image(str(path))})
+
+
+def log_summary_table(rows, columns, key="test/summary"):
+    """Log one slide-ready table (one row per dataset)."""
+    if not is_active():
+        return
+    wandb.log({key: wandb.Table(columns=list(columns), data=rows)})
 
 
 def _read_yolo_labels(label_path):
@@ -157,11 +182,14 @@ def _to_wandb_image_source(result_obj, fallback_path):
 
 
 def log_test_predictions(predictor, data_spec, n=10, names=None,
-                         conf=0.05, panel_key="test/predictions", seed=0):
+                         conf=None, iou=None, panel_key="test/predictions", seed=0):
     """Upload a sample of test images with prediction and GT boxes."""
     if not is_active():
         print("wandb:    no active run — skipping test prediction panel")
         return
+
+    conf = config.VIZ_CONF if conf is None else conf
+    iou  = config.VIZ_IOU if iou is None else iou
 
     if isinstance(data_spec, dict):
         spec = data_spec
@@ -198,7 +226,11 @@ def log_test_predictions(predictor, data_spec, n=10, names=None,
 
     wandb_images = []
     for img_path in sample:
-        results = predictor.predict(source=str(img_path), conf=conf, verbose=False)
+        results = predictor.predict(
+            source=str(img_path), conf=conf, iou=iou,
+            classes=[config.PERSON_CLASS_ID],
+            agnostic_nms=config.VIZ_AGNOSTIC_NMS, verbose=False,
+        )
         if not results:
             continue
         r = results[0]
