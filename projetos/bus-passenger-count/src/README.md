@@ -21,9 +21,43 @@ notebooks curtos e trocar comportamento nos módulos:
 | `notebooks/3_train.ipynb` | Treinar um experimento | `runs/<experiment>/weights.txt` |
 | `notebooks/4_evaluate.ipynb` | Validar/testar e fazer cross-dataset | `runs/<experiment>/test_metrics.json` |
 
-Para criar um novo experimento, duplique apenas `3_train.ipynb` e altere a
-célula de configuração. Download, preprocessing e validação continuam
-compartilhados.
+## Experimentos (replicabilidade)
+
+Cada experimento é um YAML em `experiments/<id>.yaml`.
+Nos notebooks 3 e 4, você só troca o experimento carregado.
+
+```python
+from src import experiments
+cfg = experiments.load("e2-all")            # carrega do registro
+cfg = experiments.load("e2-all", override)  # mescla um dict colado na célula
+```
+
+- `load(name, override)` aplica override no YAML (`train_config` e `augment`
+  fazem merge por chave; o resto substitui).
+- `load(None, dict)` roda 100% inline, sem arquivo.
+- `train.run_experiment(cfg)` salva a config resolvida em `runs/<run>/experiment.yaml`.
+
+Estratégias suportadas (`strategy` no YAML):
+
+| strategy | o que faz |
+| --- | --- |
+| `baseline` | não treina; avalia os pesos base (zero-shot) |
+| `direct` | fine-tuning direto em `train_datasets` |
+| `two_stage` | etapas sequenciais (`stages`); os pesos passam de uma etapa para a seguinte |
+
+`eval.run_experiment(cfg)` avalia cada item de `eval_datasets` e salva os
+resultados em `runs/<run>/test_metrics.json`.
+
+### Processamento e augmentation
+
+- **Augmentation (online):** bloco opcional `augment` no YAML, repassado direto ao
+  `model.train()` do Ultralytics (`fliplr`, `mosaic`, `hsv_*`, `degrees`, `scale`,
+  `erasing`, `shear`, ...). Para desligar tudo, zere as chaves (ver
+  `experiments/e2-all-aug-off.yaml`).
+- **Pré-processamento (offline):** escolha `dataset_stage: interim` (sem
+  processamento) ou `processed`. A versão `processed` vem do export do Roboflow
+  com pré-processamento aplicado (grayscale, auto-contrast, resize, etc.); baixe-a
+  no notebook 1 antes de rodar os experimentos `*-proc`.
 
 ## Setup
 

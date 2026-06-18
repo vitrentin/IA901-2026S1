@@ -1,7 +1,6 @@
-"""Training entrypoint — infraestrutura de run dir e wandb."""
+"""Treino de experimentos."""
 
 import csv
-import json
 import subprocess
 import time
 from datetime import datetime
@@ -10,6 +9,8 @@ from pathlib import Path
 import yaml
 
 from src import config
+from src import datasets
+from src import experiments
 from src import wandb_utils
 
 
@@ -67,8 +68,35 @@ def _resolve_data_arg(data_spec, run_dir):
     return str(data_spec)
 
 
+def _best_weights(results):
+    save_dir = Path(results.save_dir)
+    best     = save_dir / "weights" / "best.pt"
+    if not best.exists():
+        best = save_dir / "weights" / "last.pt"
+    return save_dir, best
+
+
+def _train_stage(model, data_spec, train_params, run_dir, name, augment=None):
+    """Treina uma etapa e retorna os melhores pesos."""
+    params = dict(train_params or {})
+    params.update(augment or {})
+    params["data"]     = _resolve_data_arg(data_spec, run_dir)
+    params["project"]  = str(run_dir)
+    params["name"]     = name
+    params["exist_ok"] = True
+
+    t0 = time.time()
+    results = model.train(**params)
+    dt = time.time() - t0
+    print(f"train:    etapa '{name}' concluída em {dt:.1f}s")
+
+    save_dir, best = _best_weights(results)
+    _log_yolo_history(save_dir)
+    return best, dt
+
+
 def run(experiment_id, model, data_spec, train_config=None):
-    """Cria run dir, inicia wandb, treina o modelo e retorna o run dir."""
+    """Treina um modelo e retorna o run dir."""
     run_dir, run_name = _make_run_dir(experiment_id)
     print(f"train:    run dir -> {run_dir}")
 
@@ -83,23 +111,91 @@ def run(experiment_id, model, data_spec, train_config=None):
         run_dir=run_dir,
     )
 
-    params = dict(train_config or {})
-    params["data"]     = _resolve_data_arg(data_spec, run_dir)
-    params["project"]  = str(run_dir)
-    params["name"]     = "train"
-    params["exist_ok"] = True
+    best, dt = _train_stage(model, data_spec, train_config, run_dir, "train")
+    (run_dir / "weights.txt").write_text(str(best) + "\n")
+    wandb_utils.log_metrics({"train/duration_sec": dt})
+    wandb_utils.finish_run({"train/duration_sec": dt})
+    return run_dir
 
-    t0 = time.time()
-    results = model.train(**params)
-    dt = time.time() - t0
-    print(f"train:    concluído em {dt:.1f}s")
 
-    save_dir = Path(results.save_dir)
-    best     = save_dir / "weights" / "best.pt"
-    if not best.exists():
-        best = save_dir / "weights" / "last.pt"
+def _prepare_and_summarize(names, stage):
+    data_spec = datasets.prepare(names, stage=stage)
+    print(f"train:    datasets de treino ({stage}): {names}")
+    for name in names:
+        for split in ["train", "valid", "test"]:
+            img_dir = config.DATA_DIR / stage / name / split / "images"
+            if img_dir.exists():
+                n_img = len(list(img_dir.glob("*.*")))
+                print(f"            {name}/{split}: {n_img} imagens")
+    return data_spec
 
-    _log_yolo_history(save_dir)
+
+def run_experiment(cfg):
+    """Roda experimento por `strategy` (`direct`, `two_stage`, `baseline`)."""
+    from ultralytics import YOLO
+
+    experiment_id = cfg["experiment_id"]
+    strategy      = cfg.get("strategy", "direct")
+    stage         = cfg.get("dataset_stage", "interim")
+
+    if strategy == "baseline":
+        print(f"train:    estratégia 'baseline' — sem treino para {experiment_id}")
+        return None
+
+    run_dir, run_name = _make_run_dir(experiment_id)
+    print(f"train:    run dir -> {run_dir}")
+    experiments.save_resolved(cfg, run_dir)
+
+    if strategy == "two_stage":
+        weights = cfg["weights"]
+        for i, st in enumerate(cfg["stages"], start=1):
+            st_name   = st.get("name", f"stage{i}")
+            st_stage  = st.get("dataset_stage", stage)
+            data_spec = _prepare_and_summarize(st["train_datasets"], st_stage)
+            params    = dict(st.get("train_config", {}))
+            if st.get("freeze") is not None:
+                params["freeze"] = st["freeze"]
+            augment = st.get("augment", cfg.get("augment"))
+
+            wandb_utils.init_run(
+                wandb_config={
+                    "experiment_id": experiment_id,
+                    "strategy":      strategy,
+                    "stage":         st_name,
+                    "stage_index":   i,
+                    "data":          data_spec,
+                    "train_config":  params,
+                    "augment":       augment,
+                    **_git_info(),
+                },
+                run_name=f"{run_name}_{st_name}",
+                run_dir=run_dir,
+            )
+            model = YOLO(weights)
+            best, dt = _train_stage(model, data_spec, params, run_dir, st_name, augment)
+            wandb_utils.finish_run({"train/duration_sec": dt})
+            weights = str(best)
+
+        (run_dir / "weights.txt").write_text(str(weights) + "\n")
+        return run_dir
+
+    data_spec = _prepare_and_summarize(cfg["train_datasets"], stage)
+    wandb_utils.init_run(
+        wandb_config={
+            "experiment_id": experiment_id,
+            "strategy":      strategy,
+            "data":          data_spec,
+            "train_config":  cfg.get("train_config"),
+            "augment":       cfg.get("augment"),
+            **_git_info(),
+        },
+        run_name=run_name,
+        run_dir=run_dir,
+    )
+    model = YOLO(cfg["weights"])
+    best, dt = _train_stage(
+        model, data_spec, cfg.get("train_config"), run_dir, "train", cfg.get("augment")
+    )
     (run_dir / "weights.txt").write_text(str(best) + "\n")
     wandb_utils.log_metrics({"train/duration_sec": dt})
     wandb_utils.finish_run({"train/duration_sec": dt})
