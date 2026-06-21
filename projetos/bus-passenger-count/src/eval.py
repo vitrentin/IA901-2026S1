@@ -23,6 +23,7 @@ def _headline_metrics(results_dict, count_metrics):
         "recall":     r,
         "F1":         f1,
         "count_mae":  count_metrics["count_mae"],
+        "count_me":   count_metrics["count_me"],  # signed error
         "count_rmse": count_metrics["count_rmse"],
     }
 
@@ -30,8 +31,8 @@ def _headline_metrics(results_dict, count_metrics):
 def _count_metrics(model, data_spec):
     """Per-image count error at the operating threshold (the counting objective)."""
     img_dir   = wandb_utils._resolve_test_image_dir(data_spec)
-    label_dir = img_dir.parent / "labels"
-    abs_err, sq_err = [], []
+    label_dir = wandb_utils._resolve_label_dir(img_dir)
+    abs_err, sq_err, signed_err = [], [], []
     for r in model.predict(
         source       = str(img_dir),
         conf         = config.VIZ_CONF,
@@ -43,12 +44,15 @@ def _count_metrics(model, data_spec):
     ):
         pred_n = len(r.boxes) if r.boxes is not None else 0
         gt_n   = len(wandb_utils._read_yolo_labels(label_dir / f"{Path(r.path).stem}.txt"))
-        d = abs(pred_n - gt_n)
+        signed_d = pred_n - gt_n  # positive = overcounting, negative = undercounting
+        d = abs(signed_d)
         abs_err.append(d)
         sq_err.append(d * d)
+        signed_err.append(signed_d)
     n = len(abs_err) or 1
     return {
         "count_mae":  sum(abs_err) / n,
+        "count_me":   sum(signed_err) / n,  # signed mean error (+ = overcount, - = undercount)
         "count_rmse": (sum(sq_err) / n) ** 0.5,
         "n_images":   len(abs_err),
     }
@@ -205,8 +209,8 @@ def run_experiment(cfg, n_wandb_samples=config.LOG_N_WANDB_TEST_PREDICTIONS, wei
     )
 
     model = YOLO(str(weights))
-    columns     = ["dataset", "mAP50", "mAP50-95", "precision", "recall", "F1",
-                   "count_mae", "count_rmse"]
+    columns     = ["experiment_id", "run_name", "dataset", "mAP50", "mAP50-95", "precision", "recall", "F1",
+                   "count_mae", "count_me", "count_rmse"]
     all_metrics = {}
     headlines   = {}
     for dataset_name in eval_datasets:
@@ -218,7 +222,10 @@ def run_experiment(cfg, n_wandb_samples=config.LOG_N_WANDB_TEST_PREDICTIONS, wei
 
     (run_dir / "test_metrics.json").write_text(json.dumps(all_metrics, indent=2))
 
-    table_rows = [[ds] + [h[c] for c in columns[1:]] for ds, h in headlines.items()]
+    table_rows = [
+        [experiment_id, run_dir.name, ds] + [h[c] for c in columns[3:]]
+        for ds, h in headlines.items()
+    ]
     wandb_utils.log_summary_table(table_rows, columns)
 
     # No reprefixed summary: `wandb.log("test/<ds>/<metric>")` already populates

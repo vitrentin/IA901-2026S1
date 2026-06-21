@@ -172,6 +172,27 @@ def _resolve_test_image_dir(data_spec):
     )
 
 
+def _resolve_label_dir(img_dir):
+    img_dir = Path(img_dir)
+
+    if img_dir.name.lower() == "images":
+        split_dir = img_dir.parent
+        if split_dir.name.lower() in ("train", "valid", "val", "test"):
+            candidate = split_dir / "labels"
+            if candidate.exists():
+                return candidate
+
+    parts = list(img_dir.parts)
+    for i in range(len(parts) - 1, -1, -1):
+        if parts[i].lower() != "images":
+            continue
+        candidate = Path(*parts[:i], "labels", *parts[i + 1:])
+        if candidate.exists():
+            return candidate
+
+    return img_dir.parent / "labels"
+
+
 def _to_wandb_image_source(result_obj, fallback_path):
     img = getattr(result_obj, "orig_img", None)
     if img is None:
@@ -191,18 +212,8 @@ def log_test_predictions(predictor, data_spec, n=10, names=None,
     conf = config.VIZ_CONF if conf is None else conf
     iou  = config.VIZ_IOU if iou is None else iou
 
-    if isinstance(data_spec, dict):
-        spec = data_spec
-    else:
-        with Path(data_spec).open() as f:
-            spec = yaml.safe_load(f)
-    class_names = names or (
-        spec["names"] if isinstance(spec.get("names"), dict)
-        else {i: n for i, n in enumerate(spec.get("names", []))}
-    )
-
     img_dir   = _resolve_test_image_dir(data_spec)
-    label_dir = img_dir.parent / "labels"
+    label_dir = _resolve_label_dir(img_dir)
 
     all_imgs = sorted(
         [p for p in img_dir.iterdir()
@@ -243,8 +254,8 @@ def log_test_predictions(predictor, data_spec, n=10, names=None,
             for (x, y, w, h), c, p in zip(xywhn, clses, confs):
                 pred_boxes.append({
                     "position":    _yolo_to_minmax(float(x), float(y), float(w), float(h)),
-                    "class_id":    int(c),
-                    "box_caption": f"{class_names.get(int(c), c)} {p:.2f}",
+                    "class_id":    0,
+                    "box_caption": f"person_pred {p:.2f}",
                     "scores":      {"conf": float(p)},
                 })
 
@@ -253,19 +264,23 @@ def log_test_predictions(predictor, data_spec, n=10, names=None,
         for c, x, y, w, h in _read_yolo_labels(label_path):
             gt_boxes.append({
                 "position":    _yolo_to_minmax(x, y, w, h),
-                "class_id":    int(c),
-                "box_caption": class_names.get(int(c), str(c)),
+                "class_id":    1,
+                "box_caption": "GT_ref",
             })
 
+        image_source = _to_wandb_image_source(r, img_path)
         wandb_images.append(wandb.Image(
-            _to_wandb_image_source(r, img_path),
+            image_source,
             boxes={
-                "predictions":  {"box_data": pred_boxes,  "class_labels": class_names},
-                "ground_truth": {"box_data": gt_boxes,    "class_labels": class_names},
+                "person_pred": {"box_data": pred_boxes, "class_labels": {0: "person_pred"}},
+                "gt_ref": {"box_data": gt_boxes, "class_labels": {1: "GT_ref"}},
             },
             caption=img_path.name,
         ))
 
     if wandb_images:
         wandb.log({panel_key: wandb_images})
-        print(f"wandb:    logged {len(wandb_images)} images under '{panel_key}'")
+        print(
+            f"wandb:    logged {len(wandb_images)} images under '{panel_key}' "
+            "(single combined panel: person_pred + gt_ref)"
+        )

@@ -1,10 +1,12 @@
-# E1 - Fine-tuning direto em 1 dataset (passenger-detection-bus).
-experiment_id: e1-pdb
+# E4 - Model size ablation: YOLO11n (nano, ~3M params)
+experiment_id: e4-nano
 strategy: direct
-weights: yolo11m.pt
+weights: yolo11n.pt
 dataset_stage: interim
 train_datasets:
   - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
 eval_datasets:
   - passenger-detection-bus
   - inside-bus-view

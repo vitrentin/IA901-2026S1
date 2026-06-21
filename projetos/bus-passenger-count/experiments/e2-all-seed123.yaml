@@ -1,10 +1,12 @@
-# E1 - Fine-tuning direto em 1 dataset (passenger-detection-bus).
-experiment_id: e1-pdb
+# E2-all with seed 123 for variance analysis
+experiment_id: e2-all-seed123
 strategy: direct
 weights: yolo11m.pt
 dataset_stage: interim
 train_datasets:
   - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
 eval_datasets:
   - passenger-detection-bus
   - inside-bus-view
@@ -16,5 +18,5 @@ train_config:
   imgsz: 640
   workers: 4
   amp: true
-  seed: 42
+  seed: 123
   deterministic: true
