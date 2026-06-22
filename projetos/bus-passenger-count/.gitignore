@@ -9,6 +9,8 @@ __pycache__/
 # Run artefacts
 runs/
 wandb/
+data/**
+!data/**/*.md
 
 # Downloaded model weights (pulled on demand by ultralytics / SAM)
 yolo*.pt
