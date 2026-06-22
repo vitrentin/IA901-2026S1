@@ -14,31 +14,52 @@ oferecida no primeiro semestre de 2026, na Unicamp, sob supervisão da Profa. Dr
 
 
 ## Descrição do Projeto
-<!-- > Descrição do objetivo principal do projeto, incluindo contexto gerador, motivação, etc. Qual problema você pretende solucionar? Qual a relevância do problema e o impacto da solução do mesmo? -->
+<!-- > 
+Descrição do objetivo principal do projeto, incluindo contexto gerador, motivação, etc. 
+Qual problema o grupo pretendia solucionar?
+Qual a relevância do problema e o impacto da solução do mesmo? 
+-->
 
-O objetivo do projeto é desenvolver um algoritmo capaz de detectar e contabilizar o número de passageiros presentes em imagens no interior de ônibus. A solução utilizará técnica de transfer learning a partir de modelos de detecção de objetos pré-treinados, como YOLOv8 ou YOLOv11 treinados no dataset COCO para a classe "person". Diversos datasets públicos que contem imagens de pessoas em ônibus possuem precisão elevada, porém quando são colocados em situações diferentes, como validando com uma imagem de outro dataset, essa precisão diminui, chegando até porcentagens superiores de 20% a menos, por exemplo.
+O objetivo do projeto é desenvolver um algoritmo capaz de detectar e contabilizar o número de passageiros presentes em imagens no interior de ônibus. A solução utilizará técnica de transfer learning a partir de modelos de detecção de objetos pré-treinados, como YOLOv8 ou YOLOv11 treinados no dataset COCO para a classe "person". Diversos datasets públicos que contem imagens de pessoas em ônibus possuem precisão elevada(mais de 90%), porém quando são colocados em situações diferentes, como validando com uma imagem de outro dataset, essa precisão diminui, chegando em torno de 30%, como será demonstrado posteriormente.
 
 A relevância deste projeto reside na tentativa de desenvolver um algoritmo de detecção de passageiros que tenha uma boa precisão na detecção em diferentes cenários, a noção da quantidade de passageiros em ônibus pelo tempo contribui na otimização da mobilidade urbana e na análise de impacto da massa de passageiros, sendo importante para o consumo energético de ônibus elétricos, com aplicação direta no ônibus elétrico da Unicamp.
 
 ## Metodologia
-<!-- > Proposta de metodologia incluindo especificação de quais técnicas pretende-se explorar. Espera-se que nesta entrega você já seja capaz de descrever de maneira mais específica (do que na Entrega 1) quais as técnicas a serem empregadas em cada etapa do projeto. -->
-A metodologia consiste na aplicação de Redes Neurais Convolucionais (CNNs), principalmente da arquitetura da família YOLO (YOLOv8 e YOLOv11) para extração de características espaciais e detecção de instâncias, no caso pessoas. O núcleo do projeto avaliará comparativamente duas estratégias de Transfer Learning e Fine-Tuning:
-1. **Fine-tuning direto (Baseline):** Utilizar o modelo pré-treinado e realizar o fine-tuning diretamente nas imagens anotadas do interior dos ônibus(datasets públicos). Esta é a abordagem mais simples e será utilizada como base para a avaliação de desempenho.
-2. **Fine-tuning em estágios (Robusto):** Implementar um treinamento seguencial, em que será realizado um fine-tuning inicial em um dataset de cenas de multidões(Crowd Human Dataset) para melhorar a robustez contra oclusões. Em seguida, aplicar um segundo fine-tuning com as imagens de passageiros no interior do ônibus, fechando o gap de domínio progressivamente.
+<!-- >
+Abordagem adotada pelo projeto na busca pela resposta às perguntas de pesquisa. Justificar teoricamente, sempre que possível, a metodologia adotada. 
+-->
+A metodologia consiste na aplicação de Redes Neurais Convolucionais (CNNs), principalmente da arquitetura da família YOLO **YOLOv8** e **YOLO11** (especificamente a variante *medium*, YOLO11m) para extração de características espaciais e detecção de instâncias, no caso pessoas. O escopo central da pesquisa consiste em avaliar comparativamente o impacto de estratégias de transferência de aprendizado (*Transfer Learning*) e ajuste fino (*Fine-Tuning*) na redução do gap de domínio (*domain gap*) e no aumento da robustez contra oclusões severas em ambientes de transporte público.
 
+O núcleo do projeto avaliará comparativamente duas estratégias de Transfer Learning e Fine-Tuning:
+
+1. **Fine-tuning direto (Baseline):** Utilização do modelo pré-treinado e realização do fine-tuning diretamente nas imagens anotadas do interior dos ônibus(datasets públicos). Esta é a abordagem mais simples e foi utilizada como base para a avaliação de desempenho.
+
+2. **Fine-tuning em estágios (Robusto):** Implementação de um treinamento seguencial, em que fo realizado um fine-tuning inicial em um dataset de cenas de multidões(Crowd Human Dataset) para melhorar a robustez contra oclusões. Em seguida, foi aplicado um segundo fine-tuning com as imagens de passageiros no interior do ônibus, fechando o gap de domínio progressivamente.
 
 ### Avaliação de Generalização e Validação:
 
-Em ambas abordagens será feita etapas sequenciais comparando a precisão relatadas nos datasets utilizados e validando com uma imagem de outro dataset(cross-dataset) em que não foi utilizada no treinamento. Por exemplo primeiramente fazer um transfer learning com o dataset Passenger Detection on a Bus e ver a precisão obtida, depois pegar algumas imagens do dataset limpo de Inside Bus View e ver a precisão que irá obter, analisando a perda de precisão em novos cenários.
+Para ambas as abordagens, etapas sequenciais foram executadas com o objetivo de comparar a precisão documentada nos datasets de origem e validá-la por meio de validação cruzada(cross-dataset), utilizando ausentes do conjunto de treinamento. Como exemplo, aplicar inicialmente o aprendizado por transferência(Transfer Learning) utilizando o dataset "Passenger Detection on a Bus" para estabelecer a precisão de referência. Em sequência, o modelo será avaliado com um subconjunto de imagens tratadas do dataset "Inside Bus View", com o intuito de analisar a eventual degradação da precisão em novos cenários.
 
 ### Pré-processamento e Robustez
 
-Adicionalmente, para tentar diminuir o risco de overfitting e melhorar a robustez frente a diferentes ambientes, serão aplicados métodos de pré-processament(como remapeamento de classes, em Inside Bus View transformar "occupied seat" em "person" e descartar classes irrelevantes) e Data Augmentation(para lidar com variações de iluminação, como brilho e contraste e oclusões artificiais).
+Adicionalmente, com o intuito de mitigar o risco de sobreajuste (overfitting) e aprimorar a robustez do modelo frente a diferentes ambientes, serão aplicados métodos de pré-processamento. Tais métodos englobam o remapeamento de classes, como a conversão da classe "occupied seat" para "person" no dataset "Inside Bus View", e a exclusão de categorias irrelevantes. Paralelamente, técnicas de aumento de dados (Data Augmentation) serão empregadas para simular variações de iluminação (como ajustes de brilho e contraste) e inserção de oclusões artificiais. 
 
-A validação final será realizada no dataset privado da Unicamp, sendo analisado o desempenho em um "cenário real de operação".
+A validação final será conduzida utilizando o dataset privado da Unicamp, visando aferir o desempenho do modelo em condições reais de operação.
 
-## Bases de Dados e Evolução
-<!-- > Elencar as bases de dados utilizadas no projeto. -->
+## Bases de Dados
+<!-- > 
+Elencar as bases de dados utilizadas no projeto. 
+
+Faça uma descrição sobre o que o grupo concluiu sobre esta base. Sugere-se que respondam perguntas ou forneçam informações indicadas a seguir:
+* Qual o formato dessa base, tamanho, tipo de anotação?
+* Quais as transformações e tratamentos feitos? Limpeza, reanotação, etc.
+* Utilize tabelas e/ou gráficos que descrevam os aspectos principais da base que são relevantes para o projeto.
+
+Forneça também o link para o "datasheet" criado para os datasets (anexado na pasta `data`, como indicado nas [instruções E2](https://github.com/Disciplinas-FEEC/IA901-2026S1/blob/main/templates/ia901-E2-instructions.md)), contendo informações mais detalhadas e sistematizadas sobre as bases de dados.
+-->
+O projeto implementa uma arquitetura de dados baseada no padrão Medalhão dividida em três camadas de persistência (`data/raw`, `data/interim` e `data/processed`). Os dados brutos originais são extraídos de forma imutável de suas respectivas fontes web e consolidados via rotinas automatizadas Python.
+
+### Resumo Descritivo dos Datasets
 
 | Base de Dados | Endereço na Web | Resumo descritivo |
 | ----- | ----- | ----- |
@@ -49,43 +70,126 @@ A validação final será realizada no dataset privado da Unicamp, sendo analisa
 | Dataset Privado (Unicamp) | N/A | 2.400 imagens (.jpeg) coletadas no ônibus elétrico da Unicamp para rotulação manual e validação final. |
 
 <!-- > Forneça também o link para o "datasheet" criado para os datasets (anexado na pasta `data`, como indicado nas [instruções E2](https://github.com/Disciplinas-FEEC/IA901-2026S1/blob/main/templates/ia901-E2-instructions.md)), contendo informações mais detalhadas e sistematizadas sobre as bases de dados. -->
-> O "datasheet" contendo a sistematização destas bases encontra-se no diretório [`data/`](data/), por questões de limitação do github para imagens, foram adicionadas no Google drive e disponibilizados links de cada pasta separada.
+
+### Transformações e Tratamentos Aplicados (Camada Processed)
+
+Para padronizar os dados e viabilizar a convergência das arquiteturas YOLOv8 e YOLO11, o pipeline de pré-processamento executado em `2_preprocess_datasets.ipynb` (com suporte do módulo `src/datasets.py`) submete os dados brutos aos seguintes tratamentos determinísticos:
+
+1. **Remapeamento de Classes para Alvo Único (`nc=1`):** Redução categórica obrigatória para unificar o escopo estritamente na classe `person` (ID `0`). No dataset *Inside Bus View*, as anotações nativas rotuladas originalmente como `occupied seat` foram remapeadas programaticamente para `person`. Classes espúrias ou irrelevantes ao problema de contagem foram integralmente descartadas do arquivo final.
+2. **Normalização e Parsing de Coordenadas:** Conversão de anotações complexas e polígonos em formatos de caixas delimitadoras normatizadas (*bounding boxes*) padrão YOLO, expressas em coordenadas relativas de centro da caixa e dimensões de borda $[cx, cy, nw, nh]$ limitadas rigidamente no intervalo $[0.0, 1.0]$ para evitar erros de consistência.
+3. **Reamostragem e Controle de Reprodutibilidade (CrowdHuman):** Devido à volumetria massiva do CrowdHuman original (mais de 19 mil imagens), foi desenvolvido um motor de amostragem aleatória determinística (fixado com `seed=42`) para extrair splits balanceados e compactos na camada `processed` (ex: 800 imagens de treino, 200 de validação e 200 de teste), viabilizando ciclos rápidos de iteração de código (*Fast Mode*).
+4. **Geração de Metadados de Runtime:** Criação automática de arquivos de ancoragem `data.yaml` e arquivos ocultos de validação de integridade (`.download_complete`) para garantir que o motor de treinamento consuma os caminhos de forma correta e limpa.
+
+> **Nota sobre os Datasheets:** Os documentos detalhados de especificação (*datasheets*) contendo a distribuição interna de caixas, volumetria final pós-limpeza e análises estatísticas encontram-se estruturados no diretório [`data/`](data/). Por questões de otimização de armazenamento no GitHub, os gráficos de distribuição descritiva foram incorporados diretamente nos painéis das respectivas bases no Roboflow.
 
 ## Ferramentas
-<!-- > Ferramentas e/ou bibliotecas já utilizadas e/ou ainda a serem utilizadas (com base na visão atual do grupo sobre o projeto). -->
-* **Modelos Base:** YOLOv8 e YOLOv11.
-* **Linguagem e Bibliotecas:** Python, OpenCV, Pandas, NumPy, PyTorch, ...
-* **Plataformas de Anotação/Gestão de Dados:** Roboflow, WandDB.
+<!-- > 
+Panorama das ferramentas utilizadas incluindo uma breve discussão sobre o uso das mesmas. 
+-->
+O desenvolvimento deste projeto possui uma arquitetura possuindo reprodutibilidade, rastreabilidade e bom desempenho na extração de características.
+
+* **Modelos Base e Deep Learning:**
+  * **Família YOLO (Ultralytics):** Utilização das arquiteturas estado-da-arte YOLOv8 e YOLO11 (com foco nas variantes *medium*, como YOLO11m) devido ao excelente balanço entre precisão de detecção (mAP) e velocidade de inferência, requisito importante na questão de escalabilidade pelo "custo benefício".
+  * **PyTorch:** Framework base subjacente para processamento de tensores e aceleração de hardware via CUDA, permitindo o treinamento otimizado com grandes matrizes de dados.
+
+* **Engenharia de Dados (Pipeline ETL):**
+  * **Roboflow API:** Plataforma adotada para gestão, anotação e versionamento automatizado dos datasets do domínio alvo (imagens do interior dos ônibus).
+  * **Hugging Face Hub:** Utilizado para a extração programática dos arquivos brutos e anotações matriciais do dataset de domínio geral (CrowdHuman) utilizado na etapa de robustez.
+  * **Pillow, OpenCV e NumPy:** Stack base para decodificação de imagens, normalização de coordenadas de *bounding boxes* e formatação dos conjuntos de dados.
+
+* **Monitoramento e Gestão de Experimentos (MLOps):**
+  * **Weights & Biases (WandB):** Ferramenta central para o rastreamento do ciclo de vida dos modelos. Utilizada para registrar métricas de perda (*loss*) em "tempo real", gerar painéis de validação visual preditiva e gerenciar as execuções sistemáticas da busca em grade (*Grid Search*) para a otimização dos hiperparâmetros.
+
+* **Ambiente de Desenvolvimento:**
+  * **Python 3.12 e Jupyter Notebooks:** Orquestração do fluxo de trabalho estruturada no padrão Raw, Interim, Processed. A base de código implementa tipagem estática e documentação padronizada para assegurar a confiabilidade da pesquisa.
 
 ## Workflow reprodutível
-<!-- > Use uma ferramenta que permita desenhar o workflow e salvá-lo como uma imagem (Draw.io, por exemplo). Insira a imagem nesta seção.
-> Você pode optar por usar um gerenciador de workflow (Sacred, Pachyderm, etc) e nesse caso use o gerenciador para gerar uma figura para você.
-> Lembre-se que o objetivo de desenhar o workflow é ajudar a quem quiser reproduzir seus experimentos.
-> Mais informações sobre o workflow podem ser encontradas nos materiais de apoio no Classroom (Reprodutibilidade em pesquisa computacional - workflow). -->
+<!-- > 
+Use uma ferramenta que permita desenhar o workflow e salvá-lo como uma imagem (Draw.io, por exemplo). Insira a imagem nesta seção.
+Você pode optar por usar um gerenciador de workflow (Sacred, Pachyderm, etc) e nesse caso use o gerenciador para gerar uma figura para você.
+Lembre-se: o objetivo de desenhar o workflow é ajudar a quem quiser reproduzir seus experimentos!!!
 
-O pipeline foi separado em notebooks menores para deixar claro qual artefato é
-produzido em cada etapa. O treinamento pode ser duplicado por experimento, mas
-download, pré-processamento e validação permanecem compartilhados e modulares.
+-->
 
-| Etapa | Notebook / módulo | Entrada | Saída |
+A arquitetura do projeto foi estruturada visando a total reprodutibilidade e o princípio de Separação de Preocupações (SoC). O pipeline foi dividido em notebooks modulares, estabelecendo limites claros entre a engenharia de dados (ETL), a modelagem (Treinamento) e a validação de hipóteses (Avaliação).
+
+### Tabela de Artefatos e Rastreabilidade
+
+| Etapa | Módulos e Notebooks | Entrada | Saída (Artefato) |
 | --- | --- | --- | --- |
-| Download dos dados | [`notebooks/1_download_datasets.ipynb`](notebooks/1_download_datasets.ipynb), [`src/datasets.py`](src/datasets.py) | Registro de datasets e links do Drive/Hugging Face | `data/interim/<dataset>/` ou `data/processed/<dataset>/` |
-| Pré-processamento | [`notebooks/2_preprocess_datasets.ipynb`](notebooks/2_preprocess_datasets.ipynb), [`src/preprocess.py`](src/preprocess.py) | `data/interim/<dataset>/` | `data/processed/<dataset>/`, `preprocessing_manifest.json` |
-| Treinamento | [`notebooks/3_train.ipynb`](notebooks/3_train.ipynb), [`src/train.py`](src/train.py) | `data/processed/.../data.yaml` | `runs/<experiment>/weights.txt` e pesos YOLO |
-| Validação/teste | [`notebooks/4_validate_test.ipynb`](notebooks/4_validate_test.ipynb), [`src/eval.py`](src/eval.py) | pesos treinados ou baseline `yolo_raw` | métricas em `runs/<experiment>/test_metrics.json` e W&B |
+| **1. Extração (Download)** | `1_download_datasets.ipynb`<br>`src/datasets.py` | API do Roboflow e Hugging Face Hub | `data/raw/<dataset>/` |
+| **2. Pré-processamento** | `2_preprocess_datasets.ipynb`<br>`src/datasets.py` | `data/raw/<dataset>/` | Rascunhos em `data/interim/`<br>Dataset final em `data/processed/<dataset>/` |
+| **3. Treinamento** | `3_train.ipynb`<br>`src/train.py`<br>`src/wandb_utils.py` | `data/processed/<dataset>/data.yaml` | Pesos do modelo (`runs/<exp>/weights/`)<br>Logs no Weights & Biases |
+| **4. Validação (Robustez)** | `4_validate_test.ipynb`<br>`src/eval.py`<br>`src/wandb_utils.py` | Pesos treinados (`best.pt`)<br>Domínio não visto (`data/processed/`) | `runs/<exp>/test_metrics.json`<br>Painel de predições no W&B |
 
-![Workflow de detecção de passageiros](assets/workflow.png)
+<!-- Fazer um workflow melhor no Miro -->
+O fluxograma abaixo ilustra o ciclo de vida dos dados, desde as fontes externas até a consolidação das métricas de avaliação no Weights & Biases.
 
-O código Mermaid usado para gerar a próxima versão do diagrama está em
-[`docs/workflow.mmd`](docs/workflow.mmd), já com os artefatos de cada etapa.
+```mermaid
+graph TD
+    %% Definição de Estilos
+    classDef external fill:#f9f9f9,stroke:#333,stroke-width:1px,color:#333;
+    classDef raw fill:#ffebee,stroke:#c62828,stroke-width:1px,color:#c62828;
+    classDef interim fill:#fff3e0,stroke:#e65100,stroke-width:1px,color:#e65100;
+    classDef processed fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px,color:#2e7d32;
+    classDef train fill:#e3f2fd,stroke:#1565c0,stroke-width:1px,color:#1565c0;
+    classDef eval fill:#f3e5f5,stroke:#4a148c,stroke-width:1px,color:#4a148c;
+    classDef tracking fill:#fffde7,stroke:#fbc02d,stroke-width:1px,color:#f57f17;
+
+    %% Fontes de Dados
+    subgraph Fontes Externas
+        R[Roboflow API]:::external
+        H[Hugging Face Hub]:::external
+    end
+
+    %% Pipeline de Dados
+    subgraph Pipeline ETL
+        NB1[Notebook 1: Download]:::raw
+        RAW[(data/raw/)]:::raw
+        NB2[Notebook 2: Pre-process]:::interim
+        INT[(data/interim/)]:::interim
+        PROC[(data/processed/)]:::processed
+        
+        R & H -->|Extração API| NB1
+        NB1 -->|Arquivos Brutos| RAW
+        RAW -->|Leitura| NB2
+        NB2 -->|Pré-processamento| INT
+        INT -->|Normalização YOLO| PROC
+    end
+
+    %% Treinamento
+    subgraph Modelagem
+        NB3[Notebook 3: Train]:::train
+        WANDB[(Weights & Biases)]:::tracking
+        RUNS[(runs/ weights.pt)]:::train
+        
+        PROC -->|Consome data.yaml| NB3
+        NB3 -->|Registra Épocas| WANDB
+        NB3 -->|Salva Pesos| RUNS
+    end
+
+    %% Validação
+    subgraph Avaliação
+        NB4[Notebook 4: Validate]:::eval
+        METRICS[(test_metrics.json)]:::eval
+        
+        RUNS -->|Carrega Modelo| NB4
+        PROC -->|Divisão de Testes: Imagens não vistas| NB4
+        NB4 -->|Matriz de Confusão| WANDB
+        NB4 -->|Exporta Métricas| METRICS
+    end
+```
 
 As instruções de execução dos notebooks ficam em [`src/README.md`](src/README.md).
 Detalhes do registro no Weights & Biases ficam em [`docs/WANDB.md`](docs/WANDB.md).
 
-## Experimentos e Resultados preliminares
-<!-- > Descreva de forma sucinta e organizada os experimentos realizados.
-> Para cada experimento, apresente os principais resultados obtidos.
-> Aponte os problemas encontrados nas soluções testadas até aqui. -->
+## Experimentos e Resultados
+<!-- > 
+Descrição dos resultados mais importantes obtidos.
+Apresente os resultados da forma mais rica possível, com gráficos e tabelas. Mesmo que o seu código rode online em um notebook, copie para esta parte a figura estática. A referência a código e links para execução online pode ser feita também, mas é preciso apresentar os principais resultados neste documento.
+-->
+
+### Experimentos:
 
 Os experimentos iniciais utilizarão o modelo YOLO base para estabelecer o baseline de performance. Como primeiro experimento foi feito um treinamento utilizando o dataset Passenger Detection on a Bus, esse dataset possui 170 imagens de pessoas em ônibus, os dados foram pré processados utilizando orientação sempre na horizontal e na escala 640x640 fit com preenchimento preto nas bordas para não distorcer as imagens. Como data augmentation foram utilizadas as técnicas de:
 * Flip Mirror horizontally: Dobra o dataset sem distorcer a física da imagem, fazendo com que tenha imagens de pessoas que estavam na esquerda ficarem também na direita, já que os ônibus são simétricos.
@@ -124,20 +228,35 @@ No roboflow do repositório Inside Bus Detection estava com uma precisão de 90.
 *Matriz de confusão normalizada Inside Bus Detection Validação cruzada*
 ![Matriz de confusão normalizada Inside Bus Detection Validação cruzada](assets/inside-bus-view/cross-validation/confusion_matrix_normalized.png)
 
-**Problemas identificados até o momento:**
+**Problemas identificados:**
 * Risco elevado de oclusão severa gerando subcontagem (falsos negativos) e sobreposição de detecções (contagem dupla).
 * Viés de dataset (overfitting) e necessidade de simular diversidade, como de iluminação, dos parâmetros de data augmentation, porém mesmo utilizando esses parâmetros o caso ao contrário do primeiro dataset(Passenger Detection on a Bus) sendo para ser validado no Inside Bus View também ficou com precisão bem abaixo.
 * Dataset "passenger_count" foi avaliado preliminarmente e excluído devido a problemas severos de anotação (bounding boxes cobrindo múltiplas pessoas).
 
-## Próximos passos
-<!-- > Liste as próximas etapas planejadas para conclusão do projeto, com uma estimativa de tempo para cada etapa. -->
-1. **Semana 1-2:** Realizar a rotulação manual de parte das 2.400 imagens do Dataset Privado da Unicamp utilizando a plataforma Roboflow.
-2. **Semana 1:** Implementar e treinar o modelo baseline utilizando a técnica de fine-tuning direto (Estratégia 1), na questão de um modelo com um dataset e em seguida com outro dataset para treinamento também e não apenas de validação.
-3. **Semana 1-2:** Executar o fine-tuning em estágios utilizando o CrowdHuman Dataset* seguido das bases de ônibus (Estratégia 2).
-4. **Semana 2-3:** Avaliação quantitativa (mAP, Recall, Precision) e qualitativa das detecções no dataset da Unicamp, tanto com a Estratégia 1, quanto da Estratégia 2.
+### Resultados:
+
+## Discussão
+<!-- 
+Discussão dos resultados. Relacionar os resultados com as perguntas de pesquisa ou hipóteses avaliadas.
+A discussão dos resultados também pode ser feita opcionalmente na seção de Resultados, na medida em que os resultados são apresentados. Aspectos importantes a serem discutidos: É possível tirar conclusões dos resultados? Quais? Há indicações de direções para estudo? São necessários trabalhos mais profundos?
+-->
+
+## Conclusão
+<!-- 
+Destacar as principais conclusões obtidas no desenvolvimento do projeto.
+Destacar os principais desafios enfrentados.
+Principais lições aprendidas.
+-->
+
+## Trabalhos Futuros
+<!-- O que poderia ser melhorado se houvesse mais tempo? -->
+* Detecção de Oclusão em Ambientes de Alta Densidade: Embora a metodologia de fine-tuning em estágios com o dataset CrowdHuman tenha mitigado problemas de oclusão, o uso de módulos de estimativa de densidade (density map estimation), inspirados em arquiteturas como CSRNet, poderia ser investigado para cenários de superlotação extrema, onde a contagem por detecção individual de caixas (bounding boxes) tende a saturar.
+* Privacidade e Ética de Dados: Pesquisas futuras poderiam integrar módulos de anonimização automática diretamente no pipeline de pré-processamento, utilizando técnicas de blurring de rostos ou segmentação semântica para garantir a conformidade com leis de proteção de dados (LGPD) sem comprometer a capacidade de extração de características espaciais necessárias para a contagem.
 
 ## Uso de IA Generativa
-<!-- > Adicione aqui em quais tarefas foi usada alguma ferramenta de IA Generativa. Para cada tarefa indicada detalhe qual a ferramenta e qual o prompt utilizado. -->
+<!-- > 
+Adicione aqui em quais tarefas foi usada alguma ferramenta de IA Generativa. Para cada tarefa indicada detalhe qual a ferramenta e qual o prompt utilizado. 
+-->
 Durante o desenvolvimento deste projeto e a elaboração desta documentação, ferramentas de IA Generativa foram utilizadas estritamente para auxiliar na estruturação visual, diagramação e formatação do texto do repositório, não interferindo na concepção da metodologia. Abaixo estão os detalhes das tarefas:
 
 * **Tarefa:** Apoio ao desenvolvimento e organização do código do projeto, incluindo estruturação dos módulos em `src/` e adaptação do notebook para funções reutilizáveis.
@@ -165,3 +284,6 @@ Durante o desenvolvimento deste projeto e a elaboração desta documentação, f
 * **[Roboflow - Passenger (Deakin)](https://universe.roboflow.com/deakin-07shj/passenger-mmpbi):** Dataset auxiliar de passageiros utilizado para compor as bases de treinamento e validação.
 * **[CrowdHuman Dataset (Página Oficial)](https://www.crowdhuman.org/):** Página oficial do dataset de multidões utilizado para o fine-tuning em estágios, visando maior robustez contra oclusões.
 * **[CrowdHuman Dataset (Hugging Face)](https://huggingface.co/datasets/sshao0516/CrowdHuman):** Repositório do dataset CrowdHuman hospedado no Hugging Face.
+
+**Ferramentas de Experimentação e MLOps**
+* **[Weights & Biases](https://wandb.ai/site/):** Plataforma integrada para o registro de experimentos, monitoramento de métricas de convergência (mAP@50/95) e visualização de predições em ambiente de teste.
