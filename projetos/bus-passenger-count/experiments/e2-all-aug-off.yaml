@@ -1,0 +1,40 @@
+# Ablacao A: E2-all com TODA a augmentation DESLIGADA.
+# Compara contra e2-all (aug padrao) -> mostra se augmentation ajuda (piso).
+experiment_id: e2-all-aug-off
+strategy: direct
+weights: yolo11m.pt
+dataset_stage: interim
+train_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+  - onibus-unicamp-private
+train_config:
+  epochs: 100
+  patience: 20
+  batch: 16
+  imgsz: 640
+  workers: 4
+  amp: true
+  seed: 42
+  deterministic: true
+# augment forwarded direto para o YOLO; tudo zerado = sem augmentation
+augment:
+  hsv_h: 0.0
+  hsv_s: 0.0
+  hsv_v: 0.0
+  degrees: 0.0
+  translate: 0.0
+  scale: 0.0
+  shear: 0.0
+  perspective: 0.0
+  flipud: 0.0
+  fliplr: 0.0
+  mosaic: 0.0
+  mixup: 0.0
+  copy_paste: 0.0
+  erasing: 0.0

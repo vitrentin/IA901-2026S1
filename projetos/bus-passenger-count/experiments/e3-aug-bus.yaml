@@ -1,0 +1,54 @@
+# Ablacao A sobre o two-stage: E3 com a politica de aug de onibus no estagio 2.
+# Compara contra e3-crowd-all (aug padrao) -> ajuste de aug ajuda no robusto?
+experiment_id: e3-aug-bus
+strategy: two_stage
+weights: yolo11m.pt
+dataset_stage: interim
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+  - onibus-unicamp-private
+stages:
+  - name: stage1_crowd
+    train_datasets:
+      - crowdhuman
+    freeze: 10
+    train_config:
+      epochs: 50
+      patience: 15
+      batch: 16
+      imgsz: 640
+      workers: 4
+      amp: true
+      seed: 42
+      deterministic: true
+  - name: stage2_bus
+    train_datasets:
+      - passenger-detection-bus
+      - inside-bus-view
+      - passenger-deakin
+    freeze: 0
+    train_config:
+      epochs: 100
+      patience: 20
+      batch: 16
+      imgsz: 640
+      workers: 4
+      amp: true
+      seed: 42
+      deterministic: true
+    augment:
+      fliplr: 0.5
+      flipud: 0.0
+      mosaic: 1.0
+      close_mosaic: 10
+      hsv_h: 0.03
+      hsv_s: 0.7
+      hsv_v: 0.4
+      degrees: 10.0
+      translate: 0.1
+      scale: 0.2
+      shear: 0.0
+      perspective: 0.0
+      erasing: 0.4

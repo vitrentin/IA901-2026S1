@@ -1,0 +1,23 @@
+# E4 - Model size ablation: YOLO11l (large, ~50M params)
+experiment_id: e4-large
+strategy: direct
+weights: yolo11l.pt
+dataset_stage: interim
+train_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+  - onibus-unicamp-private
+train_config:
+  epochs: 100
+  patience: 20
+  batch: 16
+  imgsz: 640
+  workers: 4
+  amp: true
+  seed: 42
+  deterministic: true

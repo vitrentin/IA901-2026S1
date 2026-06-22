@@ -17,6 +17,8 @@ yolo*.pt
 sam*.pt
 
 # Downloaded dataset payloads; keep only the per-folder readmes.
+data/interim/*/*
+!data/interim/*/readme.md
 data/processed/*/*
 !data/processed/*/readme.md
 
