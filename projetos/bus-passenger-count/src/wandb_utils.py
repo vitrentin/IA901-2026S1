@@ -3,6 +3,7 @@
 import os
 import random
 from pathlib import Path
+from uuid import uuid4
 
 import yaml
 
@@ -202,6 +203,63 @@ def _to_wandb_image_source(result_obj, fallback_path):
     return img
 
 
+def _downscale_for_wandb(image_source, max_side):
+    """Reduce very large images before upload to avoid quota blowups."""
+    if max_side <= 0:
+        return image_source
+    if isinstance(image_source, str):
+        return image_source
+    if not hasattr(image_source, "shape") or len(image_source.shape) < 2:
+        return image_source
+
+    h, w = image_source.shape[:2]
+    longest = max(h, w)
+    if longest <= max_side:
+        return image_source
+
+    # Fast integer-step downsampling keeps dependencies minimal.
+    step = (longest + max_side - 1) // max_side
+    return image_source[::step, ::step].copy()
+
+
+def _jpeg_for_wandb(image_source, quality):
+    """Materialize as JPEG so wandb media is much smaller than PNG."""
+    if quality >= 100:
+        return image_source
+    run = _active_run()
+    if run is None:
+        return image_source
+
+    try:
+        import cv2
+    except ImportError:
+        return image_source
+
+    if isinstance(image_source, str):
+        bgr = cv2.imread(image_source, cv2.IMREAD_COLOR)
+        if bgr is None:
+            return image_source
+    else:
+        if not hasattr(image_source, "shape"):
+            return image_source
+        if len(image_source.shape) == 2:
+            bgr = image_source
+        elif len(image_source.shape) == 3 and image_source.shape[2] == 3:
+            bgr = image_source[:, :, ::-1].copy()
+        else:
+            return image_source
+
+    cache_dir = Path(run.dir) / "media_jpeg_cache"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    out_path = cache_dir / f"{uuid4().hex}.jpg"
+    ok = cv2.imwrite(
+        str(out_path),
+        bgr,
+        [int(cv2.IMWRITE_JPEG_QUALITY), int(quality)],
+    )
+    return str(out_path) if ok else image_source
+
+
 def log_test_predictions(predictor, data_spec, n=10, names=None,
                          conf=None, iou=None, panel_key="test/predictions", seed=0):
     """Upload a sample of test images with prediction and GT boxes."""
@@ -269,6 +327,14 @@ def log_test_predictions(predictor, data_spec, n=10, names=None,
             })
 
         image_source = _to_wandb_image_source(r, img_path)
+        image_source = _downscale_for_wandb(
+            image_source=image_source,
+            max_side=config.WANDB_MAX_IMAGE_SIDE,
+        )
+        image_source = _jpeg_for_wandb(
+            image_source=image_source,
+            quality=config.WANDB_IMAGE_JPEG_QUALITY,
+        )
         wandb_images.append(wandb.Image(
             image_source,
             boxes={

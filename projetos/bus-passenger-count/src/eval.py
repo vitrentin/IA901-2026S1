@@ -9,6 +9,7 @@ from src import wandb_utils
 import yaml
 
 IMG_EXTS = (".jpg", ".jpeg", ".png", ".bmp", ".webp")
+FULL_DATASET_TEST_ONLY = "onibus-unicamp-private"
 
 
 def _headline_metrics(results_dict, count_metrics):
@@ -30,25 +31,33 @@ def _headline_metrics(results_dict, count_metrics):
 
 def _count_metrics(model, data_spec):
     """Per-image count error at the operating threshold (the counting objective)."""
-    img_dir   = wandb_utils._resolve_test_image_dir(data_spec)
-    label_dir = wandb_utils._resolve_label_dir(img_dir)
     abs_err, sq_err, signed_err = [], [], []
-    for r in model.predict(
-        source       = str(img_dir),
-        conf         = config.VIZ_CONF,
-        iou          = config.VIZ_IOU,
-        classes      = [config.PERSON_CLASS_ID],
-        agnostic_nms = config.VIZ_AGNOSTIC_NMS,
-        stream       = True,
-        verbose      = False,
-    ):
-        pred_n = len(r.boxes) if r.boxes is not None else 0
-        gt_n   = len(wandb_utils._read_yolo_labels(label_dir / f"{Path(r.path).stem}.txt"))
-        signed_d = pred_n - gt_n  # positive = overcounting, negative = undercounting
-        d = abs(signed_d)
-        abs_err.append(d)
-        sq_err.append(d * d)
-        signed_err.append(signed_d)
+    if isinstance(data_spec, dict) and data_spec.get("_dataset_name") == FULL_DATASET_TEST_ONLY:
+        split_dirs = data_spec.get("test") or []
+        if not isinstance(split_dirs, list):
+            split_dirs = [split_dirs]
+        image_dirs = [Path(p) for p in split_dirs]
+    else:
+        image_dirs = [Path(wandb_utils._resolve_test_image_dir(data_spec))]
+
+    for img_dir in image_dirs:
+        label_dir = wandb_utils._resolve_label_dir(img_dir)
+        for r in model.predict(
+            source       = str(img_dir),
+            conf         = config.VIZ_CONF,
+            iou          = config.VIZ_IOU,
+            classes      = [config.PERSON_CLASS_ID],
+            agnostic_nms = config.VIZ_AGNOSTIC_NMS,
+            stream       = True,
+            verbose      = False,
+        ):
+            pred_n = len(r.boxes) if r.boxes is not None else 0
+            gt_n   = len(wandb_utils._read_yolo_labels(label_dir / f"{Path(r.path).stem}.txt"))
+            signed_d = pred_n - gt_n  # positive = overcounting, negative = undercounting
+            d = abs(signed_d)
+            abs_err.append(d)
+            sq_err.append(d * d)
+            signed_err.append(signed_d)
     n = len(abs_err) or 1
     return {
         "count_mae":  sum(abs_err) / n,
@@ -148,6 +157,18 @@ def run(
 def _eval_one_dataset(model, dataset_name, stage, run_dir, n_wandb_samples):
     """Avalia um unico dataset. Retorna (headline, full_metrics)."""
     data_spec = datasets.prepare([dataset_name], stage=stage)
+    if dataset_name == FULL_DATASET_TEST_ONLY:
+        root = config.DATA_DIR / stage / dataset_name
+        all_split_imgs = []
+        for split in ("train", "valid", "test"):
+            img_dir = datasets._split_images(root, split)
+            if img_dir:
+                all_split_imgs.append(str(img_dir))
+        if all_split_imgs:
+            data_spec = dict(data_spec)
+            data_spec["test"] = all_split_imgs if len(all_split_imgs) > 1 else all_split_imgs[0]
+    if isinstance(data_spec, dict):
+        data_spec["_dataset_name"] = dataset_name
     split     = "test" if "test" in data_spec else "val"
 
     results = model.val(

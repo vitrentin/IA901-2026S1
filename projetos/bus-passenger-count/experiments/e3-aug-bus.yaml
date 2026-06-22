@@ -8,6 +8,7 @@ eval_datasets:
   - passenger-detection-bus
   - inside-bus-view
   - passenger-deakin
+  - onibus-unicamp-private
 stages:
   - name: stage1_crowd
     train_datasets:

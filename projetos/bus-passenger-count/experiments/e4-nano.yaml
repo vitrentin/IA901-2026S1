@@ -11,6 +11,7 @@ eval_datasets:
   - passenger-detection-bus
   - inside-bus-view
   - passenger-deakin
+  - onibus-unicamp-private
 train_config:
   epochs: 100
   patience: 20

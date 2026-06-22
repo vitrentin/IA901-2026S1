@@ -45,6 +45,15 @@ _ROBOFLOW_SOURCES = {
             "processed": None,
         },
     },
+    "onibus-unicamp-private": {
+        "workspace": "cristians-workspace-9z79y",
+        "project": "detector-de-passageiros-teste-80eya",
+        "keep_classes": {"person", "0"},
+        "versions": {
+            "interim": 1,
+            "processed": None,
+        },
+    },
 }
 _CROWDHUMAN_FILES = {
     "zips": [

@@ -9,4 +9,4 @@ eval_datasets:
   - passenger-detection-bus
   - inside-bus-view
   - passenger-deakin
-# quando o dataset privado estiver rotulado, adicionar: unicamp-private
+  - onibus-unicamp-private 
