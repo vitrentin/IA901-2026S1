@@ -1,0 +1,24 @@
+# E5 - Final size trade-off: private-adapted YOLO11n.
+# Same data/training recipe as e4-private-adapt-medium, smaller model.
+experiment_id: e5-private-adapt-nano
+strategy: direct
+weights: yolo11n.pt
+dataset_stage: processed
+train_datasets:
+  - passenger-deakin
+  - inside-bus-view
+  - onibus-unicamp-private
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+  - onibus-unicamp-private
+train_config:
+  epochs: 100
+  patience: 20
+  batch: 16
+  imgsz: 640
+  workers: 4
+  amp: true
+  seed: 42
+  deterministic: true

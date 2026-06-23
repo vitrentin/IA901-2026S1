@@ -9,12 +9,11 @@ The suite follows the project story:
 2) single-domain public training,
 3) two-public-dataset baseline,
 4) augmentation,
-5) two-stage CrowdHuman transfer,
-6) private-domain adaptation,
-7) final nano/medium/large size trade-off.
+5) private-domain adaptation,
+6) final nano/medium/large size trade-off,
+7) two-stage CrowdHuman transfer at the end because it is slower.
 """
 
-import copy
 import json
 import traceback
 import argparse
@@ -53,6 +52,25 @@ TWO_STAGE_EXPERIMENTS = [
     "e3-public-crowd-default",
     "e3-public-crowd-busaug",
 ]
+
+PRIVATE_ADAPT_EXPERIMENTS = [
+    "e4-private-adapt-medium",
+]
+
+SIZE_EXPERIMENTS = [
+    "e5-private-adapt-nano",
+    "e5-private-adapt-large",
+]
+
+RUN_ORDER = (
+    BASELINE_EXPERIMENTS
+    + SINGLE_DOMAIN_EXPERIMENTS
+    + PUBLIC_BASELINE_EXPERIMENTS
+    + AUGMENTATION_EXPERIMENTS
+    + PRIVATE_ADAPT_EXPERIMENTS
+    + SIZE_EXPERIMENTS
+    + TWO_STAGE_EXPERIMENTS
+)
 
 PRIVATE = "onibus-unicamp-private"
 ALL_EVAL_DATASETS = [
@@ -102,16 +120,6 @@ def summarize_result(eval_result, eval_datasets):
     }
 
 
-def better(candidate, current):
-    if current is None:
-        return True
-    c = candidate["summary"]
-    b = current["summary"]
-    if abs(c["avg_count_mae"] - b["avg_count_mae"]) > 1e-9:
-        return c["avg_count_mae"] < b["avg_count_mae"]
-    return c["avg_mAP50"] > b["avg_mAP50"]
-
-
 def run_one(cfg):
     exp_id = cfg["experiment_id"]
     eval_datasets = cfg.get("eval_datasets") or ALL_EVAL_DATASETS
@@ -144,46 +152,13 @@ def run_named(name):
     return run_one(experiments.load(name))
 
 
-def add_private_to_training(cfg, exp_id, weights="yolo11m.pt"):
-    out = copy.deepcopy(cfg)
-    out["experiment_id"] = exp_id
-    out["weights"] = weights
-    out["eval_datasets"] = list(ALL_EVAL_DATASETS)
-
-    if out.get("strategy") == "baseline":
-        raise ValueError("Cannot adapt a baseline config.")
-
-    if out.get("strategy") == "two_stage":
-        stages = out.get("stages") or []
-        last = stages[-1]
-        train_datasets = list(last.get("train_datasets") or [])
-        if PRIVATE not in train_datasets:
-            train_datasets.append(PRIVATE)
-        last["train_datasets"] = train_datasets
-        return out
-
-    train_datasets = list(out.get("train_datasets") or [])
-    if PRIVATE not in train_datasets:
-        train_datasets.append(PRIVATE)
-    out["train_datasets"] = train_datasets
-    return out
-
-
-def with_model(cfg, exp_id, weights):
-    out = copy.deepcopy(cfg)
-    out["experiment_id"] = exp_id
-    out["weights"] = weights
-    return out
-
-
-def write_report(records, failures, best_aug, best_public, private_medium, best_final):
+def write_report(records, failures):
     lines = []
     lines.append("# Final Experiment Results")
     lines.append("")
     lines.append(f"- Generated at: `{datetime.now().isoformat(timespec='seconds')}`")
     lines.append("- Dataset stage: `processed`")
-    lines.append("- Main selection criterion: lower average `count_mae` across all test datasets.")
-    lines.append("- Tie-breaker: higher average `mAP50`.")
+    lines.append("- Fixed YAML-driven run order; no dynamic branching.")
     lines.append("")
 
     if failures:
@@ -193,32 +168,10 @@ def write_report(records, failures, best_aug, best_public, private_medium, best_
             lines.append(f"- `{exp_id}`: `{err}`")
         lines.append("")
 
-    lines.append("## Decisions")
+    lines.append("## Run Order")
     lines.append("")
-    if best_aug:
-        lines.append(
-            f"- Best public augmentation/direct baseline: `{best_aug['experiment_id']}` "
-            f"(avg_count_mae={best_aug['summary']['avg_count_mae']:.4f}, "
-            f"avg_mAP50={best_aug['summary']['avg_mAP50']:.4f})."
-        )
-    if best_public:
-        lines.append(
-            f"- Best public-only medium model after two-stage check: `{best_public['experiment_id']}` "
-            f"(avg_count_mae={best_public['summary']['avg_count_mae']:.4f}, "
-            f"avg_mAP50={best_public['summary']['avg_mAP50']:.4f})."
-        )
-    if private_medium:
-        lines.append(
-            f"- Private-adapted medium model: `{private_medium['experiment_id']}` "
-            f"(avg_count_mae={private_medium['summary']['avg_count_mae']:.4f}, "
-            f"avg_mAP50={private_medium['summary']['avg_mAP50']:.4f})."
-        )
-    if best_final:
-        lines.append(
-            f"- Best final size/adaptation candidate: `{best_final['experiment_id']}` "
-            f"(avg_count_mae={best_final['summary']['avg_count_mae']:.4f}, "
-            f"avg_mAP50={best_final['summary']['avg_mAP50']:.4f})."
-        )
+    for i, exp_id in enumerate(RUN_ORDER, start=1):
+        lines.append(f"{i}. `{exp_id}`")
     lines.append("")
 
     lines.append("## Per-dataset Metrics")
@@ -276,23 +229,8 @@ def _label(cfg_or_name):
 
 
 def _print_dry_run():
-    names = []
-    names.extend(BASELINE_EXPERIMENTS)
-    names.extend(SINGLE_DOMAIN_EXPERIMENTS)
-    names.extend(PUBLIC_BASELINE_EXPERIMENTS)
-    names.extend(AUGMENTATION_EXPERIMENTS)
-    names.extend([
-        "<dynamic e4-private-adapt-medium from best e1/e2 public result>",
-        "<dynamic e5-private-adapt-nano from e4-private-adapt-medium>",
-        "<dynamic e5-private-adapt-large from e4-private-adapt-medium>",
-    ])
-    names.extend(TWO_STAGE_EXPERIMENTS)
-
     log("DRY RUN: final experiment execution order")
-    for i, name in enumerate(names, start=1):
-        if name.startswith("<dynamic"):
-            log(f"{i:02d}. {name}")
-            continue
+    for i, name in enumerate(RUN_ORDER, start=1):
         info = _label(name)
         log(
             f"{i:02d}. {info['experiment_id']} | {info['strategy']} | "
@@ -311,61 +249,19 @@ def main(dry_run=False):
     failures = []
 
     log("Final suite: story-driven experiment sequence")
-    log("All YAML configs use dataset_stage=processed.")
+    log("All runs are loaded from explicit YAML configs with dataset_stage=processed.")
 
-    for name in BASELINE_EXPERIMENTS:
+    for name in RUN_ORDER:
         try_run(records, failures, name)
-
-    for name in SINGLE_DOMAIN_EXPERIMENTS:
-        try_run(records, failures, name)
-
-    public_direct = []
-    for name in PUBLIC_BASELINE_EXPERIMENTS + AUGMENTATION_EXPERIMENTS:
-        rec = try_run(records, failures, name)
-        if rec:
-            public_direct.append(rec)
-
-    best_aug = None
-    for rec in public_direct:
-        if better(rec, best_aug):
-            best_aug = rec
-
-    # Run the private adaptation and size comparison before the expensive
-    # two-stage experiments so useful final-candidate results appear earlier.
-    best_public = best_aug
-
-    private_medium = None
-    if best_public:
-        cfg = add_private_to_training(best_public["config"], "e4-private-adapt-medium", "yolo11m.pt")
-        private_medium = try_run(records, failures, cfg)
-
-    best_final = private_medium
-    if private_medium:
-        for exp_id, weights in [
-            ("e5-private-adapt-nano", "yolo11n.pt"),
-            ("e5-private-adapt-large", "yolo11l.pt"),
-        ]:
-            cfg = with_model(private_medium["config"], exp_id, weights)
-            rec = try_run(records, failures, cfg)
-            if rec and better(rec, best_final):
-                best_final = rec
-
-    for name in TWO_STAGE_EXPERIMENTS:
-        rec = try_run(records, failures, name)
-        if rec and better(rec, best_public):
-            best_public = rec
 
     payload = {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "records": records,
         "failures": failures,
-        "best_aug": best_aug,
-        "best_public": best_public,
-        "private_medium": private_medium,
-        "best_final": best_final,
+        "run_order": RUN_ORDER,
     }
     RESULTS_JSON.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-    write_report(records, failures, best_aug, best_public, private_medium, best_final)
+    write_report(records, failures)
 
     log("=" * 80)
     log(f"Wrote {RESULTS_JSON}")
