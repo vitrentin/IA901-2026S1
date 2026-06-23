@@ -29,10 +29,13 @@ RESULTS_JSON = Path("final_experiment_results.json")
 REPORT_MD = Path("FINAL_EXPERIMENT_RESULTS.md")
 
 BASELINE_EXPERIMENTS = [
-    # Intentionally empty: skipping e0 baselines in this run profile.
+    "e0-baseline-medium",
+    "e0-baseline-nano",
+    "e0-baseline-large",
 ]
 
 SINGLE_DOMAIN_EXPERIMENTS = [
+    "e1-dkn",
     "e1-ibv",
 ]
 
