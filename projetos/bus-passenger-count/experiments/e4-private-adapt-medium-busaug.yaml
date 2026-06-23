@@ -1,12 +1,13 @@
-# E2 - Two-public-dataset training with bus-specific augmentation.
-# Uses custom Albumentations patch from src/train.py for blur/motion blur/cutout.
-experiment_id: e2-public-busaug
+# E4 - Private-domain adaptation with YOLO11m + bus-specific augmentation.
+# Keeps original e4-private-adapt-medium and adds bus-specific aug comparison.
+experiment_id: e4-private-adapt-medium-busaug
 strategy: direct
 weights: yolo11m.pt
 dataset_stage: processed
 train_datasets:
   - passenger-deakin
   - inside-bus-view
+  - onibus-unicamp-private
 eval_datasets:
   - passenger-detection-bus
   - inside-bus-view
@@ -26,7 +27,6 @@ augment:
   flipud: 0.0
   mosaic: 1.0
   close_mosaic: 10
-  # Bus-specific color variation target (mapped to YOLO-native hsv gains).
   hsv_h: 0.03
   hsv_s: 0.7
   hsv_v: 0.0
@@ -35,9 +35,7 @@ augment:
   scale: 0.2
   shear: 0.0
   perspective: 0.0
-  # Keep YOLO erasing off to isolate custom cutout settings below.
   erasing: 0.0
-  # Custom Albumentations patch keys (handled in src/train.py).
   blur_px: 50
   blur_p: 0.15
   motion_blur_px: 50

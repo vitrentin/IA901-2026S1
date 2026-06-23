@@ -13,6 +13,17 @@ from src import datasets
 from src import experiments
 from src import wandb_utils
 
+CUSTOM_ALBUMENTATIONS_KEYS = {
+    "blur_px",
+    "blur_p",
+    "motion_blur_px",
+    "motion_blur_p",
+    "cutout_holes",
+    "cutout_size",
+    "cutout_p",
+}
+_ORIGINAL_ALBUMENTATIONS_CLASS = None
+
 
 def _git_info():
     def _cmd(args):
@@ -78,10 +89,90 @@ def _best_weights(results):
     return save_dir, best
 
 
+def _split_augment_params(augment):
+    if not augment:
+        return {}, {}
+    yolo_aug = {}
+    custom_aug = {}
+    for k, v in augment.items():
+        if k in CUSTOM_ALBUMENTATIONS_KEYS:
+            custom_aug[k] = v
+        else:
+            yolo_aug[k] = v
+    return yolo_aug, custom_aug
+
+
+def _build_custom_albumentations(custom_aug):
+    if not custom_aug:
+        return []
+
+    import albumentations as A
+
+    transforms = []
+    blur_px = int(custom_aug.get("blur_px", 0) or 0)
+    motion_blur_px = int(custom_aug.get("motion_blur_px", 0) or 0)
+    cutout_holes = int(custom_aug.get("cutout_holes", 0) or 0)
+    cutout_size = float(custom_aug.get("cutout_size", 0.0) or 0.0)
+
+    if blur_px > 0 and blur_px % 2 == 0:
+        blur_px += 1
+    if motion_blur_px > 0 and motion_blur_px % 2 == 0:
+        motion_blur_px += 1
+
+    if blur_px > 0:
+        transforms.append(A.Blur(blur_limit=(blur_px, blur_px), p=float(custom_aug.get("blur_p", 0.15))))
+    if motion_blur_px > 0:
+        transforms.append(
+            A.MotionBlur(blur_limit=(motion_blur_px, motion_blur_px), p=float(custom_aug.get("motion_blur_p", 0.15)))
+        )
+    if cutout_holes > 0 and cutout_size > 0:
+        transforms.append(
+            A.CoarseDropout(
+                num_holes_range=(cutout_holes, cutout_holes),
+                hole_height_range=(cutout_size, cutout_size),
+                hole_width_range=(cutout_size, cutout_size),
+                p=float(custom_aug.get("cutout_p", 0.5)),
+            )
+        )
+
+    return transforms
+
+
+def _patch_albumentations(custom_aug):
+    global _ORIGINAL_ALBUMENTATIONS_CLASS
+
+    from ultralytics.data import augment as ul_aug
+
+    if _ORIGINAL_ALBUMENTATIONS_CLASS is None:
+        _ORIGINAL_ALBUMENTATIONS_CLASS = ul_aug.Albumentations
+
+    if not custom_aug:
+        ul_aug.Albumentations = _ORIGINAL_ALBUMENTATIONS_CLASS
+        return
+
+    transforms = _build_custom_albumentations(custom_aug)
+    if not transforms:
+        ul_aug.Albumentations = _ORIGINAL_ALBUMENTATIONS_CLASS
+        return
+
+    base_class = _ORIGINAL_ALBUMENTATIONS_CLASS
+
+    class PatchedAlbumentations(base_class):
+        def __init__(self, p=1.0, transforms=None):
+            if transforms is None:
+                transforms = list(_build_custom_albumentations(custom_aug))
+            super().__init__(p=p, transforms=transforms)
+
+    ul_aug.Albumentations = PatchedAlbumentations
+    print(f"train:    custom albumentations ativas: {', '.join(custom_aug.keys())}")
+
+
 def _train_stage(model, data_spec, train_params, run_dir, name, augment=None):
     """Treina uma etapa e retorna os melhores pesos."""
     params = dict(train_params or {})
-    params.update(augment or {})
+    yolo_aug, custom_aug = _split_augment_params(augment)
+    params.update(yolo_aug)
+    _patch_albumentations(custom_aug)
     params["data"]     = _resolve_data_arg(data_spec, run_dir)
     params["project"]  = str(run_dir)
     params["name"]     = name

@@ -55,11 +55,14 @@ TWO_STAGE_EXPERIMENTS = [
 
 PRIVATE_ADAPT_EXPERIMENTS = [
     "e4-private-adapt-medium",
+    "e4-private-adapt-medium-busaug",
 ]
 
 SIZE_EXPERIMENTS = [
     "e5-private-adapt-nano",
     "e5-private-adapt-large",
+    "e5-private-adapt-nano-busaug",
+    "e5-private-adapt-large-busaug",
 ]
 
 RUN_ORDER = (

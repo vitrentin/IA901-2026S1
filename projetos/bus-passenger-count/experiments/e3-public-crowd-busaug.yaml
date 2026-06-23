@@ -1,5 +1,5 @@
 # E3 - Two-stage training: CrowdHuman, then public bus datasets.
-# Stage 2 uses the bus-specific augmentation policy.
+# Stage 2 uses bus-specific augmentation via src/train.py Albumentations patch.
 experiment_id: e3-public-crowd-busaug
 strategy: two_stage
 weights: yolo11m.pt
@@ -14,15 +14,25 @@ augment:
   flipud: 0.0
   mosaic: 1.0
   close_mosaic: 10
+  # Bus-specific color variation target (mapped to YOLO-native hsv gains).
   hsv_h: 0.03
   hsv_s: 0.7
-  hsv_v: 0.4
+  hsv_v: 0.0
   degrees: 10.0
   translate: 0.1
   scale: 0.2
   shear: 0.0
   perspective: 0.0
-  erasing: 0.4
+  # Keep YOLO erasing off to isolate custom cutout settings below.
+  erasing: 0.0
+  # Custom Albumentations patch keys (handled in src/train.py).
+  blur_px: 50
+  blur_p: 0.15
+  motion_blur_px: 50
+  motion_blur_p: 0.15
+  cutout_holes: 3
+  cutout_size: 0.10
+  cutout_p: 0.50
 stages:
   - name: stage1_crowd
     train_datasets:
