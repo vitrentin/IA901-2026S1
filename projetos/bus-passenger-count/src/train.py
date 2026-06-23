@@ -22,7 +22,6 @@ CUSTOM_ALBUMENTATIONS_KEYS = {
     "cutout_size",
     "cutout_p",
 }
-_ORIGINAL_ALBUMENTATIONS_CLASS = None
 
 
 def _git_info():
@@ -138,41 +137,15 @@ def _build_custom_albumentations(custom_aug):
     return transforms
 
 
-def _patch_albumentations(custom_aug):
-    global _ORIGINAL_ALBUMENTATIONS_CLASS
-
-    from ultralytics.data import augment as ul_aug
-
-    if _ORIGINAL_ALBUMENTATIONS_CLASS is None:
-        _ORIGINAL_ALBUMENTATIONS_CLASS = ul_aug.Albumentations
-
-    if not custom_aug:
-        ul_aug.Albumentations = _ORIGINAL_ALBUMENTATIONS_CLASS
-        return
-
-    transforms = _build_custom_albumentations(custom_aug)
-    if not transforms:
-        ul_aug.Albumentations = _ORIGINAL_ALBUMENTATIONS_CLASS
-        return
-
-    base_class = _ORIGINAL_ALBUMENTATIONS_CLASS
-
-    class PatchedAlbumentations(base_class):
-        def __init__(self, p=1.0, transforms=None):
-            if transforms is None:
-                transforms = list(_build_custom_albumentations(custom_aug))
-            super().__init__(p=p, transforms=transforms)
-
-    ul_aug.Albumentations = PatchedAlbumentations
-    print(f"train:    custom albumentations ativas: {', '.join(custom_aug.keys())}")
-
-
 def _train_stage(model, data_spec, train_params, run_dir, name, augment=None):
     """Treina uma etapa e retorna os melhores pesos."""
     params = dict(train_params or {})
     yolo_aug, custom_aug = _split_augment_params(augment)
     params.update(yolo_aug)
-    _patch_albumentations(custom_aug)
+    custom_transforms = _build_custom_albumentations(custom_aug)
+    if custom_transforms:
+        params["augmentations"] = custom_transforms
+        print(f"train:    custom albumentations ativas: {', '.join(custom_aug.keys())}")
     params["data"]     = _resolve_data_arg(data_spec, run_dir)
     params["project"]  = str(run_dir)
     params["name"]     = name
