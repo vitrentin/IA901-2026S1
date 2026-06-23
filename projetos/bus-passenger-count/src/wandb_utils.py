@@ -102,13 +102,38 @@ def log_summary_table(rows, columns, key="test/summary"):
 def _read_yolo_labels(label_path):
     if not label_path.exists():
         return []
+
+    def _parse_label_xywh(parts):
+        coords = [float(v) for v in parts[1:]]
+
+        if len(coords) == 4:
+            return coords
+
+        if len(coords) >= 6 and len(coords) % 2 == 0:
+            xs = coords[0::2]
+            ys = coords[1::2]
+            min_x, max_x = min(xs), max(xs)
+            min_y, max_y = min(ys), max(ys)
+            w = max_x - min_x
+            h = max_y - min_y
+            if w <= 0 or h <= 0:
+                return None
+            cx = min_x + (w / 2.0)
+            cy = min_y + (h / 2.0)
+            return [cx, cy, w, h]
+
+        return None
+
     out = []
     for line in label_path.read_text().splitlines():
         parts = line.strip().split()
         if len(parts) < 5:
             continue
         c = int(parts[0])
-        x, y, w, h = (float(v) for v in parts[1:5])
+        xywh = _parse_label_xywh(parts)
+        if xywh is None:
+            continue
+        x, y, w, h = xywh
         out.append((c, x, y, w, h))
     return out
 

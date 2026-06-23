@@ -6,9 +6,12 @@ Conventions:
 """
 
 import json
+import os
 import random
 import re
 import shutil
+import stat
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -86,6 +89,30 @@ _CROWDHUMAN_FILES = {
         "valid": "annotation_val.odgt",
     },
 }
+
+
+def _on_rm_error(func, path, exc_info):
+    # Common on Windows when files are read-only.
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
+
+
+def _safe_rmtree(path, retries=5, delay_s=0.5):
+    """Best-effort recursive delete with retries for transient locks."""
+    path = Path(path)
+    if not path.exists():
+        return
+    last_err = None
+    for attempt in range(1, retries + 1):
+        try:
+            shutil.rmtree(path, onerror=_on_rm_error)
+            return
+        except PermissionError as e:
+            last_err = e
+            if attempt == retries:
+                break
+            time.sleep(delay_s * attempt)
+    raise last_err
 
 
 def _load_class_names(data_yaml):
@@ -232,6 +259,9 @@ def _write_data_yaml(root):
 
 
 def _find_downloaded_yolo_root(raw_download_source_dir):
+    # Roboflow may place YOLO files directly in `location` or inside a child folder.
+    if (raw_download_source_dir / "data.yaml").exists():
+        return raw_download_source_dir
     candidates = [d for d in raw_download_source_dir.iterdir() if d.is_dir() and (d / "data.yaml").exists()]
     if not candidates:
         raise FileNotFoundError(f"Nenhum download YOLO encontrado em {raw_download_source_dir}")
@@ -266,7 +296,7 @@ def _download_roboflow_sources_to_dir(
     for source_name, meta in sources.items():
         dst_outer = download_root / source_name
         if dst_outer.exists():
-            shutil.rmtree(dst_outer)
+            _safe_rmtree(dst_outer)
         project = rf.workspace(meta["workspace"]).project(meta["project"])
         version = versions[source_name]
         print(f"[download] {source_name}: version {version}")
@@ -275,8 +305,10 @@ def _download_roboflow_sources_to_dir(
         src_root = _find_downloaded_yolo_root(dst_outer)
         dst_root = target_root / meta["raw_name"]
         if dst_root.exists():
-            shutil.rmtree(dst_root)
+            _safe_rmtree(dst_root)
         shutil.copytree(src_root, dst_root)
+        # datasets.prepare() requires this marker to consider the dataset ready.
+        (dst_root / ".download_complete").write_text("ok\n", encoding="utf-8")
 
 
 def download_roboflow_raw(pdb_version=2, inside_version=5, deakin_version=3, private_version=1, api_key=""):
@@ -303,12 +335,12 @@ def download_roboflow_processed(pdb_version=1, inside_version=1, deakin_version=
     )
 
 
-def download_crowdhuman_raw(repo_id="sshao0516/CrowdHuman", force=False):
-    root = config.RAW_DIR / "crowdhuman_raw"
+def download_crowdhuman_raw(repo_id="sshao0516/CrowdHuman", force=False, raw_name="crowdhuman"):
+    root = config.RAW_DIR / raw_name
     if root.exists() and not force:
         return root
     if root.exists():
-        shutil.rmtree(root)
+        _safe_rmtree(root)
     root.mkdir(parents=True, exist_ok=True)
 
     for filename in _CROWDHUMAN_FILES["zips"]:
@@ -353,7 +385,7 @@ def process_roboflow_raw_to_processed(deakin_stride=40, inside_min_minutes=1):
 
         dst_root = out_root / meta["raw_name"]
         if dst_root.exists():
-            shutil.rmtree(dst_root)
+            _safe_rmtree(dst_root)
         for split, items in buckets.items():
             dst_img = dst_root / split / "images"
             dst_lbl = dst_root / split / "labels"
@@ -368,7 +400,7 @@ def process_roboflow_raw_to_processed(deakin_stride=40, inside_min_minutes=1):
         (dst_root / ".download_complete").write_text("ok\n", encoding="utf-8")
 
 
-def promote_crowdhuman_raw_to_processed(raw_name="crowdhuman_raw", processed_name="crowdhuman", force=False):
+def promote_crowdhuman_raw_to_processed(raw_name="crowdhuman", processed_name="crowdhuman", force=False):
     raw_root = config.RAW_DIR / raw_name
     if not raw_root.exists():
         raise FileNotFoundError(f"CrowdHuman raw não encontrado em {raw_root}.")
@@ -377,7 +409,7 @@ def promote_crowdhuman_raw_to_processed(raw_name="crowdhuman_raw", processed_nam
     if root.exists() and not force:
         return root
     if root.exists():
-        shutil.rmtree(root)
+        _safe_rmtree(root)
     root.mkdir(parents=True, exist_ok=True)
 
     train_images = root / "train" / "images"
