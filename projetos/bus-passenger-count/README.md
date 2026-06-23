@@ -20,21 +20,23 @@ Qual problema o grupo pretendia solucionar?
 Qual a relevância do problema e o impacto da solução do mesmo? 
 -->
 
-O objetivo do projeto é desenvolver um algoritmo capaz de detectar e contabilizar o número de passageiros presentes em imagens no interior de ônibus. A solução utilizará técnica de transfer learning a partir de modelos de detecção de objetos pré-treinados, como YOLOv8 ou YOLOv11 treinados no dataset COCO para a classe "person". Diversos datasets públicos que contem imagens de pessoas em ônibus possuem precisão elevada(mais de 90%), porém quando são colocados em situações diferentes, como validando com uma imagem de outro dataset, essa precisão diminui, chegando em torno de 30%, como será demonstrado posteriormente.
+O objetivo do projeto é desenvolver um modelo genérico capaz de detectar e contabilizar o número de passageiros (pessoas) presentes em imagens no interior de ônibus em diferentes cenários e datasets. A solução utiliza técnicas de transfer learning a partir de modelos de detecção de objetos pré-treinados, como YOLOv8 ou YOLOv11 treinados no dataset COCO para a classe "person". 
 
-A relevância deste projeto reside na tentativa de desenvolver um algoritmo de detecção de passageiros que tenha uma boa precisão na detecção em diferentes cenários, a noção da quantidade de passageiros em ônibus pelo tempo contribui na otimização da mobilidade urbana e na análise de impacto da massa de passageiros, sendo importante para o consumo energético de ônibus elétricos, com aplicação direta no ônibus elétrico da Unicamp.
+O principal problema abordado é a "ilusão da alta precisão" em datasets específicos. Diversos datasets públicos possuem precisão elevada (ex: 93% em testes in-domain), porém quando os modelos são submetidos à validação cruzada (cross-dataset), a precisão cai drasticamente (chegando a 31%). Esse viés de dataset (overfitting de cenário) ocorre porque o modelo "decora" a iluminação, ângulos exatos das câmeras e texturas dos fundos, apresentando severa inflexibilidade de domínio.
+
+A relevância deste projeto reside na tentativa de desenvolver um algoritmo de detecção robusto contra falsos positivos complexos (ex: reflexos nos vidros), falsos negativos por oclusão e contagem dupla causada por obstáculos físicos como barras de apoio. A contagem precisa contribui para a otimização da mobilidade urbana e na análise de impacto da massa de passageiros no consumo energético de ônibus elétricos (aplicação direta no ônibus elétrico da Unicamp).
 
 ## Metodologia
 <!-- >
 Abordagem adotada pelo projeto na busca pela resposta às perguntas de pesquisa. Justificar teoricamente, sempre que possível, a metodologia adotada. 
 -->
-A metodologia consiste na aplicação de Redes Neurais Convolucionais (CNNs), principalmente da arquitetura da família YOLO **YOLOv8** e **YOLO11** (especificamente a variante *medium*, YOLO11m) para extração de características espaciais e detecção de instâncias, no caso pessoas. O escopo central da pesquisa consiste em avaliar comparativamente o impacto de estratégias de transferência de aprendizado (*Transfer Learning*) e ajuste fino (*Fine-Tuning*) na redução do gap de domínio (*domain gap*) e no aumento da robustez contra oclusões severas em ambientes de transporte público.
 
-O núcleo do projeto avaliará comparativamente duas estratégias de Transfer Learning e Fine-Tuning:
+A metodologia consiste na aplicação de Redes Neurais Convolucionais (CNNs), principalmente da arquitetura da família YOLO (**YOLOv8** e **YOLO11**, variante *medium*) para extração de características espaciais. 
 
-1. **Fine-tuning direto (Baseline):** Utilização do modelo pré-treinado e realização do fine-tuning diretamente nas imagens anotadas do interior dos ônibus(datasets públicos). Esta é a abordagem mais simples e foi utilizada como base para a avaliação de desempenho.
+O núcleo do projeto avalia comparativamente duas estratégias de *Transfer Learning* e *Fine-Tuning*:
 
-2. **Fine-tuning em estágios (Robusto):** Implementação de um treinamento seguencial, em que fo realizado um fine-tuning inicial em um dataset de cenas de multidões(Crowd Human Dataset) para melhorar a robustez contra oclusões. Em seguida, foi aplicado um segundo fine-tuning com as imagens de passageiros no interior do ônibus, fechando o gap de domínio progressivamente.
+1. **Estratégia 1: Baseline (Fine-Tuning Direto):** Utilização do modelo pré-treinado e realização do fine-tuning diretamente nas imagens anotadas de datasets públicos do interior de ônibus. É a abordagem mais simples e rápida, porém altamente propensa a overfitting.
+2. **Estratégia 2: Fine-Tuning em Estágios (Robusto):** Implementação de treinamento sequencial visando o fechamento progressivo do *gap* de domínio (de multidão "geral" para multidão "confinada"). Realizou-se um fine-tuning inicial (Estágio 1) no dataset CrowdHuman para ajuste de sobreposição, seguido por um segundo fine-tuning (Estágio 2) nas imagens do interior do ônibus.
 
 ### Avaliação de Generalização e Validação:
 
@@ -42,9 +44,13 @@ Para ambas as abordagens, etapas sequenciais foram executadas com o objetivo de 
 
 ### Pré-processamento e Robustez
 
-Adicionalmente, com o intuito de mitigar o risco de sobreajuste (overfitting) e aprimorar a robustez do modelo frente a diferentes ambientes, serão aplicados métodos de pré-processamento. Tais métodos englobam o remapeamento de classes, como a conversão da classe "occupied seat" para "person" no dataset "Inside Bus View", e a exclusão de categorias irrelevantes. Paralelamente, técnicas de aumento de dados (Data Augmentation) serão empregadas para simular variações de iluminação (como ajustes de brilho e contraste) e inserção de oclusões artificiais. 
-
-A validação final será conduzida utilizando o dataset privado da Unicamp, visando aferir o desempenho do modelo em condições reais de operação.
+Para mitigar o overfitting e aprimorar a robustez, aplicou-se:
+* **Normalização de Classes:** Todos os datasets foram convertidos para uma classe-alvo única (`person`), descartando classes irrelevantes ou remapeando classes como `occupied seat`.
+* **Limpeza e Redução de Volume:** Remoção de amostras ruidosas e aplicação de subamostragem orientada à redundância temporal/visual.
+* **Data Augmentation:** 
+  * *Cutout (3x10%)*: Simula oclusão parcial cobrindo partes da imagem.
+  * *Blur e Motion Blur (50px)*: Simula movimento e a trepidação natural do ônibus (ladeiras e buracos).
+  * *Hue (+/- 15%) e Saturation (+/- 25%)*: Combate o viés de cor e iluminação, e simula o hardware real acessível utilizado na coleta (ESP32-CAM), que por exemplo, possui limitações de balanço de branco.
 
 ## Bases de Dados
 <!-- > 
@@ -57,17 +63,16 @@ Faça uma descrição sobre o que o grupo concluiu sobre esta base. Sugere-se qu
 
 Forneça também o link para o "datasheet" criado para os datasets (anexado na pasta `data`, como indicado nas [instruções E2](https://github.com/Disciplinas-FEEC/IA901-2026S1/blob/main/templates/ia901-E2-instructions.md)), contendo informações mais detalhadas e sistematizadas sobre as bases de dados.
 -->
-O projeto implementa uma arquitetura de dados baseada no padrão Medalhão dividida em três camadas de persistência (`data/raw`, `data/interim` e `data/processed`). Os dados brutos originais são extraídos de forma imutável de suas respectivas fontes web e consolidados via rotinas automatizadas Python.
 
-### Resumo Descritivo dos Datasets
+O projeto implementa uma arquitetura de dados baseada no padrão Medalhão (`data/raw`, `data/interim` e `data/processed`). A tabela abaixo resume a volumetria bruta e a volumetria final utilizada após a limpeza:
 
-| Base de Dados | Endereço na Web | Resumo descritivo |
-| ----- | ----- | ----- |
-| Passenger Detection on a Bus | [Roboflow Universe](https://universe.roboflow.com/bus-project-frdgz/passenger-detection-on-a-bus-qgljh) | 170 imagens (.jpg) de passageiros em ônibus com bounding boxes precisas. Será utilizada para treinamento (Etapa 1 e 2) |
-| Inside Bus View | [Roboflow Universe](https://universe.roboflow.com/seat-occupancy/inside-bus-view) | 1.400 imagens (.jpg) com anotações de assentos ocupados, que serão remapeadas para a classe "person". Será utilizada para treinamento e teste (Etapa 1 e 2)  |
-| Crowd Human Dataset | [CrowdHuman.org](https://www.crowdhuman.org/) | 19.370 imagens (.jpg) contendo instâncias humanas em cenas densas para o treinamento em estágios. Será utilizada para treinamento(Etapa 2)  |
-| Passenger (Deakin) | [Roboflow Universe](https://universe.roboflow.com/deakin-07shj/passenger-mmpbi) | 4181 imagens (.jpg), será aplicada subamostragem (1 a cada 40 frames) resultando em torno de 100 imagens (.jpg). Será utilizada para treinamento e teste(Etapa 1 e 2) |
-| Dataset Privado (Unicamp) | N/A | 2.400 imagens (.jpeg) coletadas no ônibus elétrico da Unicamp para rotulação manual e validação final. |
+| Dataset | Origem / Fonte | Volume Bruto (Raw) | Volume Utilizado (Processed) | Classe Alvo | Papel Experimental / Etapa |
+| ----- | ----- | ----- | ----- | ----- | ----- |
+| Inside Bus View | Roboflow Universe | 1378 imagens | 93 imagens | person (remap de Occupied) | Treinamento (Base) e Teste In-Distribution |
+| Passenger (Deakin) | Roboflow Universe | 4181 imagens | 641 imagens | person (remap de passenger) | Treinamento (Base) e Teste In-Distribution |
+| CrowdHuman | Hugging Face Hub | 19370 imagens | 19370 imagens | person | Pré-treinamento (Estágio 1 - Metodologia Robusta) |
+| Passenger Detection | Roboflow Universe | 170 imagens | 170 imagens | person (remap de passenger) | Teste de Generalização (Out-of-Distribution) |
+| Dataset Privado | Coleta Própria | 583 imagens | 583 imagens | person | Validação Final em Cenário Real (Ônibus Unicamp) |
 
 <!-- > Forneça também o link para o "datasheet" criado para os datasets (anexado na pasta `data`, como indicado nas [instruções E2](https://github.com/Disciplinas-FEEC/IA901-2026S1/blob/main/templates/ia901-E2-instructions.md)), contendo informações mais detalhadas e sistematizadas sobre as bases de dados. -->
 
@@ -102,6 +107,9 @@ O desenvolvimento deste projeto possui uma arquitetura possuindo reprodutibilida
 
 * **Ambiente de Desenvolvimento:**
   * **Python 3.12 e Jupyter Notebooks:** Orquestração do fluxo de trabalho estruturada no padrão Raw, Interim, Processed. A base de código implementa tipagem estática e documentação padronizada para assegurar a confiabilidade da pesquisa.
+
+* **Camada de Ambiente:** A execução isolada do ambiente é gerenciada pelo **uv** (gerenciador de pacotes Python).
+* **Camada de Configuração:** O isolamento rigoroso dos parâmetros de treinamento é feito através da injeção de configurações via arquivo `config.yaml`, permitindo alterar conjuntos de dados ou estratégias com uma única string.
 
 ## Workflow reprodutível
 <!-- > 
@@ -191,55 +199,57 @@ Apresente os resultados da forma mais rica possível, com gráficos e tabelas. M
 
 ### Experimentos:
 
-Os experimentos iniciais utilizarão o modelo YOLO base para estabelecer o baseline de performance. Como primeiro experimento foi feito um treinamento utilizando o dataset Passenger Detection on a Bus, esse dataset possui 170 imagens de pessoas em ônibus, os dados foram pré processados utilizando orientação sempre na horizontal e na escala 640x640 fit com preenchimento preto nas bordas para não distorcer as imagens. Como data augmentation foram utilizadas as técnicas de:
-* Flip Mirror horizontally: Dobra o dataset sem distorcer a física da imagem, fazendo com que tenha imagens de pessoas que estavam na esquerda ficarem também na direita, já que os ônibus são simétricos.
-* Mosaic: Combina 4 imagens em 1, fazendo com que a rede "foque" em contextos variados.
-* Brightness: Variar o brilho da imagem, regulável, escolhemos de +/- 15%
-* Exposure: Variar a exposição da imagem, regulável, escolhemos de +/- 10%
-* Cutout: Caixas pretas aleatórias que irão cobrir alguma parte da imagem, também é regulável, escolhemos de 3 x 10%, esse parâmetro pode ajudar no problema de oclusão, mesmo que um quadrado preto(simulando alguma oclusão, como uma barra de ferro do ônibus, poltrona,...) esconder alguma parte do corpo de uma pessoa, o restante ainda é um passageiro.
-* Rotation: rotação variável, escolhemos de +/- 10% para simular a variação que pode acontecer da câmera do ônibus balançar/trepidar.
-* Blur: Aplicar efeito de "embaçamento", escolhemos para ser menor ou igual a 1px, pois acreditamos que pelas imagens isso não acontece tanto e poderia piorar o modelo.
-* Motion Blur: semelhante ao blur, porém simulando uma movimentação, escolhemos como parâmetro 50px 0 graus e 1 frame.
-* Hue, variar a escala de cores da imagem, escolhemos +/- 15%. Esse parâmetro ajuda o modelo não ficar tão inviesado em relação a cores, como de roupas e tom de pele.
-* Saturation: Variar a saturação da imagem, escolhemos de +/- 25%, câmeras simples(como a do ESP32-CAM, utilizada no modelo do dataset privado no ônibus da Unicamp, ou câmeras similares) costumam ter um balanço de branco ruim, deixando a imagem mais "azulada" ou "amarelada"(cores frias e quentes), a saturação também pode ajudar na questão de viés em relação a cores que nem o Hue.
-* Crop: Variar corte ou zoom, escolhemos de 0 a 20%, essa técnica aproxima a imagem artificialmente, pode ajudar o modelo aprender a detectar pessoas que estão coladas na câmera, que pode acontecer
+### 1. Falha de Generalização (Cross-Domain)
+Os experimentos iniciais confirmaram que treinar em um único dataset não transfere bem para outro dataset, mesmo com a mesma tarefa. No cenário *in-domain* a métrica é boa, mas no *cross-dataset* cai severamente.
 
-Para visualização de alguns dos resultados preliminares disponibilizamos um pasta no Google Drive com simulações do dataset Passenger Detection on a Bus e Inside Bus View e será mostrado algumas imagens abaixo de parte dos resultados.
+| Modelo | Treino | Teste | mAP50 | Precision | count_mae | count_me |
+|---|---|---|---|---|---|---|
+| el-dkn | passenger-deakin | passenger-deakin | 0.650 | 0.707 | 2.093 | +0.381 |
+| el-dkn | passenger-deakin | inside-bus-view | 0.440 | 0.581 | 5.533 | -5.533 |
+| el-ibv | inside-bus-view | inside-bus-view | 0.876 | 0.881 | 1.133 | +0.333 |
+| el-ibv | inside-bus-view | passenger-deakin | 0.128 | 0.284 | 4.340 | -3.433 |
 
-### Runs Google Drive
+### 2. Multi-dataset Fine-Tuning (In-Domain)
+A combinação de datasets públicos no fine-tuning (`e2-public-default`) superou claramente a arquitetura genérica base (`yolo11m`) dentro do domínio de treino.
 
-```sh
-  https://drive.google.com/drive/folders/1mELdfdfAS4YE39bwXNG4FGVBLFEm-mYM?usp=drive_link
-```
+| Métrica (média do test set inside-bus-view + passenger-deakin) | Baseline yolo11m | e2-public-default |
+|---|---|---|
+| mAP50 | 0.271 | 0.759 |
+| Precision | 0.338 | 0.800 |
+| count_mae | 5.922 | 1.289 |
+| count_me | -4.980 | -0.008 |
 
-De `Epoch` foram utilizadas 300 para o treinamento. 
+### 3. Avaliação em Domínios Não Vistos (Público vs. Privado)
+Avaliamos a estratégia direta (`e2`) contra o fine-tuning em estágios com o CrowdHuman (`e3`) e o modelo Baseline. 
+* **Teste Público:** O fine-tuning melhora significativamente a detecção.
+* **Teste Privado (Unicamp):** De forma surpreendente, o baseline generalista venceu as abordagens de fine-tuning público em detecção e contagem no mundo real.
 
-No roboflow do repositório Passenger Detection on a Bus estava com uma precisão de 91.1%, com o nosso treinamento feito ficou com uma precisão de 93%.
+| Testing dataset | Modelo | mAP50 | Precision | count_mae | count_me |
+|---|---|---|---|---|---|
+| passenger-detection-bus | baseline-medium | 0.064 | 0.112 | 1.706 | -0.882 |
+| passenger-detection-bus | e2-public-default | 0.569 | 0.643 | 3.588 | -3.118 |
+| passenger-detection-bus | e3-public-crowd-default | 0.605 | 0.673 | 2.294 | -1.824 |
+| onibus-unicamp-private | baseline-medium | 0.612 | 0.723 | 1.185 | -1.032 |
+| onibus-unicamp-private | e2-public-default | 0.134 | 0.310 | 1.955 | -1.904 |
+| onibus-unicamp-private | e3-public-crowd-default | 0.156 | 0.319 | 1.803 | -1.662 |
 
-*Matriz de confusão normalizada Passenger Detection on a Bus*
-![Matriz de confusão normalizada Passenger Detection on a Bus](assets/passenger-detection-bus/train/confusion_matrix_normalized.png)
+### 4. Adaptação In-Domain (Teste Privado)
+Para contornar o problema, implementou-se a estratégia `e4-private-adapt-medium`, introduzindo adaptação *in-domain* com aproximadamente 362 imagens privadas de treino. O modelo passou a liderar no domínio real, reduzindo erros de contagem e praticamente zerando o viés.
 
-
-No roboflow do repositório Inside Bus Detection estava com uma precisão de 90.2%, com o nosso treinamento feito ficou com uma precisão de  97%, porém utilizando o modelo do primeiro dataset nesse dataset para validar e verificar a precisão, diminuiu para 31% evidenciando o problema que retratamos de um dataset ficar específico para o conjunto de imagens treinados e quando jogado em outro dataset cair drasticamente a precisão.
-
-*Matriz de confusão normalizada Inside Bus Detection*
-![Matriz de confusão normalizada Inside Bus Detection](assets/inside-bus-view/train/confusion_matrix_normalized.png)
-
-*Matriz de confusão normalizada Inside Bus Detection Validação cruzada*
-![Matriz de confusão normalizada Inside Bus Detection Validação cruzada](assets/inside-bus-view/cross-validation/confusion_matrix_normalized.png)
-
-**Problemas identificados:**
-* Risco elevado de oclusão severa gerando subcontagem (falsos negativos) e sobreposição de detecções (contagem dupla).
-* Viés de dataset (overfitting) e necessidade de simular diversidade, como de iluminação, dos parâmetros de data augmentation, porém mesmo utilizando esses parâmetros o caso ao contrário do primeiro dataset(Passenger Detection on a Bus) sendo para ser validado no Inside Bus View também ficou com precisão bem abaixo.
-* Dataset "passenger_count" foi avaliado preliminarmente e excluído devido a problemas severos de anotação (bounding boxes cobrindo múltiplas pessoas).
-
-### Resultados:
+| Modelo | mAP50 | Precision | count_mae | count_me |
+|---|---|---|---|---|
+| e0-baseline-medium | 0.612 | 0.723 | 1.185 | -1.032 |
+| e4-private-adapt-medium | 0.789 | 0.812 | 0.682 | -0.006 |
 
 ## Discussão
 <!-- 
 Discussão dos resultados. Relacionar os resultados com as perguntas de pesquisa ou hipóteses avaliadas.
 A discussão dos resultados também pode ser feita opcionalmente na seção de Resultados, na medida em que os resultados são apresentados. Aspectos importantes a serem discutidos: É possível tirar conclusões dos resultados? Quais? Há indicações de direções para estudo? São necessários trabalhos mais profundos?
 -->
+
+O modelo especializado nos datasets públicos funciona muito bem dentro de seu domínio de treino e chegou a melhorar os resultados em testes públicos similares não vistos. Contudo, no teste privado da Unicamp, o desempenho despencou. 
+
+Essa falha ocorreu porque o dataset privado representa um **domínio próprio**, caracterizado por um cenário com mais oclusão e uma vasta presença de corpos parciais (braços, pernas ou troncos isolados nos cantos do frame), algo muito diferente do que predominava nos dados públicos. A tentativa de reduzir esse gap com o uso de *augmentations* ofereceu um ganho parcial, mas insuficiente para fechar o domínio. Portanto, a adaptação *in-domain* (inserir dados reais da câmera alvo no treino) se mostrou a etapa crítica para destravar o desempenho na aplicação real.
 
 ## Conclusão
 <!-- 
@@ -248,10 +258,21 @@ Destacar os principais desafios enfrentados.
 Principais lições aprendidas.
 -->
 
+1. Treinar em um dataset único não garante generalização, mesmo mantendo a mesma tarefa.
+2. O treinamento agregado em múltiplos datasets públicos melhorou a generalização no teste público não visto (superando o baseline).
+3. Um modelo especializado de forma exagerada em um conjunto restrito de domínios (datasets públicos) pode degradar severamente o desempenho em domínios fora dele, ficando com uma performance inferior a de um *baseline* generalista no mundo real (dataset privado).
+4. A adaptação *in-domain* elevou o desempenho no domínio real (aumentando mAP50 e Precision) e praticamente zerou o viés da contagem.
+5. O uso do dataset CrowdHuman ajudou no fine-tuning de cenários similares de multidão, mas não conseguiu substituir a necessidade de dados *in-domain* para contagem no ônibus real (devido ao *mismatch* no tipo de oclusão).
+
+**Lições Aprendidas:**
+* A representatividade de um dataset depende diretamente da diversidade das imagens e não apenas do volume total de amostras.
+* Generalização só abrange os domínios efetivamente representados no treinamento. Para domínios "de borda", os dados in-domain são a principal alavanca, enquanto dados proxy (como CrowdHuman) ajudam, mas não substituem.
+* Treinamentos com modelos pesados localmente demandam alto poder de processamento, e o aumento excessivo de épocas provoca overfitting, sendo obrigatório definir critérios de parada (Early Stopping) adequados.
+
 ## Trabalhos Futuros
 <!-- O que poderia ser melhorado se houvesse mais tempo? -->
-* Detecção de Oclusão em Ambientes de Alta Densidade: Embora a metodologia de fine-tuning em estágios com o dataset CrowdHuman tenha mitigado problemas de oclusão, o uso de módulos de estimativa de densidade (density map estimation), inspirados em arquiteturas como CSRNet, poderia ser investigado para cenários de superlotação extrema, onde a contagem por detecção individual de caixas (bounding boxes) tende a saturar.
-* Privacidade e Ética de Dados: Pesquisas futuras poderiam integrar módulos de anonimização automática diretamente no pipeline de pré-processamento, utilizando técnicas de blurring de rostos ou segmentação semântica para garantir a conformidade com leis de proteção de dados (LGPD) sem comprometer a capacidade de extração de características espaciais necessárias para a contagem.
+* **Atacar a lacuna do dataset privado:** Incluir mais dados *in-domain* coletados em cenários de dificuldade extrema (condições de baixa luz, reflexos nos vidros, superlotação extrema e presença de corpos parciais), além de desenvolver *augmentations* de oclusão mais realistas (ex: ocluir partes específicas de pessoas com poltronas ou barras, em vez de recortes genéricos aleatórios).
+* **Explorar Modelos Fundacionais (Foundation Models):** Testar arquiteturas como o Segment Anything Model (SAM) para avaliar a robustez à segmentação em massa e verificar se as abordagens e *augmentations* de oclusão desenvolvidas neste estudo transferem-se de maneira mais eficiente do que nos modelos YOLO convencionais.
 
 ## Uso de IA Generativa
 <!-- > 
@@ -267,7 +288,7 @@ Durante o desenvolvimento deste projeto e a elaboração desta documentação, f
   * **Ferramenta:** Gemini
   * **Prompt utilizado:** Fornecimento do texto descritivo das seções de "Metodologia" e "Experimentos" do README, seguido do comando: *"Preciso gerar uma imagem do meu workflow para meu projeto"*. A IA processou o texto e gerou o código em linguagem Mermaid, que foi posteriormente importado para a plataforma Mermaid e ajustado para a exportação da imagem final.
 
-* **Tarefa: Estruturação e formatação das Referências Bibliográficas**
+* **Tarefa: Estruturação e formatação das Referências Bibliográficas e documentação Readme.**
   * **Ferramenta:** Gemini
   * **Prompt utilizado:** Fornecimento dos links brutos (URLs) das bases de dados, bibliotecas e documentações, acompanhado do comando: *"Preciso ajustar minhas referencias para meu .md"*. A ferramenta categorizou os links e aplicou a sintaxe correta de hiperlinks nativa do Markdown.
 
@@ -275,15 +296,15 @@ Durante o desenvolvimento deste projeto e a elaboração desta documentação, f
 <!-- > Seção obrigatória. Inclua aqui referências utilizadas no projeto. -->
 **Bibliotecas e Frameworks**
 * **[PyTorch](https://pytorch.org/):** Framework principal de Deep Learning utilizado no projeto.
-  > *Nota de instalação (versão estável com suporte a CUDA 12.6):* > `pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu126`
-* **[Ultralytics (YOLO)](https://docs.ultralytics.com/):** Documentação oficial das arquiteturas YOLOv8 e YOLOv11 utilizadas para a detecção de objetos.
+* **[Ultralytics (YOLO)](https://docs.ultralytics.com/):** Documentação oficial das arquiteturas YOLOv8 e YOLOv11.
+* **[Artigo](https://doi.org/10.1177/036119811985233):** Impact of Time-Varying Passenger... (Luying Liu et al., 2019).
 
 **Bases de Dados (Datasets)**
-* **[Roboflow - Passenger Detection on a Bus](https://universe.roboflow.com/bus-project-frdgz/passenger-detection-on-a-bus-qgljh):** Dataset utilizado para o treinamento e detecção de passageiros no interior de ônibus.
-* **[Roboflow - Inside Bus View](https://universe.roboflow.com/seat-occupancy/inside-bus-view):** Dataset focado na visão interna do ônibus (anotações de assentos mapeadas para passageiros).
-* **[Roboflow - Passenger (Deakin)](https://universe.roboflow.com/deakin-07shj/passenger-mmpbi):** Dataset auxiliar de passageiros utilizado para compor as bases de treinamento e validação.
-* **[CrowdHuman Dataset (Página Oficial)](https://www.crowdhuman.org/):** Página oficial do dataset de multidões utilizado para o fine-tuning em estágios, visando maior robustez contra oclusões.
-* **[CrowdHuman Dataset (Hugging Face)](https://huggingface.co/datasets/sshao0516/CrowdHuman):** Repositório do dataset CrowdHuman hospedado no Hugging Face.
+* **[Roboflow - Passenger Detection on a Bus](https://universe.roboflow.com/bus-project-frdgz/passenger-detection-on-a-bus-qgljh):** Dataset utilizado para teste de generalização.
+* **[Roboflow - Inside Bus View](https://universe.roboflow.com/seat-occupancy/inside-bus-view):** Dataset focado na visão interna do ônibus.
+* **[Roboflow - Passenger (Deakin)](https://universe.roboflow.com/deakin-07shj/passenger-mmpbi):** Dataset auxiliar de passageiros utilizado no fine-tuning.
+* **[CrowdHuman Dataset (Página Oficial)](https://www.crowdhuman.org/):** Dataset de multidões utilizado para o fine-tuning no Estágio 1.
 
 **Ferramentas de Experimentação e MLOps**
-* **[Weights & Biases](https://wandb.ai/site/):** Plataforma integrada para o registro de experimentos, monitoramento de métricas de convergência (mAP@50/95) e visualização de predições em ambiente de teste.
+* **[Weights & Biases](https://wandb.ai/site/):** Plataforma integrada para o registro de experimentos e monitoramento de métricas de convergência.
+* **uv:** Gerenciador de dependências e ambiente em Python.

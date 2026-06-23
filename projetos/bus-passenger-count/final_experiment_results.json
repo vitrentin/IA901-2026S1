@@ -1,0 +1,2606 @@
+{
+  "generated_at": "2026-06-23T06:01:54",
+  "records": [
+    {
+      "experiment_id": "e0-baseline-medium",
+      "config": {
+        "experiment_id": "e0-baseline-medium",
+        "strategy": "baseline",
+        "weights": "yolo11m.pt",
+        "dataset_stage": "processed",
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ]
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.1117435623123124,
+          "metrics/recall(B)": 0.2300469483568075,
+          "metrics/mAP50(B)": 0.06354159370879509,
+          "metrics/mAP50-95(B)": 0.020897079626574035,
+          "fitness": 0.020897079626574035,
+          "count_mae": 1.7058823529411764,
+          "count_me": -0.8823529411764706,
+          "count_rmse": 2.1282414723677108,
+          "n_images": 17,
+          "tp": 24,
+          "fp": 174,
+          "fn": 189,
+          "pred_n": 198,
+          "gt_n": 213,
+          "mean_conf": 0.6190566205316119,
+          "precision_cnt": 0.12121212121212122,
+          "recall_cnt": 0.11267605633802817,
+          "f1_cnt": 0.11678832116788321,
+          "F1": 0.15042117733544638
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.3662057504488289,
+          "metrics/recall(B)": 0.3818770226537217,
+          "metrics/mAP50(B)": 0.32856903260893133,
+          "metrics/mAP50-95(B)": 0.17888885041929276,
+          "fitness": 0.17888885041929276,
+          "count_mae": 9.266666666666667,
+          "count_me": -8.866666666666667,
+          "count_rmse": 11.710394243292296,
+          "n_images": 15,
+          "tp": 86,
+          "fp": 90,
+          "fn": 223,
+          "pred_n": 176,
+          "gt_n": 309,
+          "mean_conf": 0.6116029581224377,
+          "precision_cnt": 0.48863636363636365,
+          "recall_cnt": 0.2783171521035599,
+          "f1_cnt": 0.354639175257732,
+          "F1": 0.37387724109749
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.3105303837763469,
+          "metrics/recall(B)": 0.32332878581173263,
+          "metrics/mAP50(B)": 0.21409148256175262,
+          "metrics/mAP50-95(B)": 0.09626555639700826,
+          "fitness": 0.09626555639700826,
+          "count_mae": 2.577319587628866,
+          "count_me": -1.092783505154639,
+          "count_rmse": 3.8422501998097607,
+          "n_images": 97,
+          "tp": 208,
+          "fp": 419,
+          "fn": 525,
+          "pred_n": 627,
+          "gt_n": 733,
+          "mean_conf": 0.5974842974443755,
+          "precision_cnt": 0.3317384370015949,
+          "recall_cnt": 0.2837653478854025,
+          "f1_cnt": 0.3058823529411765,
+          "F1": 0.3168003769963788
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.7233387238356975,
+          "metrics/recall(B)": 0.5302208604503614,
+          "metrics/mAP50(B)": 0.611746636473924,
+          "metrics/mAP50-95(B)": 0.3998879023596826,
+          "fitness": 0.3998879023596826,
+          "count_mae": 1.1847133757961783,
+          "count_me": -1.0318471337579618,
+          "count_rmse": 1.9220477402821103,
+          "n_images": 157,
+          "tp": 2,
+          "fp": 266,
+          "fn": 428,
+          "pred_n": 268,
+          "gt_n": 430,
+          "mean_conf": 0.6493853265002593,
+          "precision_cnt": 0.007462686567164179,
+          "recall_cnt": 0.004651162790697674,
+          "f1_cnt": 0.005730659025787965,
+          "F1": 0.611904348795134
+        }
+      },
+      "summary": {
+        "avg_count_mae": 3.6836454957582223,
+        "avg_mAP50": 0.30448718633835076,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.06354159370879509,
+            "F1": 0.15042117733544638,
+            "count_mae": 1.7058823529411764,
+            "count_me": -0.8823529411764706,
+            "count_rmse": 2.1282414723677108
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.32856903260893133,
+            "F1": 0.37387724109749,
+            "count_mae": 9.266666666666667,
+            "count_me": -8.866666666666667,
+            "count_rmse": 11.710394243292296
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.21409148256175262,
+            "F1": 0.3168003769963788,
+            "count_mae": 2.577319587628866,
+            "count_me": -1.092783505154639,
+            "count_rmse": 3.8422501998097607
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.611746636473924,
+            "F1": 0.611904348795134,
+            "count_mae": 1.1847133757961783,
+            "count_me": -1.0318471337579618,
+            "count_rmse": 1.9220477402821103
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e0-baseline-nano",
+      "config": {
+        "experiment_id": "e0-baseline-nano",
+        "strategy": "baseline",
+        "weights": "yolo11n.pt",
+        "dataset_stage": "processed",
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ]
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.10596552823820087,
+          "metrics/recall(B)": 0.2782295676965859,
+          "metrics/mAP50(B)": 0.07233230926036527,
+          "metrics/mAP50-95(B)": 0.023364856197126166,
+          "fitness": 0.023364856197126166,
+          "count_mae": 3.2941176470588234,
+          "count_me": -3.0588235294117645,
+          "count_rmse": 4.922935518331218,
+          "n_images": 17,
+          "tp": 19,
+          "fp": 142,
+          "fn": 194,
+          "pred_n": 161,
+          "gt_n": 213,
+          "mean_conf": 0.5241463213973905,
+          "precision_cnt": 0.11801242236024845,
+          "recall_cnt": 0.0892018779342723,
+          "f1_cnt": 0.1016042780748663,
+          "F1": 0.15347797733190946
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.5924593749438335,
+          "metrics/recall(B)": 0.16828478964401294,
+          "metrics/mAP50(B)": 0.24044566195285044,
+          "metrics/mAP50-95(B)": 0.1338280423662265,
+          "fitness": 0.1338280423662265,
+          "count_mae": 11.866666666666667,
+          "count_me": -11.866666666666667,
+          "count_rmse": 14.193895401427568,
+          "n_images": 15,
+          "tp": 54,
+          "fp": 77,
+          "fn": 255,
+          "pred_n": 131,
+          "gt_n": 309,
+          "mean_conf": 0.5972652344303276,
+          "precision_cnt": 0.4122137404580153,
+          "recall_cnt": 0.17475728155339806,
+          "f1_cnt": 0.24545454545454543,
+          "F1": 0.2621167691481737
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.2927832675159534,
+          "metrics/recall(B)": 0.25102319236016374,
+          "metrics/mAP50(B)": 0.17237145733908224,
+          "metrics/mAP50-95(B)": 0.0732792691107709,
+          "fitness": 0.0732792691107709,
+          "count_mae": 3.2783505154639174,
+          "count_me": -1.6494845360824741,
+          "count_rmse": 4.565672001441,
+          "n_images": 97,
+          "tp": 171,
+          "fp": 402,
+          "fn": 562,
+          "pred_n": 573,
+          "gt_n": 733,
+          "mean_conf": 0.5323025104159044,
+          "precision_cnt": 0.29842931937172773,
+          "recall_cnt": 0.23328785811732605,
+          "f1_cnt": 0.26186830015313933,
+          "F1": 0.2702998066563505
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.7615039157827548,
+          "metrics/recall(B)": 0.4763381518287573,
+          "metrics/mAP50(B)": 0.5693583041151951,
+          "metrics/mAP50-95(B)": 0.35939458944003705,
+          "fitness": 0.35939458944003705,
+          "count_mae": 1.4331210191082802,
+          "count_me": -1.394904458598726,
+          "count_rmse": 2.201620711648985,
+          "n_images": 157,
+          "tp": 1,
+          "fp": 210,
+          "fn": 429,
+          "pred_n": 211,
+          "gt_n": 430,
+          "mean_conf": 0.6335795970889629,
+          "precision_cnt": 0.004739336492890996,
+          "recall_cnt": 0.002325581395348837,
+          "f1_cnt": 0.0031201248049922,
+          "F1": 0.5860737445354949
+        }
+      },
+      "summary": {
+        "avg_count_mae": 4.968063962074422,
+        "avg_mAP50": 0.26362693316687325,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.07233230926036527,
+            "F1": 0.15347797733190946,
+            "count_mae": 3.2941176470588234,
+            "count_me": -3.0588235294117645,
+            "count_rmse": 4.922935518331218
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.24044566195285044,
+            "F1": 0.2621167691481737,
+            "count_mae": 11.866666666666667,
+            "count_me": -11.866666666666667,
+            "count_rmse": 14.193895401427568
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.17237145733908224,
+            "F1": 0.2702998066563505,
+            "count_mae": 3.2783505154639174,
+            "count_me": -1.6494845360824741,
+            "count_rmse": 4.565672001441
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.5693583041151951,
+            "F1": 0.5860737445354949,
+            "count_mae": 1.4331210191082802,
+            "count_me": -1.394904458598726,
+            "count_rmse": 2.201620711648985
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e0-baseline-large",
+      "config": {
+        "experiment_id": "e0-baseline-large",
+        "strategy": "baseline",
+        "weights": "yolo11l.pt",
+        "dataset_stage": "processed",
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ]
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.1167962813430424,
+          "metrics/recall(B)": 0.29107981220657275,
+          "metrics/mAP50(B)": 0.06691947909706566,
+          "metrics/mAP50-95(B)": 0.022134054294166615,
+          "fitness": 0.022134054294166615,
+          "count_mae": 2.1176470588235294,
+          "count_me": -0.9411764705882353,
+          "count_rmse": 2.8284271247461903,
+          "n_images": 17,
+          "tp": 21,
+          "fp": 176,
+          "fn": 192,
+          "pred_n": 197,
+          "gt_n": 213,
+          "mean_conf": 0.608245645531543,
+          "precision_cnt": 0.1065989847715736,
+          "recall_cnt": 0.09859154929577464,
+          "f1_cnt": 0.1024390243902439,
+          "F1": 0.1667027814446954
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.35017095907323204,
+          "metrics/recall(B)": 0.3300970873786408,
+          "metrics/mAP50(B)": 0.2969381933725751,
+          "metrics/mAP50-95(B)": 0.16721047401563888,
+          "fitness": 0.16721047401563888,
+          "count_mae": 10.666666666666666,
+          "count_me": -10.533333333333333,
+          "count_rmse": 13.185851002747857,
+          "n_images": 15,
+          "tp": 68,
+          "fp": 83,
+          "fn": 241,
+          "pred_n": 151,
+          "gt_n": 309,
+          "mean_conf": 0.642030286867887,
+          "precision_cnt": 0.4503311258278146,
+          "recall_cnt": 0.22006472491909385,
+          "f1_cnt": 0.2956521739130435,
+          "F1": 0.3398378456185119
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.30971501181033095,
+          "metrics/recall(B)": 0.34652114597544337,
+          "metrics/mAP50(B)": 0.2143589303477416,
+          "metrics/mAP50-95(B)": 0.09633824593004219,
+          "fitness": 0.09633824593004219,
+          "count_mae": 2.6597938144329896,
+          "count_me": -1.2164948453608246,
+          "count_rmse": 4.033365993449317,
+          "n_images": 97,
+          "tp": 211,
+          "fp": 404,
+          "fn": 522,
+          "pred_n": 615,
+          "gt_n": 733,
+          "mean_conf": 0.6057247695884085,
+          "precision_cnt": 0.34308943089430893,
+          "recall_cnt": 0.2878581173260573,
+          "f1_cnt": 0.3130563798219585,
+          "F1": 0.3270859112074375
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.7752453341195116,
+          "metrics/recall(B)": 0.5226218917897173,
+          "metrics/mAP50(B)": 0.6318189956125373,
+          "metrics/mAP50-95(B)": 0.41737994592731986,
+          "fitness": 0.41737994592731986,
+          "count_mae": 1.1146496815286624,
+          "count_me": -0.9745222929936306,
+          "count_rmse": 1.8181673421543005,
+          "n_images": 157,
+          "tp": 2,
+          "fp": 275,
+          "fn": 428,
+          "pred_n": 277,
+          "gt_n": 430,
+          "mean_conf": 0.6663610139048056,
+          "precision_cnt": 0.007220216606498195,
+          "recall_cnt": 0.004651162790697674,
+          "f1_cnt": 0.005657708628005658,
+          "F1": 0.6243476605780737
+        }
+      },
+      "summary": {
+        "avg_count_mae": 4.139689305362962,
+        "avg_mAP50": 0.3025088996074799,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.06691947909706566,
+            "F1": 0.1667027814446954,
+            "count_mae": 2.1176470588235294,
+            "count_me": -0.9411764705882353,
+            "count_rmse": 2.8284271247461903
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.2969381933725751,
+            "F1": 0.3398378456185119,
+            "count_mae": 10.666666666666666,
+            "count_me": -10.533333333333333,
+            "count_rmse": 13.185851002747857
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.2143589303477416,
+            "F1": 0.3270859112074375,
+            "count_mae": 2.6597938144329896,
+            "count_me": -1.2164948453608246,
+            "count_rmse": 4.033365993449317
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.6318189956125373,
+            "F1": 0.6243476605780737,
+            "count_mae": 1.1146496815286624,
+            "count_me": -0.9745222929936306,
+            "count_rmse": 1.8181673421543005
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e1-dkn",
+      "config": {
+        "experiment_id": "e1-dkn",
+        "strategy": "direct",
+        "weights": "yolo11m.pt",
+        "dataset_stage": "processed",
+        "train_datasets": [
+          "passenger-deakin"
+        ],
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "train_config": {
+          "epochs": 100,
+          "patience": 20,
+          "batch": 16,
+          "imgsz": 640,
+          "workers": 4,
+          "amp": true,
+          "seed": 42,
+          "deterministic": true
+        }
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.5397940050935117,
+          "metrics/recall(B)": 0.4956143387936368,
+          "metrics/mAP50(B)": 0.4739742391391202,
+          "metrics/mAP50-95(B)": 0.18934579651486566,
+          "fitness": 0.18934579651486566,
+          "count_mae": 3.9411764705882355,
+          "count_me": -3.9411764705882355,
+          "count_rmse": 5.514686274474945,
+          "n_images": 17,
+          "tp": 83,
+          "fp": 63,
+          "fn": 130,
+          "pred_n": 146,
+          "gt_n": 213,
+          "mean_conf": 0.5632091521808545,
+          "precision_cnt": 0.5684931506849316,
+          "recall_cnt": 0.38967136150234744,
+          "f1_cnt": 0.4623955431754875,
+          "F1": 0.5167616245293626
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.5812544722548049,
+          "metrics/recall(B)": 0.5048543689320388,
+          "metrics/mAP50(B)": 0.4404363296681874,
+          "metrics/mAP50-95(B)": 0.17571324306074862,
+          "fitness": 0.17571324306074862,
+          "count_mae": 5.533333333333333,
+          "count_me": -5.533333333333333,
+          "count_rmse": 7.085195833567341,
+          "n_images": 15,
+          "tp": 140,
+          "fp": 86,
+          "fn": 169,
+          "pred_n": 226,
+          "gt_n": 309,
+          "mean_conf": 0.6022036771858688,
+          "precision_cnt": 0.6194690265486725,
+          "recall_cnt": 0.45307443365695793,
+          "f1_cnt": 0.5233644859813084,
+          "F1": 0.5403673161493815
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.7073233898340724,
+          "metrics/recall(B)": 0.6521145975443383,
+          "metrics/mAP50(B)": 0.6503507809947798,
+          "metrics/mAP50-95(B)": 0.3286548897258177,
+          "fitness": 0.3286548897258177,
+          "count_mae": 2.0927835051546393,
+          "count_me": 0.38144329896907214,
+          "count_rmse": 3.2220247204155763,
+          "n_images": 97,
+          "tp": 496,
+          "fp": 274,
+          "fn": 237,
+          "pred_n": 770,
+          "gt_n": 733,
+          "mean_conf": 0.6201867958554974,
+          "precision_cnt": 0.6441558441558441,
+          "recall_cnt": 0.6766712141882674,
+          "f1_cnt": 0.6600133067198936,
+          "F1": 0.6785979382330573
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.30425658622771956,
+          "metrics/recall(B)": 0.19813519813519814,
+          "metrics/mAP50(B)": 0.12577217326442436,
+          "metrics/mAP50-95(B)": 0.050632203335914096,
+          "fitness": 0.050632203335914096,
+          "count_mae": 1.8152866242038217,
+          "count_me": -1.7261146496815287,
+          "count_rmse": 2.4740693418496287,
+          "n_images": 157,
+          "tp": 2,
+          "fp": 157,
+          "fn": 428,
+          "pred_n": 159,
+          "gt_n": 430,
+          "mean_conf": 0.49101303995780227,
+          "precision_cnt": 0.012578616352201259,
+          "recall_cnt": 0.004651162790697674,
+          "f1_cnt": 0.006791171477079796,
+          "F1": 0.23998775805067823
+        }
+      },
+      "summary": {
+        "avg_count_mae": 3.3456449833200073,
+        "avg_mAP50": 0.42263338076662793,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.4739742391391202,
+            "F1": 0.5167616245293626,
+            "count_mae": 3.9411764705882355,
+            "count_me": -3.9411764705882355,
+            "count_rmse": 5.514686274474945
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.4404363296681874,
+            "F1": 0.5403673161493815,
+            "count_mae": 5.533333333333333,
+            "count_me": -5.533333333333333,
+            "count_rmse": 7.085195833567341
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.6503507809947798,
+            "F1": 0.6785979382330573,
+            "count_mae": 2.0927835051546393,
+            "count_me": 0.38144329896907214,
+            "count_rmse": 3.2220247204155763
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.12577217326442436,
+            "F1": 0.23998775805067823,
+            "count_mae": 1.8152866242038217,
+            "count_me": -1.7261146496815287,
+            "count_rmse": 2.4740693418496287
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e1-ibv",
+      "config": {
+        "experiment_id": "e1-ibv",
+        "strategy": "direct",
+        "weights": "yolo11m.pt",
+        "dataset_stage": "processed",
+        "train_datasets": [
+          "inside-bus-view"
+        ],
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "train_config": {
+          "epochs": 100,
+          "patience": 20,
+          "batch": 16,
+          "imgsz": 640,
+          "workers": 4,
+          "amp": true,
+          "seed": 42,
+          "deterministic": true
+        }
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.5426073458729418,
+          "metrics/recall(B)": 0.7464788732394366,
+          "metrics/mAP50(B)": 0.6800939361561433,
+          "metrics/mAP50-95(B)": 0.3495887801573896,
+          "fitness": 0.3495887801573896,
+          "count_mae": 79.17647058823529,
+          "count_me": 79.17647058823529,
+          "count_rmse": 80.75962881947157,
+          "n_images": 17,
+          "tp": 181,
+          "fp": 1378,
+          "fn": 32,
+          "pred_n": 1559,
+          "gt_n": 213,
+          "mean_conf": 0.6142704963607617,
+          "precision_cnt": 0.11610006414368185,
+          "recall_cnt": 0.8497652582159625,
+          "f1_cnt": 0.20428893905191872,
+          "F1": 0.6284217675332457
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.5921902457395473,
+          "metrics/recall(B)": 0.643822409478266,
+          "metrics/mAP50(B)": 0.6328400321504983,
+          "metrics/mAP50-95(B)": 0.3008278913904384,
+          "fitness": 0.3008278913904384,
+          "count_mae": 44.8,
+          "count_me": 44.8,
+          "count_rmse": 45.768985131855395,
+          "n_images": 15,
+          "tp": 241,
+          "fp": 740,
+          "fn": 68,
+          "pred_n": 981,
+          "gt_n": 309,
+          "mean_conf": 0.6906573619925162,
+          "precision_cnt": 0.24566768603465852,
+          "recall_cnt": 0.7799352750809061,
+          "f1_cnt": 0.3736434108527132,
+          "F1": 0.6169279080955271
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.23499702438273287,
+          "metrics/recall(B)": 0.3601637107776262,
+          "metrics/mAP50(B)": 0.18954451735032163,
+          "metrics/mAP50-95(B)": 0.06629779559918755,
+          "fitness": 0.06629779559918755,
+          "count_mae": 98.65979381443299,
+          "count_me": 98.65979381443299,
+          "count_rmse": 107.44924479113646,
+          "n_images": 97,
+          "tp": 427,
+          "fp": 9876,
+          "fn": 306,
+          "pred_n": 10303,
+          "gt_n": 733,
+          "mean_conf": 0.5832512825163408,
+          "precision_cnt": 0.041444239541881006,
+          "recall_cnt": 0.582537517053206,
+          "f1_cnt": 0.07738310982239942,
+          "F1": 0.2844186295340227
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.028111530477067482,
+          "metrics/recall(B)": 0.08624708624708624,
+          "metrics/mAP50(B)": 0.011573609076070013,
+          "metrics/mAP50-95(B)": 0.0033220682702164855,
+          "fitness": 0.0033220682702164855,
+          "count_mae": 52.3312101910828,
+          "count_me": 52.3312101910828,
+          "count_rmse": 55.410914328781764,
+          "n_images": 157,
+          "tp": 5,
+          "fp": 8641,
+          "fn": 425,
+          "pred_n": 8646,
+          "gt_n": 430,
+          "mean_conf": 0.5377362240920209,
+          "precision_cnt": 0.0005783021050196623,
+          "recall_cnt": 0.011627906976744186,
+          "f1_cnt": 0.0011018069634200088,
+          "F1": 0.04240235957805434
+        }
+      },
+      "summary": {
+        "avg_count_mae": 68.74186864843777,
+        "avg_mAP50": 0.37851302368325834,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.6800939361561433,
+            "F1": 0.6284217675332457,
+            "count_mae": 79.17647058823529,
+            "count_me": 79.17647058823529,
+            "count_rmse": 80.75962881947157
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.6328400321504983,
+            "F1": 0.6169279080955271,
+            "count_mae": 44.8,
+            "count_me": 44.8,
+            "count_rmse": 45.768985131855395
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.18954451735032163,
+            "F1": 0.2844186295340227,
+            "count_mae": 98.65979381443299,
+            "count_me": 98.65979381443299,
+            "count_rmse": 107.44924479113646
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.011573609076070013,
+            "F1": 0.04240235957805434,
+            "count_mae": 52.3312101910828,
+            "count_me": 52.3312101910828,
+            "count_rmse": 55.410914328781764
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e1-public-noaug",
+      "config": {
+        "experiment_id": "e1-public-noaug",
+        "strategy": "direct",
+        "weights": "yolo11m.pt",
+        "dataset_stage": "processed",
+        "train_datasets": [
+          "passenger-deakin",
+          "inside-bus-view"
+        ],
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "train_config": {
+          "epochs": 100,
+          "patience": 20,
+          "batch": 16,
+          "imgsz": 640,
+          "workers": 4,
+          "amp": true,
+          "seed": 42,
+          "deterministic": true
+        },
+        "augment": {
+          "hsv_h": 0.0,
+          "hsv_s": 0.0,
+          "hsv_v": 0.0,
+          "degrees": 0.0,
+          "translate": 0.0,
+          "scale": 0.0,
+          "shear": 0.0,
+          "perspective": 0.0,
+          "flipud": 0.0,
+          "fliplr": 0.0,
+          "mosaic": 0.0,
+          "mixup": 0.0,
+          "copy_paste": 0.0,
+          "erasing": 0.0
+        }
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.663785533366821,
+          "metrics/recall(B)": 0.47417840375586856,
+          "metrics/mAP50(B)": 0.48405780928420145,
+          "metrics/mAP50-95(B)": 0.1918049635985853,
+          "fitness": 0.1918049635985853,
+          "count_mae": 5.411764705882353,
+          "count_me": -5.176470588235294,
+          "count_rmse": 6.126125346800038,
+          "n_images": 17,
+          "tp": 92,
+          "fp": 33,
+          "fn": 121,
+          "pred_n": 125,
+          "gt_n": 213,
+          "mean_conf": 0.7071697649955749,
+          "precision_cnt": 0.736,
+          "recall_cnt": 0.431924882629108,
+          "f1_cnt": 0.5443786982248521,
+          "F1": 0.5531858337162436
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.7955978080987942,
+          "metrics/recall(B)": 0.7431954782337143,
+          "metrics/mAP50(B)": 0.7565375495993492,
+          "metrics/mAP50-95(B)": 0.3766153615038344,
+          "fitness": 0.3766153615038344,
+          "count_mae": 3.2,
+          "count_me": -3.2,
+          "count_rmse": 4.147288270665544,
+          "n_images": 15,
+          "tp": 223,
+          "fp": 38,
+          "fn": 86,
+          "pred_n": 261,
+          "gt_n": 309,
+          "mean_conf": 0.8284286554060677,
+          "precision_cnt": 0.8544061302681992,
+          "recall_cnt": 0.7216828478964401,
+          "f1_cnt": 0.7824561403508772,
+          "F1": 0.7685043842125409
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.6098879622770127,
+          "metrics/recall(B)": 0.538881309686221,
+          "metrics/mAP50(B)": 0.5424803018625624,
+          "metrics/mAP50-95(B)": 0.26376824002916577,
+          "fitness": 0.26376824002916577,
+          "count_mae": 2.9690721649484537,
+          "count_me": -2.0618556701030926,
+          "count_rmse": 4.2280360286773595,
+          "n_images": 97,
+          "tp": 364,
+          "fp": 169,
+          "fn": 369,
+          "pred_n": 533,
+          "gt_n": 733,
+          "mean_conf": 0.7577817403129521,
+          "precision_cnt": 0.6829268292682927,
+          "recall_cnt": 0.4965893587994543,
+          "f1_cnt": 0.5750394944707741,
+          "F1": 0.572190137558303
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.41349894875577486,
+          "metrics/recall(B)": 0.09696730205971026,
+          "metrics/mAP50(B)": 0.06991517149882934,
+          "metrics/mAP50-95(B)": 0.027090196845806762,
+          "fitness": 0.027090196845806762,
+          "count_mae": 2.3694267515923566,
+          "count_me": -2.343949044585987,
+          "count_rmse": 3.084789063595594,
+          "n_images": 157,
+          "tp": 0,
+          "fp": 62,
+          "fn": 430,
+          "pred_n": 62,
+          "gt_n": 430,
+          "mean_conf": 0.5925229206200568,
+          "precision_cnt": 0.0,
+          "recall_cnt": 0.0,
+          "f1_cnt": 0.0,
+          "F1": 0.15709511608777077
+        }
+      },
+      "summary": {
+        "avg_count_mae": 3.487565905605791,
+        "avg_mAP50": 0.46324770806123555,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.48405780928420145,
+            "F1": 0.5531858337162436,
+            "count_mae": 5.411764705882353,
+            "count_me": -5.176470588235294,
+            "count_rmse": 6.126125346800038
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.7565375495993492,
+            "F1": 0.7685043842125409,
+            "count_mae": 3.2,
+            "count_me": -3.2,
+            "count_rmse": 4.147288270665544
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.5424803018625624,
+            "F1": 0.572190137558303,
+            "count_mae": 2.9690721649484537,
+            "count_me": -2.0618556701030926,
+            "count_rmse": 4.2280360286773595
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.06991517149882934,
+            "F1": 0.15709511608777077,
+            "count_mae": 2.3694267515923566,
+            "count_me": -2.343949044585987,
+            "count_rmse": 3.084789063595594
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e2-public-default",
+      "config": {
+        "experiment_id": "e2-public-default",
+        "strategy": "direct",
+        "weights": "yolo11m.pt",
+        "dataset_stage": "processed",
+        "train_datasets": [
+          "passenger-deakin",
+          "inside-bus-view"
+        ],
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "train_config": {
+          "epochs": 100,
+          "patience": 20,
+          "batch": 16,
+          "imgsz": 640,
+          "workers": 4,
+          "amp": true,
+          "seed": 42,
+          "deterministic": true
+        }
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.6425348065906781,
+          "metrics/recall(B)": 0.6056338028169014,
+          "metrics/mAP50(B)": 0.5686264212807688,
+          "metrics/mAP50-95(B)": 0.22539307101813705,
+          "fitness": 0.22539307101813705,
+          "count_mae": 3.588235294117647,
+          "count_me": -3.1176470588235294,
+          "count_rmse": 4.412548949903458,
+          "n_images": 17,
+          "tp": 112,
+          "fp": 48,
+          "fn": 101,
+          "pred_n": 160,
+          "gt_n": 213,
+          "mean_conf": 0.6469225050881505,
+          "precision_cnt": 0.7,
+          "recall_cnt": 0.5258215962441315,
+          "f1_cnt": 0.6005361930294907,
+          "F1": 0.6235388318929654
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.9002947380161445,
+          "metrics/recall(B)": 0.7889926861610083,
+          "metrics/mAP50(B)": 0.8521103420094954,
+          "metrics/mAP50-95(B)": 0.4657279476320679,
+          "fitness": 0.4657279476320679,
+          "count_mae": 0.7333333333333333,
+          "count_me": -0.06666666666666667,
+          "count_rmse": 0.9309493362512627,
+          "n_images": 15,
+          "tp": 254,
+          "fp": 54,
+          "fn": 55,
+          "pred_n": 308,
+          "gt_n": 309,
+          "mean_conf": 0.6790653011435038,
+          "precision_cnt": 0.8246753246753247,
+          "recall_cnt": 0.8220064724919094,
+          "f1_cnt": 0.8233387358184765,
+          "F1": 0.8409770338875007
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.7004259702448264,
+          "metrics/recall(B)": 0.6316507503410641,
+          "metrics/mAP50(B)": 0.6659980975964385,
+          "metrics/mAP50-95(B)": 0.34053381471589034,
+          "fitness": 0.34053381471589034,
+          "count_mae": 1.8453608247422681,
+          "count_me": 0.05154639175257732,
+          "count_rmse": 2.833889171271796,
+          "n_images": 97,
+          "tp": 480,
+          "fp": 258,
+          "fn": 253,
+          "pred_n": 738,
+          "gt_n": 733,
+          "mean_conf": 0.6248603629952847,
+          "precision_cnt": 0.6504065040650406,
+          "recall_cnt": 0.654843110504775,
+          "f1_cnt": 0.6526172671651937,
+          "F1": 0.6642629254400899
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.3098637428671994,
+          "metrics/recall(B)": 0.17249417249417248,
+          "metrics/mAP50(B)": 0.13405966358282387,
+          "metrics/mAP50-95(B)": 0.056518820872186,
+          "fitness": 0.056518820872186,
+          "count_mae": 1.9554140127388535,
+          "count_me": -1.9044585987261147,
+          "count_rmse": 2.768107725896087,
+          "n_images": 157,
+          "tp": 0,
+          "fp": 131,
+          "fn": 430,
+          "pred_n": 131,
+          "gt_n": 430,
+          "mean_conf": 0.5149985938581801,
+          "precision_cnt": 0.0,
+          "recall_cnt": 0.0,
+          "f1_cnt": 0.0,
+          "F1": 0.22161838008517504
+        }
+      },
+      "summary": {
+        "avg_count_mae": 2.0305858662330256,
+        "avg_mAP50": 0.5551986311173817,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.5686264212807688,
+            "F1": 0.6235388318929654,
+            "count_mae": 3.588235294117647,
+            "count_me": -3.1176470588235294,
+            "count_rmse": 4.412548949903458
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.8521103420094954,
+            "F1": 0.8409770338875007,
+            "count_mae": 0.7333333333333333,
+            "count_me": -0.06666666666666667,
+            "count_rmse": 0.9309493362512627
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.6659980975964385,
+            "F1": 0.6642629254400899,
+            "count_mae": 1.8453608247422681,
+            "count_me": 0.05154639175257732,
+            "count_rmse": 2.833889171271796
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.13405966358282387,
+            "F1": 0.22161838008517504,
+            "count_mae": 1.9554140127388535,
+            "count_me": -1.9044585987261147,
+            "count_rmse": 2.768107725896087
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e2-public-busaug",
+      "config": {
+        "experiment_id": "e2-public-busaug",
+        "strategy": "direct",
+        "weights": "yolo11m.pt",
+        "dataset_stage": "processed",
+        "train_datasets": [
+          "passenger-deakin",
+          "inside-bus-view"
+        ],
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "train_config": {
+          "epochs": 100,
+          "patience": 20,
+          "batch": 16,
+          "imgsz": 640,
+          "workers": 4,
+          "amp": true,
+          "seed": 42,
+          "deterministic": true
+        },
+        "augment": {
+          "fliplr": 0.5,
+          "flipud": 0.0,
+          "mosaic": 1.0,
+          "close_mosaic": 10,
+          "hsv_h": 0.03,
+          "hsv_s": 0.7,
+          "hsv_v": 0.0,
+          "degrees": 10.0,
+          "translate": 0.1,
+          "scale": 0.2,
+          "shear": 0.0,
+          "perspective": 0.0,
+          "erasing": 0.0,
+          "blur_px": 50,
+          "blur_p": 0.15,
+          "motion_blur_px": 50,
+          "motion_blur_p": 0.15,
+          "cutout_holes": 3,
+          "cutout_size": 0.1,
+          "cutout_p": 0.5
+        }
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.4448213768330116,
+          "metrics/recall(B)": 0.4413145539906103,
+          "metrics/mAP50(B)": 0.3073112163208839,
+          "metrics/mAP50-95(B)": 0.09544679234252276,
+          "fitness": 0.09544679234252276,
+          "count_mae": 2.823529411764706,
+          "count_me": -2.7058823529411766,
+          "count_rmse": 3.6782348707914077,
+          "n_images": 17,
+          "tp": 80,
+          "fp": 87,
+          "fn": 133,
+          "pred_n": 167,
+          "gt_n": 213,
+          "mean_conf": 0.5421120444100774,
+          "precision_cnt": 0.47904191616766467,
+          "recall_cnt": 0.3755868544600939,
+          "f1_cnt": 0.4210526315789474,
+          "F1": 0.44306102640504
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.9205405556757327,
+          "metrics/recall(B)": 0.7799352750809061,
+          "metrics/mAP50(B)": 0.868495617696886,
+          "metrics/mAP50-95(B)": 0.44801319961957864,
+          "fitness": 0.44801319961957864,
+          "count_mae": 1.6666666666666667,
+          "count_me": 1.1333333333333333,
+          "count_rmse": 2.265686062395524,
+          "n_images": 15,
+          "tp": 260,
+          "fp": 66,
+          "fn": 49,
+          "pred_n": 326,
+          "gt_n": 309,
+          "mean_conf": 0.667295158275066,
+          "precision_cnt": 0.7975460122699386,
+          "recall_cnt": 0.8414239482200647,
+          "f1_cnt": 0.8188976377952755,
+          "F1": 0.8444248821750326
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.6581037197421213,
+          "metrics/recall(B)": 0.635743519781719,
+          "metrics/mAP50(B)": 0.6444896712762341,
+          "metrics/mAP50-95(B)": 0.3090638978439501,
+          "fitness": 0.3090638978439501,
+          "count_mae": 2.3917525773195876,
+          "count_me": 1.1958762886597938,
+          "count_rmse": 3.4848715753822574,
+          "n_images": 97,
+          "tp": 498,
+          "fp": 351,
+          "fn": 235,
+          "pred_n": 849,
+          "gt_n": 733,
+          "mean_conf": 0.6032389201601206,
+          "precision_cnt": 0.5865724381625441,
+          "recall_cnt": 0.679399727148704,
+          "f1_cnt": 0.6295828065739569,
+          "F1": 0.6467304058619341
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.33382506471913664,
+          "metrics/recall(B)": 0.2417944719161736,
+          "metrics/mAP50(B)": 0.17508252730768586,
+          "metrics/mAP50-95(B)": 0.07772781495888419,
+          "fitness": 0.07772781495888419,
+          "count_mae": 1.6369426751592357,
+          "count_me": -1.394904458598726,
+          "count_rmse": 2.339089049099635,
+          "n_images": 157,
+          "tp": 2,
+          "fp": 209,
+          "fn": 428,
+          "pred_n": 211,
+          "gt_n": 430,
+          "mean_conf": 0.5088889221727001,
+          "precision_cnt": 0.009478672985781991,
+          "recall_cnt": 0.004651162790697674,
+          "f1_cnt": 0.0062402496099844,
+          "F1": 0.28045279945835205
+        }
+      },
+      "summary": {
+        "avg_count_mae": 2.1297228327275493,
+        "avg_mAP50": 0.49884475815042245,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.3073112163208839,
+            "F1": 0.44306102640504,
+            "count_mae": 2.823529411764706,
+            "count_me": -2.7058823529411766,
+            "count_rmse": 3.6782348707914077
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.868495617696886,
+            "F1": 0.8444248821750326,
+            "count_mae": 1.6666666666666667,
+            "count_me": 1.1333333333333333,
+            "count_rmse": 2.265686062395524
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.6444896712762341,
+            "F1": 0.6467304058619341,
+            "count_mae": 2.3917525773195876,
+            "count_me": 1.1958762886597938,
+            "count_rmse": 3.4848715753822574
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.17508252730768586,
+            "F1": 0.28045279945835205,
+            "count_mae": 1.6369426751592357,
+            "count_me": -1.394904458598726,
+            "count_rmse": 2.339089049099635
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e4-private-adapt-medium",
+      "config": {
+        "experiment_id": "e4-private-adapt-medium",
+        "strategy": "direct",
+        "weights": "yolo11m.pt",
+        "dataset_stage": "processed",
+        "train_datasets": [
+          "passenger-deakin",
+          "inside-bus-view",
+          "onibus-unicamp-private"
+        ],
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "train_config": {
+          "epochs": 100,
+          "patience": 20,
+          "batch": 16,
+          "imgsz": 640,
+          "workers": 4,
+          "amp": true,
+          "seed": 42,
+          "deterministic": true
+        }
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.7039530325250024,
+          "metrics/recall(B)": 0.5915492957746479,
+          "metrics/mAP50(B)": 0.5841081557813881,
+          "metrics/mAP50-95(B)": 0.2146378788710373,
+          "fitness": 0.2146378788710373,
+          "count_mae": 2.2941176470588234,
+          "count_me": -1.7058823529411764,
+          "count_rmse": 3.2988411512494005,
+          "n_images": 17,
+          "tp": 127,
+          "fp": 57,
+          "fn": 86,
+          "pred_n": 184,
+          "gt_n": 213,
+          "mean_conf": 0.6045905045517113,
+          "precision_cnt": 0.6902173913043478,
+          "recall_cnt": 0.596244131455399,
+          "f1_cnt": 0.6397984886649875,
+          "F1": 0.6428748317189812
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.9101816975965451,
+          "metrics/recall(B)": 0.7870768005957901,
+          "metrics/mAP50(B)": 0.8579021682408908,
+          "metrics/mAP50-95(B)": 0.4626860342330398,
+          "fitness": 0.4626860342330398,
+          "count_mae": 1.6,
+          "count_me": -1.2,
+          "count_rmse": 2.1908902300206643,
+          "n_images": 15,
+          "tp": 249,
+          "fp": 42,
+          "fn": 60,
+          "pred_n": 291,
+          "gt_n": 309,
+          "mean_conf": 0.7243124373590004,
+          "precision_cnt": 0.8556701030927835,
+          "recall_cnt": 0.8058252427184466,
+          "f1_cnt": 0.83,
+          "F1": 0.8441647507060559
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.691102519798394,
+          "metrics/recall(B)": 0.6501357783458196,
+          "metrics/mAP50(B)": 0.6591839722947808,
+          "metrics/mAP50-95(B)": 0.3376477702894601,
+          "fitness": 0.3376477702894601,
+          "count_mae": 1.865979381443299,
+          "count_me": 0.5257731958762887,
+          "count_rmse": 2.9021854545102963,
+          "n_images": 97,
+          "tp": 499,
+          "fp": 285,
+          "fn": 234,
+          "pred_n": 784,
+          "gt_n": 733,
+          "mean_conf": 0.6256998932863377,
+          "precision_cnt": 0.6364795918367347,
+          "recall_cnt": 0.6807639836289222,
+          "f1_cnt": 0.6578773895847067,
+          "F1": 0.6699935056247179
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.8116623912855926,
+          "metrics/recall(B)": 0.7232931176971608,
+          "metrics/mAP50(B)": 0.7887518089449224,
+          "metrics/mAP50-95(B)": 0.5603318457407604,
+          "fitness": 0.5603318457407604,
+          "count_mae": 0.6815286624203821,
+          "count_me": -0.006369426751592357,
+          "count_rmse": 1.1702250858669696,
+          "n_images": 157,
+          "tp": 2,
+          "fp": 427,
+          "fn": 428,
+          "pred_n": 429,
+          "gt_n": 430,
+          "mean_conf": 0.6621427572829462,
+          "precision_cnt": 0.004662004662004662,
+          "recall_cnt": 0.004651162790697674,
+          "f1_cnt": 0.004656577415599534,
+          "F1": 0.764933990692085
+        }
+      },
+      "summary": {
+        "avg_count_mae": 1.610406422730626,
+        "avg_mAP50": 0.7224865263154955,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.5841081557813881,
+            "F1": 0.6428748317189812,
+            "count_mae": 2.2941176470588234,
+            "count_me": -1.7058823529411764,
+            "count_rmse": 3.2988411512494005
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.8579021682408908,
+            "F1": 0.8441647507060559,
+            "count_mae": 1.6,
+            "count_me": -1.2,
+            "count_rmse": 2.1908902300206643
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.6591839722947808,
+            "F1": 0.6699935056247179,
+            "count_mae": 1.865979381443299,
+            "count_me": 0.5257731958762887,
+            "count_rmse": 2.9021854545102963
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.7887518089449224,
+            "F1": 0.764933990692085,
+            "count_mae": 0.6815286624203821,
+            "count_me": -0.006369426751592357,
+            "count_rmse": 1.1702250858669696
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e4-private-adapt-medium-busaug",
+      "config": {
+        "experiment_id": "e4-private-adapt-medium-busaug",
+        "strategy": "direct",
+        "weights": "yolo11m.pt",
+        "dataset_stage": "processed",
+        "train_datasets": [
+          "passenger-deakin",
+          "inside-bus-view",
+          "onibus-unicamp-private"
+        ],
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "train_config": {
+          "epochs": 100,
+          "patience": 20,
+          "batch": 16,
+          "imgsz": 640,
+          "workers": 4,
+          "amp": true,
+          "seed": 42,
+          "deterministic": true
+        },
+        "augment": {
+          "fliplr": 0.5,
+          "flipud": 0.0,
+          "mosaic": 1.0,
+          "close_mosaic": 10,
+          "hsv_h": 0.03,
+          "hsv_s": 0.7,
+          "hsv_v": 0.0,
+          "degrees": 10.0,
+          "translate": 0.1,
+          "scale": 0.2,
+          "shear": 0.0,
+          "perspective": 0.0,
+          "erasing": 0.0,
+          "blur_px": 50,
+          "blur_p": 0.15,
+          "motion_blur_px": 50,
+          "motion_blur_p": 0.15,
+          "cutout_holes": 3,
+          "cutout_size": 0.1,
+          "cutout_p": 0.5
+        }
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.6033871602678296,
+          "metrics/recall(B)": 0.5492957746478874,
+          "metrics/mAP50(B)": 0.5244446531473024,
+          "metrics/mAP50-95(B)": 0.2073405773483416,
+          "fitness": 0.2073405773483416,
+          "count_mae": 3.235294117647059,
+          "count_me": -2.0588235294117645,
+          "count_rmse": 4.051143629381999,
+          "n_images": 17,
+          "tp": 111,
+          "fp": 67,
+          "fn": 102,
+          "pred_n": 178,
+          "gt_n": 213,
+          "mean_conf": 0.5598772842897458,
+          "precision_cnt": 0.6235955056179775,
+          "recall_cnt": 0.5211267605633803,
+          "f1_cnt": 0.5677749360613811,
+          "F1": 0.5750723075225207
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.8908925107213539,
+          "metrics/recall(B)": 0.8025889967637541,
+          "metrics/mAP50(B)": 0.8595326779689239,
+          "metrics/mAP50-95(B)": 0.44843218657779244,
+          "fitness": 0.44843218657779244,
+          "count_mae": 1.0,
+          "count_me": 0.4666666666666667,
+          "count_rmse": 1.2909944487358056,
+          "n_images": 15,
+          "tp": 259,
+          "fp": 57,
+          "fn": 50,
+          "pred_n": 316,
+          "gt_n": 309,
+          "mean_conf": 0.6799569716559181,
+          "precision_cnt": 0.819620253164557,
+          "recall_cnt": 0.8381877022653722,
+          "f1_cnt": 0.8288000000000001,
+          "F1": 0.8444385406558461
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.6372064666478379,
+          "metrics/recall(B)": 0.6834924965893588,
+          "metrics/mAP50(B)": 0.6549375594861397,
+          "metrics/mAP50-95(B)": 0.32735705492486133,
+          "fitness": 0.32735705492486133,
+          "count_mae": 1.9896907216494846,
+          "count_me": 0.6494845360824743,
+          "count_rmse": 3.1179559786077933,
+          "n_images": 97,
+          "tp": 492,
+          "fp": 304,
+          "fn": 241,
+          "pred_n": 796,
+          "gt_n": 733,
+          "mean_conf": 0.6093364441814135,
+          "precision_cnt": 0.6180904522613065,
+          "recall_cnt": 0.6712141882673943,
+          "f1_cnt": 0.643557880967953,
+          "F1": 0.6595383972506299
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.8172938377914188,
+          "metrics/recall(B)": 0.6946386946386947,
+          "metrics/mAP50(B)": 0.7847695640510843,
+          "metrics/mAP50-95(B)": 0.511567886466124,
+          "fitness": 0.511567886466124,
+          "count_mae": 0.7515923566878981,
+          "count_me": 0.14012738853503184,
+          "count_rmse": 1.1454701702043688,
+          "n_images": 157,
+          "tp": 3,
+          "fp": 449,
+          "fn": 427,
+          "pred_n": 452,
+          "gt_n": 430,
+          "mean_conf": 0.6476138629085195,
+          "precision_cnt": 0.00663716814159292,
+          "recall_cnt": 0.0069767441860465115,
+          "f1_cnt": 0.006802721088435374,
+          "F1": 0.7509910825282441
+        }
+      },
+      "summary": {
+        "avg_count_mae": 1.7441442989961105,
+        "avg_mAP50": 0.7059211136633625,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.5244446531473024,
+            "F1": 0.5750723075225207,
+            "count_mae": 3.235294117647059,
+            "count_me": -2.0588235294117645,
+            "count_rmse": 4.051143629381999
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.8595326779689239,
+            "F1": 0.8444385406558461,
+            "count_mae": 1.0,
+            "count_me": 0.4666666666666667,
+            "count_rmse": 1.2909944487358056
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.6549375594861397,
+            "F1": 0.6595383972506299,
+            "count_mae": 1.9896907216494846,
+            "count_me": 0.6494845360824743,
+            "count_rmse": 3.1179559786077933
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.7847695640510843,
+            "F1": 0.7509910825282441,
+            "count_mae": 0.7515923566878981,
+            "count_me": 0.14012738853503184,
+            "count_rmse": 1.1454701702043688
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e5-private-adapt-nano",
+      "config": {
+        "experiment_id": "e5-private-adapt-nano",
+        "strategy": "direct",
+        "weights": "yolo11n.pt",
+        "dataset_stage": "processed",
+        "train_datasets": [
+          "passenger-deakin",
+          "inside-bus-view",
+          "onibus-unicamp-private"
+        ],
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "train_config": {
+          "epochs": 100,
+          "patience": 20,
+          "batch": 16,
+          "imgsz": 640,
+          "workers": 4,
+          "amp": true,
+          "seed": 42,
+          "deterministic": true
+        }
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.5539940719033349,
+          "metrics/recall(B)": 0.5131824993950854,
+          "metrics/mAP50(B)": 0.4636491801713143,
+          "metrics/mAP50-95(B)": 0.18650379241108433,
+          "fitness": 0.18650379241108433,
+          "count_mae": 2.4705882352941178,
+          "count_me": -0.47058823529411764,
+          "count_rmse": 3.235828832817663,
+          "n_images": 17,
+          "tp": 108,
+          "fp": 97,
+          "fn": 105,
+          "pred_n": 205,
+          "gt_n": 213,
+          "mean_conf": 0.5358946903449733,
+          "precision_cnt": 0.526829268292683,
+          "recall_cnt": 0.5070422535211268,
+          "f1_cnt": 0.5167464114832536,
+          "F1": 0.532807915982469
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.9185618708857516,
+          "metrics/recall(B)": 0.7702265372168284,
+          "metrics/mAP50(B)": 0.8607997106026521,
+          "metrics/mAP50-95(B)": 0.45255699295882046,
+          "fitness": 0.45255699295882046,
+          "count_mae": 1.6,
+          "count_me": 1.3333333333333333,
+          "count_rmse": 2.3944379994757297,
+          "n_images": 15,
+          "tp": 253,
+          "fp": 76,
+          "fn": 56,
+          "pred_n": 329,
+          "gt_n": 309,
+          "mean_conf": 0.6273587690298318,
+          "precision_cnt": 0.7689969604863222,
+          "recall_cnt": 0.8187702265372169,
+          "f1_cnt": 0.7931034482758621,
+          "F1": 0.837879660515492
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.6917195651872254,
+          "metrics/recall(B)": 0.684856753069577,
+          "metrics/mAP50(B)": 0.6868674747583674,
+          "metrics/mAP50-95(B)": 0.34505873717916036,
+          "fitness": 0.34505873717916036,
+          "count_mae": 1.9484536082474226,
+          "count_me": 0.8556701030927835,
+          "count_rmse": 3.1508467197796834,
+          "n_images": 97,
+          "tp": 524,
+          "fp": 292,
+          "fn": 209,
+          "pred_n": 816,
+          "gt_n": 733,
+          "mean_conf": 0.5748425258652252,
+          "precision_cnt": 0.6421568627450981,
+          "recall_cnt": 0.7148703956343793,
+          "f1_cnt": 0.6765655261459006,
+          "F1": 0.6882710521254921
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.78525201040332,
+          "metrics/recall(B)": 0.7132867132867133,
+          "metrics/mAP50(B)": 0.7844511354234579,
+          "metrics/mAP50-95(B)": 0.5466991511319154,
+          "fitness": 0.5466991511319154,
+          "count_mae": 0.8598726114649682,
+          "count_me": 0.37579617834394907,
+          "count_rmse": 1.2991913212348574,
+          "n_images": 157,
+          "tp": 5,
+          "fp": 484,
+          "fn": 425,
+          "pred_n": 489,
+          "gt_n": 430,
+          "mean_conf": 0.5982887507216331,
+          "precision_cnt": 0.010224948875255624,
+          "recall_cnt": 0.011627906976744186,
+          "f1_cnt": 0.01088139281828074,
+          "F1": 0.7475413437740761
+        }
+      },
+      "summary": {
+        "avg_count_mae": 1.7197286137516272,
+        "avg_mAP50": 0.6989418752389479,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.4636491801713143,
+            "F1": 0.532807915982469,
+            "count_mae": 2.4705882352941178,
+            "count_me": -0.47058823529411764,
+            "count_rmse": 3.235828832817663
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.8607997106026521,
+            "F1": 0.837879660515492,
+            "count_mae": 1.6,
+            "count_me": 1.3333333333333333,
+            "count_rmse": 2.3944379994757297
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.6868674747583674,
+            "F1": 0.6882710521254921,
+            "count_mae": 1.9484536082474226,
+            "count_me": 0.8556701030927835,
+            "count_rmse": 3.1508467197796834
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.7844511354234579,
+            "F1": 0.7475413437740761,
+            "count_mae": 0.8598726114649682,
+            "count_me": 0.37579617834394907,
+            "count_rmse": 1.2991913212348574
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e5-private-adapt-large",
+      "config": {
+        "experiment_id": "e5-private-adapt-large",
+        "strategy": "direct",
+        "weights": "yolo11l.pt",
+        "dataset_stage": "processed",
+        "train_datasets": [
+          "passenger-deakin",
+          "inside-bus-view",
+          "onibus-unicamp-private"
+        ],
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "train_config": {
+          "epochs": 100,
+          "patience": 20,
+          "batch": 16,
+          "imgsz": 640,
+          "workers": 4,
+          "amp": true,
+          "seed": 42,
+          "deterministic": true
+        }
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.5587506323937085,
+          "metrics/recall(B)": 0.568075117370892,
+          "metrics/mAP50(B)": 0.4662727102039976,
+          "metrics/mAP50-95(B)": 0.17938741408166634,
+          "fitness": 0.17938741408166634,
+          "count_mae": 2.0588235294117645,
+          "count_me": -1.7058823529411764,
+          "count_rmse": 2.879950979974976,
+          "n_images": 17,
+          "tp": 109,
+          "fp": 75,
+          "fn": 104,
+          "pred_n": 184,
+          "gt_n": 213,
+          "mean_conf": 0.5276865756706052,
+          "precision_cnt": 0.592391304347826,
+          "recall_cnt": 0.5117370892018779,
+          "f1_cnt": 0.5491183879093199,
+          "F1": 0.5633742948178547
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.8835002205398543,
+          "metrics/recall(B)": 0.7475728155339806,
+          "metrics/mAP50(B)": 0.8212201481506081,
+          "metrics/mAP50-95(B)": 0.43799297327985354,
+          "fitness": 0.43799297327985354,
+          "count_mae": 1.9333333333333333,
+          "count_me": -0.7333333333333333,
+          "count_rmse": 2.4083189157584592,
+          "n_images": 15,
+          "tp": 239,
+          "fp": 59,
+          "fn": 70,
+          "pred_n": 298,
+          "gt_n": 309,
+          "mean_conf": 0.6567223309070472,
+          "precision_cnt": 0.802013422818792,
+          "recall_cnt": 0.7734627831715211,
+          "f1_cnt": 0.7874794069192752,
+          "F1": 0.809872682321717
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.6724738408158484,
+          "metrics/recall(B)": 0.616643929058663,
+          "metrics/mAP50(B)": 0.6552721114137425,
+          "metrics/mAP50-95(B)": 0.32565405760759136,
+          "fitness": 0.32565405760759136,
+          "count_mae": 2.0,
+          "count_me": 0.08247422680412371,
+          "count_rmse": 2.9671743648360485,
+          "n_images": 97,
+          "tp": 466,
+          "fp": 275,
+          "fn": 267,
+          "pred_n": 741,
+          "gt_n": 733,
+          "mean_conf": 0.5508046371010151,
+          "precision_cnt": 0.6288798920377868,
+          "recall_cnt": 0.635743519781719,
+          "f1_cnt": 0.632293080054274,
+          "F1": 0.643349926718055
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.7125899885049641,
+          "metrics/recall(B)": 0.6993038305066352,
+          "metrics/mAP50(B)": 0.7632309918228584,
+          "metrics/mAP50-95(B)": 0.5164327411897983,
+          "fitness": 0.5164327411897983,
+          "count_mae": 0.7898089171974523,
+          "count_me": 0.21656050955414013,
+          "count_rmse": 1.3354547878703569,
+          "n_images": 157,
+          "tp": 3,
+          "fp": 461,
+          "fn": 427,
+          "pred_n": 464,
+          "gt_n": 430,
+          "mean_conf": 0.6090059627875172,
+          "precision_cnt": 0.00646551724137931,
+          "recall_cnt": 0.0069767441860465115,
+          "f1_cnt": 0.006711409395973155,
+          "F1": 0.705884397016553
+        }
+      },
+      "summary": {
+        "avg_count_mae": 1.6954914449856375,
+        "avg_mAP50": 0.6764989903978016,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.4662727102039976,
+            "F1": 0.5633742948178547,
+            "count_mae": 2.0588235294117645,
+            "count_me": -1.7058823529411764,
+            "count_rmse": 2.879950979974976
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.8212201481506081,
+            "F1": 0.809872682321717,
+            "count_mae": 1.9333333333333333,
+            "count_me": -0.7333333333333333,
+            "count_rmse": 2.4083189157584592
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.6552721114137425,
+            "F1": 0.643349926718055,
+            "count_mae": 2.0,
+            "count_me": 0.08247422680412371,
+            "count_rmse": 2.9671743648360485
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.7632309918228584,
+            "F1": 0.705884397016553,
+            "count_mae": 0.7898089171974523,
+            "count_me": 0.21656050955414013,
+            "count_rmse": 1.3354547878703569
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e5-private-adapt-nano-busaug",
+      "config": {
+        "experiment_id": "e5-private-adapt-nano-busaug",
+        "strategy": "direct",
+        "weights": "yolo11n.pt",
+        "dataset_stage": "processed",
+        "train_datasets": [
+          "passenger-deakin",
+          "inside-bus-view",
+          "onibus-unicamp-private"
+        ],
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "train_config": {
+          "epochs": 100,
+          "patience": 20,
+          "batch": 16,
+          "imgsz": 640,
+          "workers": 4,
+          "amp": true,
+          "seed": 42,
+          "deterministic": true
+        },
+        "augment": {
+          "fliplr": 0.5,
+          "flipud": 0.0,
+          "mosaic": 1.0,
+          "close_mosaic": 10,
+          "hsv_h": 0.03,
+          "hsv_s": 0.7,
+          "hsv_v": 0.0,
+          "degrees": 10.0,
+          "translate": 0.1,
+          "scale": 0.2,
+          "shear": 0.0,
+          "perspective": 0.0,
+          "erasing": 0.0,
+          "blur_px": 50,
+          "blur_p": 0.15,
+          "motion_blur_px": 50,
+          "motion_blur_p": 0.15,
+          "cutout_holes": 3,
+          "cutout_size": 0.1,
+          "cutout_p": 0.5
+        }
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.39858927339007433,
+          "metrics/recall(B)": 0.48540392651040104,
+          "metrics/mAP50(B)": 0.3283721984029715,
+          "metrics/mAP50-95(B)": 0.12311757104826979,
+          "fitness": 0.12311757104826979,
+          "count_mae": 2.2941176470588234,
+          "count_me": -1.588235294117647,
+          "count_rmse": 2.818009309883173,
+          "n_images": 17,
+          "tp": 83,
+          "fp": 103,
+          "fn": 130,
+          "pred_n": 186,
+          "gt_n": 213,
+          "mean_conf": 0.5306559898840484,
+          "precision_cnt": 0.44623655913978494,
+          "recall_cnt": 0.38967136150234744,
+          "f1_cnt": 0.4160401002506266,
+          "F1": 0.43773368028227466
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.9025138233054595,
+          "metrics/recall(B)": 0.7789814237988981,
+          "metrics/mAP50(B)": 0.8545528716948396,
+          "metrics/mAP50-95(B)": 0.4650819268931282,
+          "fitness": 0.4650819268931282,
+          "count_mae": 1.2666666666666666,
+          "count_me": -0.3333333333333333,
+          "count_rmse": 1.570562531918633,
+          "n_images": 15,
+          "tp": 253,
+          "fp": 51,
+          "fn": 56,
+          "pred_n": 304,
+          "gt_n": 309,
+          "mean_conf": 0.685136911802386,
+          "precision_cnt": 0.8322368421052632,
+          "recall_cnt": 0.8187702265372169,
+          "f1_cnt": 0.8254486133768353,
+          "F1": 0.8362099200546138
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.6750897353679366,
+          "metrics/recall(B)": 0.6236155219663593,
+          "metrics/mAP50(B)": 0.639955573194832,
+          "metrics/mAP50-95(B)": 0.30914737124947533,
+          "fitness": 0.30914737124947533,
+          "count_mae": 2.0,
+          "count_me": 0.7216494845360825,
+          "count_rmse": 2.974115133067694,
+          "n_images": 97,
+          "tp": 497,
+          "fp": 306,
+          "fn": 236,
+          "pred_n": 803,
+          "gt_n": 733,
+          "mean_conf": 0.6054504454729714,
+          "precision_cnt": 0.6189290161892902,
+          "recall_cnt": 0.6780354706684857,
+          "f1_cnt": 0.6471354166666667,
+          "F1": 0.6483325378380903
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.7786411679163596,
+          "metrics/recall(B)": 0.74614785843933,
+          "metrics/mAP50(B)": 0.7998668295044062,
+          "metrics/mAP50-95(B)": 0.5296528195232276,
+          "fitness": 0.5296528195232276,
+          "count_mae": 0.7452229299363057,
+          "count_me": 0.09554140127388536,
+          "count_rmse": 1.2389640217269258,
+          "n_images": 157,
+          "tp": 4,
+          "fp": 441,
+          "fn": 426,
+          "pred_n": 445,
+          "gt_n": 430,
+          "mean_conf": 0.655594021550725,
+          "precision_cnt": 0.008988764044943821,
+          "recall_cnt": 0.009302325581395349,
+          "f1_cnt": 0.009142857142857142,
+          "F1": 0.7620482963758741
+        }
+      },
+      "summary": {
+        "avg_count_mae": 1.576501810915449,
+        "avg_mAP50": 0.6556868681992624,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.3283721984029715,
+            "F1": 0.43773368028227466,
+            "count_mae": 2.2941176470588234,
+            "count_me": -1.588235294117647,
+            "count_rmse": 2.818009309883173
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.8545528716948396,
+            "F1": 0.8362099200546138,
+            "count_mae": 1.2666666666666666,
+            "count_me": -0.3333333333333333,
+            "count_rmse": 1.570562531918633
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.639955573194832,
+            "F1": 0.6483325378380903,
+            "count_mae": 2.0,
+            "count_me": 0.7216494845360825,
+            "count_rmse": 2.974115133067694
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.7998668295044062,
+            "F1": 0.7620482963758741,
+            "count_mae": 0.7452229299363057,
+            "count_me": 0.09554140127388536,
+            "count_rmse": 1.2389640217269258
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e5-private-adapt-large-busaug",
+      "config": {
+        "experiment_id": "e5-private-adapt-large-busaug",
+        "strategy": "direct",
+        "weights": "yolo11l.pt",
+        "dataset_stage": "processed",
+        "train_datasets": [
+          "passenger-deakin",
+          "inside-bus-view",
+          "onibus-unicamp-private"
+        ],
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "train_config": {
+          "epochs": 100,
+          "patience": 20,
+          "batch": 16,
+          "imgsz": 640,
+          "workers": 4,
+          "amp": true,
+          "seed": 42,
+          "deterministic": true
+        },
+        "augment": {
+          "fliplr": 0.5,
+          "flipud": 0.0,
+          "mosaic": 1.0,
+          "close_mosaic": 10,
+          "hsv_h": 0.03,
+          "hsv_s": 0.7,
+          "hsv_v": 0.0,
+          "degrees": 10.0,
+          "translate": 0.1,
+          "scale": 0.2,
+          "shear": 0.0,
+          "perspective": 0.0,
+          "erasing": 0.0,
+          "blur_px": 50,
+          "blur_p": 0.15,
+          "motion_blur_px": 50,
+          "motion_blur_p": 0.15,
+          "cutout_holes": 3,
+          "cutout_size": 0.1,
+          "cutout_p": 0.5
+        }
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.69319470988072,
+          "metrics/recall(B)": 0.5834172900005803,
+          "metrics/mAP50(B)": 0.5564991275423219,
+          "metrics/mAP50-95(B)": 0.2082672993996931,
+          "fitness": 0.2082672993996931,
+          "count_mae": 2.764705882352941,
+          "count_me": -2.5294117647058822,
+          "count_rmse": 3.589199484728659,
+          "n_images": 17,
+          "tp": 123,
+          "fp": 47,
+          "fn": 90,
+          "pred_n": 170,
+          "gt_n": 213,
+          "mean_conf": 0.5937224167234757,
+          "precision_cnt": 0.7235294117647059,
+          "recall_cnt": 0.5774647887323944,
+          "f1_cnt": 0.6422976501305483,
+          "F1": 0.6335860529572828
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.8869071958250802,
+          "metrics/recall(B)": 0.7867686820565601,
+          "metrics/mAP50(B)": 0.8375070830455593,
+          "metrics/mAP50-95(B)": 0.4489760729607387,
+          "fitness": 0.4489760729607387,
+          "count_mae": 2.0,
+          "count_me": -0.6666666666666666,
+          "count_rmse": 2.6832815729997477,
+          "n_images": 15,
+          "tp": 250,
+          "fp": 49,
+          "fn": 59,
+          "pred_n": 299,
+          "gt_n": 309,
+          "mean_conf": 0.6783938167685251,
+          "precision_cnt": 0.8361204013377926,
+          "recall_cnt": 0.8090614886731392,
+          "f1_cnt": 0.8223684210526316,
+          "F1": 0.8338422209310522
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.6334914887079733,
+          "metrics/recall(B)": 0.6480218281036835,
+          "metrics/mAP50(B)": 0.6469992616139624,
+          "metrics/mAP50-95(B)": 0.319246260092933,
+          "fitness": 0.319246260092933,
+          "count_mae": 2.2783505154639174,
+          "count_me": 0.711340206185567,
+          "count_rmse": 3.562403914421347,
+          "n_images": 97,
+          "tp": 494,
+          "fp": 308,
+          "fn": 239,
+          "pred_n": 802,
+          "gt_n": 733,
+          "mean_conf": 0.5894092494933088,
+          "precision_cnt": 0.6159600997506235,
+          "recall_cnt": 0.6739427012278308,
+          "f1_cnt": 0.6436482084690555,
+          "F1": 0.6406742828424282
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.781790938602563,
+          "metrics/recall(B)": 0.6923076923076923,
+          "metrics/mAP50(B)": 0.7583968222165778,
+          "metrics/mAP50-95(B)": 0.4885895252799769,
+          "fitness": 0.4885895252799769,
+          "count_mae": 0.802547770700637,
+          "count_me": 0.15286624203821655,
+          "count_rmse": 1.2868764336229073,
+          "n_images": 157,
+          "tp": 2,
+          "fp": 452,
+          "fn": 428,
+          "pred_n": 454,
+          "gt_n": 430,
+          "mean_conf": 0.6415385954443054,
+          "precision_cnt": 0.004405286343612335,
+          "recall_cnt": 0.004651162790697674,
+          "f1_cnt": 0.004524886877828055,
+          "F1": 0.7343333332272207
+        }
+      },
+      "summary": {
+        "avg_count_mae": 1.961401042129374,
+        "avg_mAP50": 0.6998505736046053,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.5564991275423219,
+            "F1": 0.6335860529572828,
+            "count_mae": 2.764705882352941,
+            "count_me": -2.5294117647058822,
+            "count_rmse": 3.589199484728659
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.8375070830455593,
+            "F1": 0.8338422209310522,
+            "count_mae": 2.0,
+            "count_me": -0.6666666666666666,
+            "count_rmse": 2.6832815729997477
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.6469992616139624,
+            "F1": 0.6406742828424282,
+            "count_mae": 2.2783505154639174,
+            "count_me": 0.711340206185567,
+            "count_rmse": 3.562403914421347
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.7583968222165778,
+            "F1": 0.7343333332272207,
+            "count_mae": 0.802547770700637,
+            "count_me": 0.15286624203821655,
+            "count_rmse": 1.2868764336229073
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e3-public-crowd-default",
+      "config": {
+        "experiment_id": "e3-public-crowd-default",
+        "strategy": "two_stage",
+        "weights": "yolo11m.pt",
+        "dataset_stage": "processed",
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "stages": [
+          {
+            "name": "stage1_crowd",
+            "train_datasets": [
+              "crowdhuman"
+            ],
+            "freeze": 10,
+            "train_config": {
+              "epochs": 50,
+              "patience": 15,
+              "batch": 16,
+              "imgsz": 640,
+              "workers": 4,
+              "amp": true,
+              "seed": 42,
+              "deterministic": true
+            }
+          },
+          {
+            "name": "stage2_public_bus",
+            "train_datasets": [
+              "passenger-deakin",
+              "inside-bus-view"
+            ],
+            "freeze": 0,
+            "train_config": {
+              "epochs": 100,
+              "patience": 20,
+              "batch": 16,
+              "imgsz": 640,
+              "workers": 4,
+              "amp": true,
+              "seed": 42,
+              "deterministic": true
+            }
+          }
+        ]
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.6730090027281584,
+          "metrics/recall(B)": 0.596244131455399,
+          "metrics/mAP50(B)": 0.6050617500642481,
+          "metrics/mAP50-95(B)": 0.25061201478922046,
+          "fitness": 0.25061201478922046,
+          "count_mae": 2.2941176470588234,
+          "count_me": -1.8235294117647058,
+          "count_rmse": 3.3694125862634556,
+          "n_images": 17,
+          "tp": 124,
+          "fp": 58,
+          "fn": 89,
+          "pred_n": 182,
+          "gt_n": 213,
+          "mean_conf": 0.5719646271113511,
+          "precision_cnt": 0.6813186813186813,
+          "recall_cnt": 0.5821596244131455,
+          "f1_cnt": 0.6278481012658228,
+          "F1": 0.6323051840268812
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.8530399926826044,
+          "metrics/recall(B)": 0.8090614886731392,
+          "metrics/mAP50(B)": 0.8602685243770076,
+          "metrics/mAP50-95(B)": 0.4700292828175325,
+          "fitness": 0.4700292828175325,
+          "count_mae": 1.7333333333333334,
+          "count_me": 0.4,
+          "count_rmse": 2.0330600909302543,
+          "n_images": 15,
+          "tp": 254,
+          "fp": 61,
+          "fn": 55,
+          "pred_n": 315,
+          "gt_n": 309,
+          "mean_conf": 0.6267910749193222,
+          "precision_cnt": 0.8063492063492064,
+          "recall_cnt": 0.8220064724919094,
+          "f1_cnt": 0.8141025641025641,
+          "F1": 0.8304689143463855
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.6215342923179872,
+          "metrics/recall(B)": 0.6362872535600672,
+          "metrics/mAP50(B)": 0.6315872944402842,
+          "metrics/mAP50-95(B)": 0.3112546755852085,
+          "fitness": 0.3112546755852085,
+          "count_mae": 2.4536082474226806,
+          "count_me": 1.1546391752577319,
+          "count_rmse": 3.3979981978478624,
+          "n_images": 97,
+          "tp": 483,
+          "fp": 362,
+          "fn": 250,
+          "pred_n": 845,
+          "gt_n": 733,
+          "mean_conf": 0.562750117419034,
+          "precision_cnt": 0.5715976331360947,
+          "recall_cnt": 0.6589358799454298,
+          "f1_cnt": 0.6121673003802282,
+          "F1": 0.6288242543600906
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.3192558606621522,
+          "metrics/recall(B)": 0.2097902097902098,
+          "metrics/mAP50(B)": 0.15606557411673577,
+          "metrics/mAP50-95(B)": 0.06939821900330095,
+          "fitness": 0.06939821900330095,
+          "count_mae": 1.802547770700637,
+          "count_me": -1.6624203821656052,
+          "count_rmse": 2.5897888658009847,
+          "n_images": 157,
+          "tp": 0,
+          "fp": 169,
+          "fn": 430,
+          "pred_n": 169,
+          "gt_n": 430,
+          "mean_conf": 0.4541793144666232,
+          "precision_cnt": 0.0,
+          "recall_cnt": 0.0,
+          "f1_cnt": 0.0,
+          "F1": 0.25319819095451657
+        }
+      },
+      "summary": {
+        "avg_count_mae": 2.0709017496288684,
+        "avg_mAP50": 0.563245785749569,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.6050617500642481,
+            "F1": 0.6323051840268812,
+            "count_mae": 2.2941176470588234,
+            "count_me": -1.8235294117647058,
+            "count_rmse": 3.3694125862634556
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.8602685243770076,
+            "F1": 0.8304689143463855,
+            "count_mae": 1.7333333333333334,
+            "count_me": 0.4,
+            "count_rmse": 2.0330600909302543
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.6315872944402842,
+            "F1": 0.6288242543600906,
+            "count_mae": 2.4536082474226806,
+            "count_me": 1.1546391752577319,
+            "count_rmse": 3.3979981978478624
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.15606557411673577,
+            "F1": 0.25319819095451657,
+            "count_mae": 1.802547770700637,
+            "count_me": -1.6624203821656052,
+            "count_rmse": 2.5897888658009847
+          }
+        ]
+      }
+    },
+    {
+      "experiment_id": "e3-public-crowd-busaug",
+      "config": {
+        "experiment_id": "e3-public-crowd-busaug",
+        "strategy": "two_stage",
+        "weights": "yolo11m.pt",
+        "dataset_stage": "processed",
+        "eval_datasets": [
+          "passenger-detection-bus",
+          "inside-bus-view",
+          "passenger-deakin",
+          "onibus-unicamp-private"
+        ],
+        "augment": {
+          "fliplr": 0.5,
+          "flipud": 0.0,
+          "mosaic": 1.0,
+          "close_mosaic": 10,
+          "hsv_h": 0.03,
+          "hsv_s": 0.7,
+          "hsv_v": 0.0,
+          "degrees": 10.0,
+          "translate": 0.1,
+          "scale": 0.2,
+          "shear": 0.0,
+          "perspective": 0.0,
+          "erasing": 0.0,
+          "blur_px": 50,
+          "blur_p": 0.15,
+          "motion_blur_px": 50,
+          "motion_blur_p": 0.15,
+          "cutout_holes": 3,
+          "cutout_size": 0.1,
+          "cutout_p": 0.5
+        },
+        "stages": [
+          {
+            "name": "stage1_crowd",
+            "train_datasets": [
+              "crowdhuman"
+            ],
+            "freeze": 10,
+            "train_config": {
+              "epochs": 50,
+              "patience": 15,
+              "batch": 16,
+              "imgsz": 640,
+              "workers": 4,
+              "amp": true,
+              "seed": 42,
+              "deterministic": true
+            }
+          },
+          {
+            "name": "stage2_public_bus",
+            "train_datasets": [
+              "passenger-deakin",
+              "inside-bus-view"
+            ],
+            "freeze": 0,
+            "train_config": {
+              "epochs": 100,
+              "patience": 20,
+              "batch": 16,
+              "imgsz": 640,
+              "workers": 4,
+              "amp": true,
+              "seed": 42,
+              "deterministic": true
+            }
+          }
+        ]
+      },
+      "eval_result": {
+        "passenger-detection-bus": {
+          "metrics/precision(B)": 0.4599368408033913,
+          "metrics/recall(B)": 0.42382324816638084,
+          "metrics/mAP50(B)": 0.35810083236120116,
+          "metrics/mAP50-95(B)": 0.13621511601326347,
+          "fitness": 0.13621511601326347,
+          "count_mae": 3.823529411764706,
+          "count_me": -3.7058823529411766,
+          "count_rmse": 4.820300210323737,
+          "n_images": 17,
+          "tp": 75,
+          "fp": 75,
+          "fn": 138,
+          "pred_n": 150,
+          "gt_n": 213,
+          "mean_conf": 0.5417088558276494,
+          "precision_cnt": 0.5,
+          "recall_cnt": 0.352112676056338,
+          "f1_cnt": 0.4132231404958677,
+          "F1": 0.4411421793168221
+        },
+        "inside-bus-view": {
+          "metrics/precision(B)": 0.895591872485178,
+          "metrics/recall(B)": 0.7772780017569871,
+          "metrics/mAP50(B)": 0.8471378229788427,
+          "metrics/mAP50-95(B)": 0.42838659638275667,
+          "fitness": 0.42838659638275667,
+          "count_mae": 0.8666666666666667,
+          "count_me": 0.06666666666666667,
+          "count_rmse": 1.1832159566199232,
+          "n_images": 15,
+          "tp": 252,
+          "fp": 58,
+          "fn": 57,
+          "pred_n": 310,
+          "gt_n": 309,
+          "mean_conf": 0.6673403511124273,
+          "precision_cnt": 0.8129032258064516,
+          "recall_cnt": 0.8155339805825242,
+          "f1_cnt": 0.81421647819063,
+          "F1": 0.8322510576029495
+        },
+        "passenger-deakin": {
+          "metrics/precision(B)": 0.6634878208933911,
+          "metrics/recall(B)": 0.664393151619022,
+          "metrics/mAP50(B)": 0.6632951547498135,
+          "metrics/mAP50-95(B)": 0.32917100811540717,
+          "fitness": 0.32917100811540717,
+          "count_mae": 1.9381443298969072,
+          "count_me": 0.4536082474226804,
+          "count_rmse": 2.998281294616882,
+          "n_images": 97,
+          "tp": 495,
+          "fp": 282,
+          "fn": 238,
+          "pred_n": 777,
+          "gt_n": 733,
+          "mean_conf": 0.6311182795881151,
+          "precision_cnt": 0.637065637065637,
+          "recall_cnt": 0.6753069577080492,
+          "f1_cnt": 0.6556291390728477,
+          "F1": 0.6639401776352759
+        },
+        "onibus-unicamp-private": {
+          "metrics/precision(B)": 0.4134874333846298,
+          "metrics/recall(B)": 0.23076923076923078,
+          "metrics/mAP50(B)": 0.18520997077059276,
+          "metrics/mAP50-95(B)": 0.08082205436159466,
+          "fitness": 0.08082205436159466,
+          "count_mae": 1.8535031847133758,
+          "count_me": -1.7770700636942676,
+          "count_rmse": 2.6312671622206842,
+          "n_images": 157,
+          "tp": 2,
+          "fp": 149,
+          "fn": 428,
+          "pred_n": 151,
+          "gt_n": 430,
+          "mean_conf": 0.4829329749606303,
+          "precision_cnt": 0.013245033112582781,
+          "recall_cnt": 0.004651162790697674,
+          "f1_cnt": 0.006884681583476765,
+          "F1": 0.2962178965125193
+        }
+      },
+      "summary": {
+        "avg_count_mae": 2.120460898260414,
+        "avg_mAP50": 0.5134359452151125,
+        "rows": [
+          {
+            "dataset": "passenger-detection-bus",
+            "mAP50": 0.35810083236120116,
+            "F1": 0.4411421793168221,
+            "count_mae": 3.823529411764706,
+            "count_me": -3.7058823529411766,
+            "count_rmse": 4.820300210323737
+          },
+          {
+            "dataset": "inside-bus-view",
+            "mAP50": 0.8471378229788427,
+            "F1": 0.8322510576029495,
+            "count_mae": 0.8666666666666667,
+            "count_me": 0.06666666666666667,
+            "count_rmse": 1.1832159566199232
+          },
+          {
+            "dataset": "passenger-deakin",
+            "mAP50": 0.6632951547498135,
+            "F1": 0.6639401776352759,
+            "count_mae": 1.9381443298969072,
+            "count_me": 0.4536082474226804,
+            "count_rmse": 2.998281294616882
+          },
+          {
+            "dataset": "onibus-unicamp-private",
+            "mAP50": 0.18520997077059276,
+            "F1": 0.2962178965125193,
+            "count_mae": 1.8535031847133758,
+            "count_me": -1.7770700636942676,
+            "count_rmse": 2.6312671622206842
+          }
+        ]
+      }
+    }
+  ],
+  "failures": [],
+  "run_order": [
+    "e0-baseline-medium",
+    "e0-baseline-nano",
+    "e0-baseline-large",
+    "e1-dkn",
+    "e1-ibv",
+    "e1-public-noaug",
+    "e2-public-default",
+    "e2-public-busaug",
+    "e4-private-adapt-medium",
+    "e4-private-adapt-medium-busaug",
+    "e5-private-adapt-nano",
+    "e5-private-adapt-large",
+    "e5-private-adapt-nano-busaug",
+    "e5-private-adapt-large-busaug",
+    "e3-public-crowd-default",
+    "e3-public-crowd-busaug"
+  ]
+}
