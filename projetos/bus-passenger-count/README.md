@@ -20,11 +20,56 @@ Qual problema o grupo pretendia solucionar?
 Qual a relevância do problema e o impacto da solução do mesmo? 
 -->
 
-O objetivo do projeto é desenvolver um modelo genérico capaz de detectar e contabilizar o número de passageiros (pessoas) presentes em imagens no interior de ônibus em diferentes cenários e datasets. A solução utiliza técnicas de transfer learning a partir de modelos de detecção de objetos pré-treinados, como YOLOv8 ou YOLOv11 treinados no dataset COCO para a classe "person". 
+O objetivo do projeto é desenvolver um modelo genérico capaz de detectar e contabilizar o número de passageiros (pessoas) presentes em imagens no interior de ônibus em diferentes cenários e datasets. A solução utiliza técnicas de transfer learning a partir de modelos de detecção de objetos pré-treinados, como YOLOv8 ou YOLOv11 treinados no dataset COCO para a classe "person".
+
+<table align="center">
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/objetivo-deteccao-1.png" width="100%" alt="Detecção de pessoas sem score explícito">
+      <br>
+      <b>Detecção da Classe Person</b>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/objetivo-deteccao-2.png" width="100%" alt="Detecção de pessoas com nível de confiança">
+      <br>
+      <b>Detecção com Níveis de Confiança</b>
+    </td>
+  </tr>
+</table>
 
 O principal problema abordado é a "ilusão da alta precisão" em datasets específicos. Diversos datasets públicos possuem precisão elevada (ex: 93% em testes in-domain), porém quando os modelos são submetidos à validação cruzada (cross-dataset), a precisão cai drasticamente (chegando a 31%). Esse viés de dataset (overfitting de cenário) ocorre porque o modelo "decora" a iluminação, ângulos exatos das câmeras e texturas dos fundos, apresentando severa inflexibilidade de domínio.
 
+<table align="center">
+  <tr>
+    <td align="center" width="40%">
+      <img src="assets/ilusao-precisao.png" width="100%" alt="Alta precisão de 93 por cento no dataset de origem">
+      <br>
+      <b>Métrica de Referência (In-Domain)</b>
+    </td>
+    <td align="center" width="60%">
+      <img src="assets/ilusao-precisao-queda.png" width="100%" alt="Gráfico de queda de desempenho para 31 por cento em cross-validation">
+      <br>
+      <b>Diagnóstico de Inflexibilidade de Domínio</b>
+    </td>
+  </tr>
+</table>
+
 A relevância deste projeto reside na tentativa de desenvolver um algoritmo de detecção robusto contra falsos positivos complexos (ex: reflexos nos vidros), falsos negativos por oclusão e contagem dupla causada por obstáculos físicos como barras de apoio. A contagem precisa contribui para a otimização da mobilidade urbana e na análise de impacto da massa de passageiros no consumo energético de ônibus elétricos (aplicação direta no ônibus elétrico da Unicamp).
+
+<table align="center">
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/consumo-massa-tempo.png" width="100%" alt="Gráfico de variação de massa calculada e real ao longo do tempo">
+      <br>
+      <b>Variação da Massa Total ao Longo da Rota</b>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/consumo-energia-massa.png" width="100%" alt="Gráfico de consumo de componentes energéticos por milha versus massa média do veículo">
+      <br>
+      <b>Impacto no Consumo Energético (BEB vs CDB)</b>
+    </td>
+  </tr>
+</table>
 
 ## Metodologia
 <!-- >
@@ -33,10 +78,22 @@ Abordagem adotada pelo projeto na busca pela resposta às perguntas de pesquisa.
 
 A metodologia consiste na aplicação de Redes Neurais Convolucionais (CNNs), principalmente da arquitetura da família YOLO (**YOLOv8** e **YOLO11**, variante *medium*) para extração de características espaciais. 
 
+<p align="center">
+  <img src="assets/metodologia-etapas.png" width="90%" alt="Etapas da metodologia e transferência de conhecimento do dataset COCO">
+  <br>
+  <b>Fluxo de Geração do Modelo a partir do Dataset COCO até a Adaptação de Domínio</b>
+</p>
+
 O núcleo do projeto avalia comparativamente duas estratégias de *Transfer Learning* e *Fine-Tuning*:
 
 1. **Estratégia 1: Baseline (Fine-Tuning Direto):** Utilização do modelo pré-treinado e realização do fine-tuning diretamente nas imagens anotadas de datasets públicos do interior de ônibus. É a abordagem mais simples e rápida, porém altamente propensa a overfitting.
 2. **Estratégia 2: Fine-Tuning em Estágios (Robusto):** Implementação de treinamento sequencial visando o fechamento progressivo do *gap* de domínio (de multidão "geral" para multidão "confinada"). Realizou-se um fine-tuning inicial (Estágio 1) no dataset CrowdHuman para ajuste de sobreposição, seguido por um segundo fine-tuning (Estágio 2) nas imagens do interior do ônibus.
+
+<p align="center">
+  <img src="assets/strategias-treinamento.png" width="85%" alt="Diagrama das duas estratégias de fine-tuning comparadas">
+  <br>
+  <b>Comparativo das Arquiteturas de Treinamento: Direto (Estratégia 1) vs. Estágios Sequenciais (Estratégia 2)</b>
+</p>
 
 ### Avaliação de Generalização e Validação:
 
@@ -47,10 +104,13 @@ Para ambas as abordagens, etapas sequenciais foram executadas com o objetivo de 
 Para mitigar o overfitting e aprimorar a robustez, aplicou-se:
 * **Normalização de Classes:** Todos os datasets foram convertidos para uma classe-alvo única (`person`), descartando classes irrelevantes ou remapeando classes como `occupied seat`.
 * **Limpeza e Redução de Volume:** Remoção de amostras ruidosas e aplicação de subamostragem orientada à redundância temporal/visual.
-* **Data Augmentation:** 
-  * *Cutout (3x10%)*: Simula oclusão parcial cobrindo partes da imagem.
-  * *Blur e Motion Blur (50px)*: Simula movimento e a trepidação natural do ônibus (ladeiras e buracos).
-  * *Hue (+/- 15%) e Saturation (+/- 25%)*: Combate o viés de cor e iluminação, e simula o hardware real acessível utilizado na coleta (ESP32-CAM), que por exemplo, possui limitações de balanço de branco.
+* **Data Augmentation:** Aplicou-se um pipeline de transformações para simular oclusão, trepidação e limitações severas de hardware.
+
+<p align="center">
+  <img src="assets/data-augmentation-exemplos.png" width="95%" alt="Exemplos de transformações de data augmentation aplicadas">
+  <br>
+  <b>Pipeline de Data Augmentation: Simulações de Oclusão (Cutout), Movimento (Blur) e Hardware</b>
+</p>
 
 ## Bases de Dados
 <!-- > 
@@ -73,6 +133,12 @@ O projeto implementa uma arquitetura de dados baseada no padrão Medalhão (`dat
 | CrowdHuman | Hugging Face Hub | 19370 imagens | 19370 imagens | person | Pré-treinamento (Estágio 1 - Metodologia Robusta) |
 | Passenger Detection | Roboflow Universe | 170 imagens | 170 imagens | person (remap de passenger) | Teste de Generalização (Out-of-Distribution) |
 | Dataset Privado | Coleta Própria | 583 imagens | 583 imagens | person | Validação Final em Cenário Real (Ônibus Unicamp) |
+
+<p align="center">
+  <img src="assets/onibus-unicamp-coleta.png" width="85%" alt="Exemplo de imagens de coleta no ônibus elétrico da Unicamp">
+  <br>
+  <b>Exemplos Visuais do Dataset Privado: Coleta de Imagens no Interior do Ônibus Elétrico da Unicamp</b>
+</p>
 
 <!-- > Forneça também o link para o "datasheet" criado para os datasets (anexado na pasta `data`, como indicado nas [instruções E2](https://github.com/Disciplinas-FEEC/IA901-2026S1/blob/main/templates/ia901-E2-instructions.md)), contendo informações mais detalhadas e sistematizadas sobre as bases de dados. -->
 
@@ -219,8 +285,22 @@ A combinação de datasets públicos no fine-tuning (`e2-public-default`) supero
 
 ### 3. Avaliação em Domínios Não Vistos (Público vs. Privado)
 Avaliamos a estratégia direta (`e2`) contra o fine-tuning em estágios com o CrowdHuman (`e3`) e o modelo Baseline. 
+
 * **Teste Público:** O fine-tuning melhora significativamente a detecção.
+
+<p align="center">
+  <img src="assets/resultado-publico.png" width="85%" alt="Predições no Dataset de Teste Público">
+  <br>
+  <b>Figura 1: Predições no Dataset de Teste Público (e3-public-crowd-default vs. baseline-medium)</b>
+</p>
+
 * **Teste Privado (Unicamp):** De forma surpreendente, o baseline generalista venceu as abordagens de fine-tuning público em detecção e contagem no mundo real.
+
+<p align="center">
+  <img src="assets/resultado-privado.png" width="85%" alt="Predições no Dataset Privado da Unicamp">
+  <br>
+  <b>Figura 2: Predições no Dataset Privado da Unicamp (e3-public-crowd-default vs. baseline-medium)</b>
+</p>
 
 | Testing dataset | Modelo | mAP50 | Precision | count_mae | count_me |
 |---|---|---|---|---|---|
