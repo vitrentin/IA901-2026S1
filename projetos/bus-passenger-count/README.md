@@ -126,7 +126,7 @@ A arquitetura do projeto foi estruturada visando a total reprodutibilidade e o p
 | Etapa | Módulos e Notebooks | Entrada | Saída (Artefato) |
 | --- | --- | --- | --- |
 | **1. Extração (Download)** | `1_download_datasets.ipynb`<br>`src/datasets.py` | API do Roboflow e Hugging Face Hub | `data/raw/<dataset>/` |
-| **2. Pré-processamento** | `2_preprocess_datasets.ipynb`<br>`src/datasets.py` | `data/raw/<dataset>/` | Rascunhos em `data/interim/`<br>Dataset final em `data/processed/<dataset>/` |
+| **2. Pré-processamento** | `2_preprocess_datasets.ipynb`<br>`src/datasets.py` | `data/raw/<dataset>/` | Dataset final em `data/processed/<dataset>/` |
 | **3. Treinamento** | `3_train.ipynb`<br>`src/train.py`<br>`src/wandb_utils.py` | `data/processed/<dataset>/data.yaml` | Pesos do modelo (`runs/<exp>/weights/`)<br>Logs no Weights & Biases |
 | **4. Validação (Robustez)** | `4_validate_test.ipynb`<br>`src/eval.py`<br>`src/wandb_utils.py` | Pesos treinados (`best.pt`)<br>Domínio não visto (`data/processed/`) | `runs/<exp>/test_metrics.json`<br>Painel de predições no W&B |
 
@@ -155,14 +155,12 @@ graph TD
         NB1[Notebook 1: Download]:::raw
         RAW[(data/raw/)]:::raw
         NB2[Notebook 2: Pre-process]:::interim
-        INT[(data/interim/)]:::interim
         PROC[(data/processed/)]:::processed
         
         R & H -->|Extração API| NB1
         NB1 -->|Arquivos Brutos| RAW
         RAW -->|Leitura| NB2
-        NB2 -->|Pré-processamento| INT
-        INT -->|Normalização YOLO| PROC
+        NB2 -->|Normalização YOLO| PROC
     end
 
     %% Treinamento
@@ -182,9 +180,9 @@ graph TD
         METRICS[(test_metrics.json)]:::eval
         
         RUNS -->|Carrega Modelo| NB4
-        PROC -->|Divisão de Testes: Imagens não vistas| NB4
-        NB4 -->|Matriz de Confusão| WANDB
-        NB4 -->|Exporta Métricas| METRICS
+        PROC -->|Divisão de Testes: 
+        Imagens não vistas| NB4
+        NB4 -->|Exporta Métricas| METRICS & WANDB
     end
 ```
 
