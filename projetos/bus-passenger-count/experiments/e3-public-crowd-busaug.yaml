@@ -1,0 +1,53 @@
+# E3 - Two-stage training: CrowdHuman, then public bus datasets.
+# Stage 2 uses the bus-specific augmentation policy.
+experiment_id: e3-public-crowd-busaug
+strategy: two_stage
+weights: yolo11m.pt
+dataset_stage: processed
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+  - onibus-unicamp-private
+augment:
+  fliplr: 0.5
+  flipud: 0.0
+  mosaic: 1.0
+  close_mosaic: 10
+  hsv_h: 0.03
+  hsv_s: 0.7
+  hsv_v: 0.4
+  degrees: 10.0
+  translate: 0.1
+  scale: 0.2
+  shear: 0.0
+  perspective: 0.0
+  erasing: 0.4
+stages:
+  - name: stage1_crowd
+    train_datasets:
+      - crowdhuman
+    freeze: 10
+    train_config:
+      epochs: 50
+      patience: 15
+      batch: 16
+      imgsz: 640
+      workers: 4
+      amp: true
+      seed: 42
+      deterministic: true
+  - name: stage2_public_bus
+    train_datasets:
+      - passenger-deakin
+      - inside-bus-view
+    freeze: 0
+    train_config:
+      epochs: 100
+      patience: 20
+      batch: 16
+      imgsz: 640
+      workers: 4
+      amp: true
+      seed: 42
+      deterministic: true

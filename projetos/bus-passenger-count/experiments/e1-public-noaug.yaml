@@ -1,0 +1,38 @@
+# E1 - Two-public-dataset baseline with augmentation disabled.
+# This is the regular public-training baseline before testing augmentation.
+experiment_id: e1-public-noaug
+strategy: direct
+weights: yolo11m.pt
+dataset_stage: processed
+train_datasets:
+  - passenger-deakin
+  - inside-bus-view
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+  - onibus-unicamp-private
+train_config:
+  epochs: 100
+  patience: 20
+  batch: 16
+  imgsz: 640
+  workers: 4
+  amp: true
+  seed: 42
+  deterministic: true
+augment:
+  hsv_h: 0.0
+  hsv_s: 0.0
+  hsv_v: 0.0
+  degrees: 0.0
+  translate: 0.0
+  scale: 0.0
+  shear: 0.0
+  perspective: 0.0
+  flipud: 0.0
+  fliplr: 0.0
+  mosaic: 0.0
+  mixup: 0.0
+  copy_paste: 0.0
+  erasing: 0.0

@@ -1,0 +1,10 @@
+# E0 - Zero-shot COCO baseline with YOLO11m.
+experiment_id: e0-baseline-medium
+strategy: baseline
+weights: yolo11m.pt
+dataset_stage: processed
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+  - onibus-unicamp-private

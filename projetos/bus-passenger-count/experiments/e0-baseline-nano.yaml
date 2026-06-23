@@ -1,0 +1,11 @@
+# E0 - Zero-shot COCO baseline with YOLO11n.
+# Inference-only reference for the later speed/size trade-off.
+experiment_id: e0-baseline-nano
+strategy: baseline
+weights: yolo11n.pt
+dataset_stage: processed
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+  - onibus-unicamp-private

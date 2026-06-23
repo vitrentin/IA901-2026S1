@@ -1,0 +1,39 @@
+# E3 - Two-stage training: CrowdHuman, then public bus datasets.
+# Stage 2 uses default YOLO augmentation.
+experiment_id: e3-public-crowd-default
+strategy: two_stage
+weights: yolo11m.pt
+dataset_stage: processed
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+  - onibus-unicamp-private
+stages:
+  - name: stage1_crowd
+    train_datasets:
+      - crowdhuman
+    freeze: 10
+    train_config:
+      epochs: 50
+      patience: 15
+      batch: 16
+      imgsz: 640
+      workers: 4
+      amp: true
+      seed: 42
+      deterministic: true
+  - name: stage2_public_bus
+    train_datasets:
+      - passenger-deakin
+      - inside-bus-view
+    freeze: 0
+    train_config:
+      epochs: 100
+      patience: 20
+      batch: 16
+      imgsz: 640
+      workers: 4
+      amp: true
+      seed: 42
+      deterministic: true

@@ -1,8 +1,9 @@
-# E1 - Fine-tuning direto em 1 dataset (passenger-deakin).
+# E1 - Single-domain baseline: train only on passenger-deakin.
+# Tests whether a general bus-passenger dataset transfers to the other domains.
 experiment_id: e1-dkn
 strategy: direct
 weights: yolo11m.pt
-dataset_stage: interim
+dataset_stage: processed
 train_datasets:
   - passenger-deakin
 eval_datasets:

@@ -1,0 +1,37 @@
+# E2 - Two-public-dataset training with bus-specific augmentation.
+# Tests physically plausible bus/camera variation against default YOLO aug.
+experiment_id: e2-public-busaug
+strategy: direct
+weights: yolo11m.pt
+dataset_stage: processed
+train_datasets:
+  - passenger-deakin
+  - inside-bus-view
+eval_datasets:
+  - passenger-detection-bus
+  - inside-bus-view
+  - passenger-deakin
+  - onibus-unicamp-private
+train_config:
+  epochs: 100
+  patience: 20
+  batch: 16
+  imgsz: 640
+  workers: 4
+  amp: true
+  seed: 42
+  deterministic: true
+augment:
+  fliplr: 0.5
+  flipud: 0.0
+  mosaic: 1.0
+  close_mosaic: 10
+  hsv_h: 0.03
+  hsv_s: 0.7
+  hsv_v: 0.4
+  degrees: 10.0
+  translate: 0.1
+  scale: 0.2
+  shear: 0.0
+  perspective: 0.0
+  erasing: 0.4

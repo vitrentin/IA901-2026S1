@@ -1,10 +1,11 @@
-# E1 - Single-domain baseline: train only on inside-bus-view.
-# Tests whether the larger public in-bus dataset transfers to the other domains.
-experiment_id: e1-ibv
+# E2 - Two-public-dataset training with default Ultralytics augmentation.
+# Compares against e1-public-noaug to estimate the value of regular YOLO aug.
+experiment_id: e2-public-default
 strategy: direct
 weights: yolo11m.pt
 dataset_stage: processed
 train_datasets:
+  - passenger-deakin
   - inside-bus-view
 eval_datasets:
   - passenger-detection-bus
